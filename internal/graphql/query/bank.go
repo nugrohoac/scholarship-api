@@ -14,21 +14,21 @@ type BankQuery struct {
 }
 
 // FetchBank ...
-func (b *BankQuery) FetchBank(ctx context.Context, filter sa.InputBankFilter) (*resolver.BankFeedResolver, error) {
-	_filter := sa.BankFilter{}
-	if filter.Limit != nil {
-		_filter.Limit = int(*filter.Limit)
+func (b *BankQuery) FetchBank(ctx context.Context, param sa.InputBankFilter) (*resolver.BankFeedResolver, error) {
+	filter := sa.BankFilter{}
+	if param.Limit != nil {
+		filter.Limit = int(*param.Limit)
 	}
 
-	if filter.Cursor != nil {
-		_filter.Cursor = *filter.Cursor
+	if param.Cursor != nil {
+		filter.Cursor = *param.Cursor
 	}
 
-	if filter.Name != nil {
-		_filter.Name = strings.ToLower(*filter.Name)
+	if param.Name != nil {
+		filter.Name = strings.ToLower(*param.Name)
 	}
 
-	bankFeed, err := b.bankService.Fetch(ctx, _filter)
+	bankFeed, err := b.bankService.Fetch(ctx, filter)
 	if err != nil {
 		return nil, err
 	}
