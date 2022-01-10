@@ -2,6 +2,7 @@ package query
 
 import (
 	"context"
+	"strings"
 
 	sa "github.com/Nusantara-Muda/scholarship-api"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/resolver"
@@ -12,19 +13,27 @@ type BankQuery struct {
 	bankService sa.BankService
 }
 
-type bfilter struct {
-	Limit  *int
-	Cursor *string
-}
-
 // FetchBank ...
-func (b BankQuery) FetchBank(ctx context.Context, filter *bfilter) (resolver.BankFeedResolver, error) {
-	//bankFeed, err := b.bankService.Fetch(ctx, *filter)
-	//if err != nil {
-	//	return resolver.BankFeedResolver{}, err
-	//}
+func (b *BankQuery) FetchBank(ctx context.Context, filter sa.InputBankFilter) (*resolver.BankFeedResolver, error) {
+	_filter := sa.BankFilter{}
+	if filter.Limit != nil {
+		_filter.Limit = int(*filter.Limit)
+	}
 
-	return resolver.BankFeedResolver{BankFeed: sa.BankFeed{}}, nil
+	if filter.Cursor != nil {
+		_filter.Cursor = *filter.Cursor
+	}
+
+	if filter.Name != nil {
+		_filter.Name = strings.ToLower(*filter.Name)
+	}
+
+	bankFeed, err := b.bankService.Fetch(ctx, _filter)
+	if err != nil {
+		return nil, err
+	}
+
+	return &resolver.BankFeedResolver{BankFeed: bankFeed}, nil
 }
 
 // NewBankQuery ...

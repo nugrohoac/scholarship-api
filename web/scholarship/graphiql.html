@@ -56,7 +56,7 @@
     }
 
     // We don't use safe-serialize for location, because it's not client input.
-    var fetchURL = locationQuery(otherParams, '/schedule/graphql');
+    var fetchURL = locationQuery(otherParams, '/scholarship/graphql');
 
     // Defines a GraphQL fetcher using the fetch API.
     function graphQLFetcher(graphQLParams, opts = { headers: {} }) {
@@ -93,7 +93,7 @@
       protocol = "wss://"
     }
 
-    const SUBSCRIPTION_WS_URL = protocol + window.location.host + locationQuery(otherParams, '/schedule/graphql');
+    const SUBSCRIPTION_WS_URL = protocol + window.location.host + locationQuery(otherParams, '/scholarship/graphql');
     let subscriptionsClient = new window.SubscriptionsTransportWs.SubscriptionClient(SUBSCRIPTION_WS_URL, {
       reconnect: true
     });

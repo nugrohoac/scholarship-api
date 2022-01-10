@@ -2,6 +2,7 @@ package scholarship_api
 
 import "time"
 
+// Bank ...
 type Bank struct {
 	ID        int64     `json:"id"`
 	Name      string    `json:"name"`
@@ -9,10 +10,18 @@ type Bank struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
+// InputBankFilter ...
+type InputBankFilter struct {
+	Limit  *int32
+	Cursor *string
+	Name   *string
+}
+
 // BankFilter ...
 type BankFilter struct {
 	Limit  int
 	Cursor string
+	Name   string
 }
 
 // BankFeed ...

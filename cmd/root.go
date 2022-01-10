@@ -32,8 +32,8 @@ var (
 )
 
 func init() {
-	//initEnv()
-	//initApp()
+	initEnv()
+	initApp()
 }
 
 func initEnv() {

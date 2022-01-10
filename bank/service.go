@@ -13,7 +13,7 @@ type service struct {
 // Fetch bank service
 // This is without validation
 // General for public access
-func (s service) Fetch(ctx context.Context, filter sa.BankFilter) (sa.BankFeed, error) {
+func (s *service) Fetch(ctx context.Context, filter sa.BankFilter) (sa.BankFeed, error) {
 	banks, cursor, err := s.bankRepo.Fetch(ctx, filter)
 	if err != nil {
 		return sa.BankFeed{}, err
@@ -26,5 +26,5 @@ func (s service) Fetch(ctx context.Context, filter sa.BankFilter) (sa.BankFeed, 
 
 // NewBankService .
 func NewBankService(bankRepo sa.BankRepository) sa.BankService {
-	return service{bankRepo: bankRepo}
+	return &service{bankRepo: bankRepo}
 }

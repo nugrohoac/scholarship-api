@@ -3,3 +3,8 @@ type bank {
     name: String
     code: String
 }
+
+type bankFeed {
+    cursor: String
+    banks: [bank]
+}
