@@ -27,9 +27,27 @@ func (b bankSuite) TestBankRepoFetch() {
 	testdata.GoldenJSONUnmarshal(b.T(), "banks", &banks)
 	postgresql.SeedBanks(b.DBConn, b.T(), banks)
 
+	// normal case
 	bankRepo := postgresql.NewBankRepository(b.DBConn)
 	bankResp, cursor, err := bankRepo.Fetch(context.Background(), sa.BankFilter{})
 	require.NoError(b.T(), err)
-	require.NotEmpty(b.T(), cursor)
+	require.Equal(b.T(), "MjAyMi0wMS0wN1QyMjo1NTozMy4wODda", cursor)
 	require.Equal(b.T(), 3, len(bankResp))
+
+	// case with limit
+	bankResp, cursor, err = bankRepo.Fetch(context.Background(), sa.BankFilter{Limit: 1})
+	require.NoError(b.T(), err)
+	require.Equal(b.T(), "MjAyMi0wMS0wN1QyMjo1NTozNS4wODda", cursor)
+	require.Equal(b.T(), 1, len(bankResp))
+
+	// case with limit and cursor
+	bankResp, cursor, err = bankRepo.Fetch(context.Background(), sa.BankFilter{
+		Limit:  1,
+		Cursor: "MjAyMi0wMS0wN1QyMjo1NTozNS4wODda",
+	})
+
+	require.NoError(b.T(), err)
+	require.Equal(b.T(), "MjAyMi0wMS0wN1QyMjo1NTozNC4wODda", cursor)
+	require.Equal(b.T(), 1, len(bankResp))
+	require.Equal(b.T(), "Mandiri", bankResp[0].Name)
 }

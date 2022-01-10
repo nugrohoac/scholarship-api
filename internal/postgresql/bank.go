@@ -28,10 +28,15 @@ func (b bankRepo) Fetch(ctx context.Context, filter sa.BankFilter) ([]sa.Bank, s
 	}
 
 	if filter.Cursor != "" {
-		qSelect = qSelect.Where("created_at < ")
+		cursorTime, err := decodeCursor(filter.Cursor)
+		if err != nil {
+			return nil, "", err
+		}
+
+		qSelect = qSelect.Where(sq.Lt{"created_at": cursorTime})
 	}
 
-	query, args, err := qSelect.ToSql()
+	query, args, err := qSelect.PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
 		return nil, "", err
 	}
@@ -76,6 +81,7 @@ func (b bankRepo) Fetch(ctx context.Context, filter sa.BankFilter) ([]sa.Bank, s
 	return banks, cursorStr, nil
 }
 
+// NewBankRepository ...
 func NewBankRepository(db *sql.DB) sa.BankRepository {
 	return bankRepo{db: db}
 }
