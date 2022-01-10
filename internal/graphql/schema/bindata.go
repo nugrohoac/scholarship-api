@@ -3,6 +3,7 @@
 // query.graphql
 // schema.graphql
 // type/bank.graphql
+// type/country.graphql
 package schema
 
 import (
@@ -79,7 +80,7 @@ func (fi bindataFileInfo) Sys() interface{} {
 	return nil
 }
 
-var _queryGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x2a\xa9\x2c\x48\x55\x08\x2c\x4d\x2d\xaa\x54\xa8\xe6\x52\x50\x50\x50\x70\x4b\x2d\x49\xce\x70\x4a\xcc\xcb\xd6\x00\x73\x41\x20\x27\x33\x37\xb3\xc4\x4a\xc1\x33\xaf\x04\x2e\x94\x5c\x5a\x54\x9c\x5f\x64\xa5\x10\x5c\x52\x94\x99\x97\x0e\x17\xce\x4b\xcc\x4d\x45\x11\xd4\xb4\x52\x48\x4a\xcc\xcb\x76\x4b\x4d\x4d\xe1\xaa\x05\x04\x00\x00\xff\xff\x0c\xf7\x5a\xad\x6c\x00\x00\x00")
+var _queryGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x2a\xa9\x2c\x48\x55\x08\x2c\x4d\x2d\xaa\x54\xa8\xe6\x52\x50\x50\x50\x70\x4b\x2d\x49\xce\x70\x4a\xcc\xcb\xd6\x00\x73\x41\x20\x27\x33\x37\xb3\xc4\x4a\xc1\x33\xaf\x04\x2e\x94\x5c\x5a\x54\x9c\x5f\x64\xa5\x10\x5c\x52\x94\x99\x97\x0e\x17\xce\x4b\xcc\x4d\x45\x11\xd4\xb4\x52\x48\x4a\xcc\xcb\x76\x4b\x4d\x4d\xe1\x42\x18\xef\x9c\x5f\x9a\x57\x52\x54\x49\x2d\x1b\x92\x21\xc6\x81\x2d\xa9\x05\x04\x00\x00\xff\xff\x30\x1f\xe9\x27\xd1\x00\x00\x00")
 
 func queryGraphqlBytes() ([]byte, error) {
 	return bindataRead(
@@ -94,7 +95,7 @@ func queryGraphql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "query.graphql", size: 108, mode: os.FileMode(420), modTime: time.Unix(1641823270, 0)}
+	info := bindataFileInfo{name: "query.graphql", size: 209, mode: os.FileMode(420), modTime: time.Unix(1641856481, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -114,7 +115,7 @@ func schemaGraphql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "schema.graphql", size: 51, mode: os.FileMode(420), modTime: time.Unix(1641806108, 0)}
+	info := bindataFileInfo{name: "schema.graphql", size: 51, mode: os.FileMode(420), modTime: time.Unix(1641850924, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -134,7 +135,27 @@ func typeBankGraphql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "type/bank.graphql", size: 115, mode: os.FileMode(420), modTime: time.Unix(1641816029, 0)}
+	info := bindataFileInfo{name: "type/bank.graphql", size: 115, mode: os.FileMode(420), modTime: time.Unix(1641850924, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var _typeCountryGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x2a\xa9\x2c\x48\x55\x48\xce\x2f\xcd\x2b\x29\xaa\x54\xa8\xe6\x52\x50\x50\x50\xc8\x4c\xb1\x52\xf0\xcc\x2b\x01\xb3\xf3\x12\x73\x53\xad\x14\x82\x4b\x8a\x32\xf3\xd2\xb9\x6a\xb9\xb8\x90\x95\xbb\xa5\xa6\xa6\x40\xb5\x24\x97\x16\x15\xe7\x17\xc1\x15\x82\x85\xc0\x8a\x32\x53\x8b\xad\x14\xa2\xa1\x1a\x62\xb9\x6a\x01\x01\x00\x00\xff\xff\xb5\xa0\xc5\x2d\x6f\x00\x00\x00")
+
+func typeCountryGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		_typeCountryGraphql,
+		"type/country.graphql",
+	)
+}
+
+func typeCountryGraphql() (*asset, error) {
+	bytes, err := typeCountryGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "type/country.graphql", size: 111, mode: os.FileMode(420), modTime: time.Unix(1641856586, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -191,9 +212,10 @@ func AssetNames() []string {
 
 // _bindata is a table, holding each asset generator, mapped to its name.
 var _bindata = map[string]func() (*asset, error){
-	"query.graphql":     queryGraphql,
-	"schema.graphql":    schemaGraphql,
-	"type/bank.graphql": typeBankGraphql,
+	"query.graphql":        queryGraphql,
+	"schema.graphql":       schemaGraphql,
+	"type/bank.graphql":    typeBankGraphql,
+	"type/country.graphql": typeCountryGraphql,
 }
 
 // AssetDir returns the file names below a certain
@@ -240,7 +262,8 @@ var _bintree = &bintree{nil, map[string]*bintree{
 	"query.graphql":  &bintree{queryGraphql, map[string]*bintree{}},
 	"schema.graphql": &bintree{schemaGraphql, map[string]*bintree{}},
 	"type": &bintree{nil, map[string]*bintree{
-		"bank.graphql": &bintree{typeBankGraphql, map[string]*bintree{}},
+		"bank.graphql":    &bintree{typeBankGraphql, map[string]*bintree{}},
+		"country.graphql": &bintree{typeCountryGraphql, map[string]*bintree{}},
 	}},
 }}
 

@@ -4,13 +4,13 @@ import sa "github.com/Nusantara-Muda/scholarship-api"
 
 // BankResolver .
 type BankResolver struct {
-	Bank *sa.Bank
+	Bank sa.Bank
 }
 
 // ID ...
 func (b BankResolver) ID() *int32 {
-	id := int32(b.Bank.ID)
-	return &id
+	ID := int32(b.Bank.ID)
+	return &ID
 }
 
 // Name ...
@@ -40,7 +40,7 @@ func (b BankFeedResolver) Banks() *[]*BankResolver {
 	for _, bank := range b.BankFeed.Banks {
 		bank := bank
 		banksResolver = append(banksResolver, &BankResolver{
-			Bank: &bank,
+			Bank: bank,
 		})
 	}
 

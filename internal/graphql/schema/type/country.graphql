@@ -1,0 +1,9 @@
+type country {
+    id: Int
+    name: String
+}
+
+type countryFeed {
+    cursor: String
+    countries: [country]
+}

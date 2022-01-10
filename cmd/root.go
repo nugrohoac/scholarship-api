@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
+	"github.com/Nusantara-Muda/scholarship-api/country"
 	"log"
 
 	"github.com/spf13/viper"
@@ -18,12 +19,16 @@ var (
 	// Database
 	dsn string
 
-	bankRepo sa.BankRepository
+	bankRepo    sa.BankRepository
+	countryRepo sa.CountryRepository
 
-	bankService sa.BankService
+	bankService    sa.BankService
+	countryService sa.CountryService
 
 	// BankQuery ...
 	BankQuery query.BankQuery
+	// CountryQuery ...
+	CountryQuery query.CountryQuery
 
 	// PortApp apps
 	PortApp = 7070
@@ -80,8 +85,11 @@ func initApp() {
 	}
 
 	bankRepo = postgresql.NewBankRepository(db)
+	countryRepo = postgresql.NewCountryRepository(db)
 
 	bankService = bank.NewBankService(bankRepo)
+	countryService = country.NewCountryService(countryRepo)
 
 	BankQuery = query.NewBankQuery(bankService)
+	CountryQuery = query.NewCountryQuery(countryService)
 }

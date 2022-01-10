@@ -4,4 +4,10 @@ type Query {
         cursor: String
         name: String
     ): bankFeed
+
+    FetchCountry(
+        limit: Int
+        cursor: String
+        name: String
+    ): countryFeed
 }
