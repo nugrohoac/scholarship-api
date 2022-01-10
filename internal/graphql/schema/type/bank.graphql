@@ -1,0 +1,5 @@
+type bank {
+    id: Int
+    name: String
+    code: String
+}

@@ -9,11 +9,13 @@ type Bank struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
+// BankFilter ...
 type BankFilter struct {
 	Limit  int
 	Cursor string
 }
 
+// BankFeed ...
 type BankFeed struct {
 	Cursor string `json:"cursor"`
 	Banks  []Bank `json:"banks"`
