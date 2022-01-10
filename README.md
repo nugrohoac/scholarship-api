@@ -59,6 +59,12 @@ $ go test ./... --short -cover -race
 
 
 ## Running Apps
+#### Running Integration Test
+* download all dependencies base on go.mod
+```bash
+$ go mod vendor
+```
+* running command
 ```bash
 $ go run cmd/app/main.go
 ```
