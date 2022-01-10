@@ -2,12 +2,14 @@ package postgresql_test
 
 import (
 	"context"
+	"testing"
+
+	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/suite"
+
 	sa "github.com/Nusantara-Muda/scholarship-api"
 	"github.com/Nusantara-Muda/scholarship-api/internal/postgresql"
 	"github.com/Nusantara-Muda/scholarship-api/testdata"
-	"github.com/stretchr/testify/require"
-	"github.com/stretchr/testify/suite"
-	"testing"
 )
 
 type bankSuite struct {
