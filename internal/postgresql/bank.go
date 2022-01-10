@@ -7,6 +7,7 @@ import (
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
+
 	sa "github.com/Nusantara-Muda/scholarship-api"
 )
 
@@ -15,7 +16,7 @@ type bankRepo struct {
 }
 
 // Fetch ...
-func (b bankRepo) Fetch(ctx context.Context, filter sa.BankFilter) ([]sa.Bank, string, error) {
+func (b *bankRepo) Fetch(ctx context.Context, filter sa.BankFilter) ([]sa.Bank, string, error) {
 	qSelect := sq.Select("id",
 		"name",
 		"code",
@@ -34,6 +35,12 @@ func (b bankRepo) Fetch(ctx context.Context, filter sa.BankFilter) ([]sa.Bank, s
 		}
 
 		qSelect = qSelect.Where(sq.Lt{"created_at": cursorTime})
+	}
+
+	if filter.Name != "" {
+		name := "%" + filter.Name + "%"
+
+		qSelect = qSelect.Where(sq.Like{"LOWER(name)": name})
 	}
 
 	query, args, err := qSelect.PlaceholderFormat(sq.Dollar).ToSql()
@@ -83,5 +90,5 @@ func (b bankRepo) Fetch(ctx context.Context, filter sa.BankFilter) ([]sa.Bank, s
 
 // NewBankRepository ...
 func NewBankRepository(db *sql.DB) sa.BankRepository {
-	return bankRepo{db: db}
+	return &bankRepo{db: db}
 }

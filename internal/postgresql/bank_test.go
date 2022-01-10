@@ -2,12 +2,14 @@ package postgresql_test
 
 import (
 	"context"
+	"testing"
+
+	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/suite"
+
 	sa "github.com/Nusantara-Muda/scholarship-api"
 	"github.com/Nusantara-Muda/scholarship-api/internal/postgresql"
 	"github.com/Nusantara-Muda/scholarship-api/testdata"
-	"github.com/stretchr/testify/require"
-	"github.com/stretchr/testify/suite"
-	"testing"
 )
 
 type bankSuite struct {
@@ -50,4 +52,14 @@ func (b bankSuite) TestBankRepoFetch() {
 	require.Equal(b.T(), "MjAyMi0wMS0wN1QyMjo1NTozNC4wODda", cursor)
 	require.Equal(b.T(), 1, len(bankResp))
 	require.Equal(b.T(), "Mandiri", bankResp[0].Name)
+
+	// case with name
+	bankResp, cursor, err = bankRepo.Fetch(context.Background(), sa.BankFilter{
+		Name: "bca",
+	})
+
+	require.NoError(b.T(), err)
+	require.Equal(b.T(), 1, len(bankResp))
+	require.Equal(b.T(), "BCA", bankResp[0].Name)
+	require.Equal(b.T(), "MjAyMi0wMS0wN1QyMjo1NTozMy4wODda", cursor)
 }

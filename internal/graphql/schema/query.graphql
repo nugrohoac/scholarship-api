@@ -1,0 +1,7 @@
+type Query {
+    FetchBank(
+        limit: Int
+        cursor: String
+        name: String
+    ): bankFeed
+}
