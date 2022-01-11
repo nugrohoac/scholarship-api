@@ -33,10 +33,19 @@ type BankFeed struct {
 // Image ...
 type Image struct {
 	URL     string `json:"url"`
-	Width   int    `json:"width"`
-	Height  int    `json:"height"`
+	Width   int32  `json:"width"`
+	Height  int32  `json:"height"`
 	Mime    string `json:"mime"`
 	Caption string `json:"caption"`
+}
+
+// InputImage ...
+type InputImage struct {
+	URL     string
+	Width   int32
+	Height  int32
+	Mime    *string
+	Caption *string
 }
 
 // User ....
@@ -68,7 +77,7 @@ type InputRegisterUser struct {
 	Type            string
 	Email           string
 	PhoneNo         string
-	Photo           string
+	Photo           InputImage
 	CompanyName     *string
 	CountryID       int32
 	PostalCode      string

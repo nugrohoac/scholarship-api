@@ -1,0 +1,15 @@
+type image {
+    url: String
+    width: Int
+    height: Int
+    mime: String
+    caption: String
+}
+
+input inputImage {
+    url: String!
+    width: Int!
+    height: Int!
+    mime: String
+    caption: String
+}

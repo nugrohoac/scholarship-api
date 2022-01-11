@@ -1,0 +1,18 @@
+type Mutation {
+    RegisterUser(
+        name: String!
+        type: userType!
+        email: String!
+        phoneNo: String!
+        photo: inputImage!
+        companyName: String
+        countryId: Int!
+        postalCode: String!
+        address: String!
+        gender: gender
+        ethnic: String
+        bankId: Int!
+        bankAccountNo: String!
+        bankAccountName: String!
+    ): user
+}
