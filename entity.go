@@ -2,6 +2,13 @@ package scholarship_api
 
 import "time"
 
+const (
+	// Sponsor ...
+	Sponsor = "sponsor"
+	//// Student ...
+	//Student = "student"
+)
+
 // Bank ...
 type Bank struct {
 	ID        int64     `json:"id"`
@@ -73,20 +80,10 @@ type User struct {
 
 // InputRegisterUser .
 type InputRegisterUser struct {
-	Name            string
-	Type            string
-	Email           string
-	PhoneNo         string
-	Photo           InputImage
-	CompanyName     *string
-	CountryID       int32
-	PostalCode      string
-	Address         string
-	Gender          *string
-	Ethnic          *string
-	BankID          int32
-	BankAccountNo   string
-	BankAccountName string
+	Type     string
+	Email    string
+	PhoneNo  string
+	Password string
 }
 
 // Country ...

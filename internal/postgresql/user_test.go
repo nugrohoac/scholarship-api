@@ -31,9 +31,9 @@ func (u userSuite) TestUserRepoFetch() {
 	_, err := userRepo.Store(context.Background(), users[0])
 	require.NoError(t, err)
 
-	var name string
-	row := u.DBConn.QueryRow("select name from \"user\" where email = $1", users[0].Email)
-	err = row.Scan(&name)
+	var phoneNo string
+	row := u.DBConn.QueryRow("select phone_no from \"user\" where email = $1", users[0].Email)
+	err = row.Scan(&phoneNo)
 	require.NoError(t, err)
-	require.Equal(t, users[0].Name, name)
+	require.Equal(t, users[0].PhoneNo, phoneNo)
 }
