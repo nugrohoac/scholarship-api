@@ -35,6 +35,10 @@ var (
 	BankQuery query.BankQuery
 	// CountryQuery ...
 	CountryQuery query.CountryQuery
+
+	// UserQuery ...
+	UserQuery query.UserQuery
+
 	// UserMutation ...
 	UserMutation mutation.UserMutation
 
@@ -116,7 +120,9 @@ func initApp() {
 	userService = user.NewUserService(userRepo, jwtHash)
 	countryService = country.NewCountryService(countryRepo)
 
-	BankQuery = query.NewBankQuery(bankService)
 	UserMutation = mutation.NewUserMutation(userService)
+
+	BankQuery = query.NewBankQuery(bankService)
 	CountryQuery = query.NewCountryQuery(countryService)
+	UserQuery = query.NewUserQuery(userService)
 }

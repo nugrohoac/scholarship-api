@@ -129,3 +129,9 @@ type Claim struct {
 	Type  string
 	jwt.StandardClaims
 }
+
+// InputLogin ...
+type InputLogin struct {
+	Email    string
+	Password string
+}

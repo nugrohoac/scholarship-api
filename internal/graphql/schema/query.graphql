@@ -10,4 +10,9 @@ type Query {
         cursor: String
         name: String
     ): countryFeed
+
+    Login(
+        email: String!
+        password: String!
+    ): String
 }
