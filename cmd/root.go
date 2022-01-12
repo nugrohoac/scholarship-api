@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
+	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/mutation"
+	"github.com/Nusantara-Muda/scholarship-api/user"
 	"log"
 
 	"github.com/spf13/viper"
@@ -19,11 +21,15 @@ var (
 	dsn string
 
 	bankRepo sa.BankRepository
+	userRepo sa.UserRepository
 
 	bankService sa.BankService
+	userService sa.UserService
 
 	// BankQuery ...
 	BankQuery query.BankQuery
+	// UserMutation ...
+	UserMutation mutation.UserMutation
 
 	// PortApp apps
 	PortApp = 7070
@@ -80,8 +86,11 @@ func initApp() {
 	}
 
 	bankRepo = postgresql.NewBankRepository(db)
+	userRepo = postgresql.NewUserRepository(db)
 
 	bankService = bank.NewBankService(bankRepo)
+	userService = user.NewUserService(userRepo)
 
 	BankQuery = query.NewBankQuery(bankService)
+	UserMutation = mutation.NewUserMutation(userService)
 }

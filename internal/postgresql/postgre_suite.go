@@ -87,6 +87,10 @@ func (s *TestSuite) TearDownTest() {
 			continue
 		}
 
+		if tableName == "user" {
+			tableName = "\"" + tableName + "\""
+		}
+
 		queryTruncate := "TRUNCATE TABLE " + tableName
 		_, err = s.DBConn.Exec(queryTruncate)
 		require.NoError(s.T(), err)
