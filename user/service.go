@@ -10,6 +10,7 @@ import (
 
 type userService struct {
 	userRepo sa.UserRepository
+	jwtHash  sa.JwtHash
 }
 
 // Store ...
@@ -33,7 +34,26 @@ func (u userService) Store(ctx context.Context, user sa.User) (sa.User, error) {
 	return u.userRepo.Store(ctx, user)
 }
 
+// Login ....
+func (u userService) Login(ctx context.Context, email, password string) (string, error) {
+	user, err := u.userRepo.Login(ctx, email)
+	if err != nil {
+		return "", err
+	}
+
+	if err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
+		return "", err
+	}
+
+	token, err := u.jwtHash.Encode(user)
+	if err != nil {
+		return "", err
+	}
+
+	return token, nil
+}
+
 // NewUserService .
-func NewUserService(userRepo sa.UserRepository) sa.UserService {
-	return userService{userRepo: userRepo}
+func NewUserService(userRepo sa.UserRepository, jwtHash sa.JwtHash) sa.UserService {
+	return userService{userRepo: userRepo, jwtHash: jwtHash}
 }

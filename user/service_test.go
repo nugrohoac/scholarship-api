@@ -3,6 +3,7 @@ package user_test
 import (
 	"context"
 	"errors"
+	"golang.org/x/crypto/bcrypt"
 	"testing"
 
 	"github.com/stretchr/testify/mock"
@@ -83,6 +84,7 @@ func TestUserServiceStore(t *testing.T) {
 	for testName, test := range tests {
 		t.Run(testName, func(t *testing.T) {
 			userRepoMock := new(mocks.UserRepository)
+			jwtHashMock := new(mocks.JwtHash)
 
 			if test.fetchUser.IsCalled {
 				userRepoMock.On("Fetch", test.fetchUser.Input...).
@@ -96,9 +98,10 @@ func TestUserServiceStore(t *testing.T) {
 					Once()
 			}
 
-			userService := _user.NewUserService(userRepoMock)
+			userService := _user.NewUserService(userRepoMock, jwtHashMock)
 			userResp, err := userService.Store(context.Background(), test.paramUser)
 			userRepoMock.AssertExpectations(t)
+			jwtHashMock.AssertExpectations(t)
 
 			if err != nil {
 				require.Error(t, err)
@@ -109,6 +112,119 @@ func TestUserServiceStore(t *testing.T) {
 
 			require.NoError(t, err)
 			require.Equal(t, test.expectedResp, userResp)
+		})
+	}
+}
+
+func TestUserServiceLogin(t *testing.T) {
+	users := make([]sa.User, 0)
+	testdata.GoldenJSONUnmarshal(t, "users", &users)
+
+	user := users[0]
+	user.Password = "$2a$14$uftSMoHxUlqPgn5k/PGSO.83RfJxXhrDmv1vUjwR6dH.kCiiv6/ka"
+
+	email := user.Email
+	password := "ini password"
+	tokenHash := "token-hash"
+
+	tests := map[string]struct {
+		paramEmail    string
+		paramPassword string
+		login         testdata.FuncCaller
+		jwtEncode     testdata.FuncCaller
+		expectedToken string
+		expectedErr   error
+	}{
+		"success": {
+			paramEmail:    user.Email,
+			paramPassword: password,
+			login: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, email},
+				Output:   []interface{}{user, nil},
+			},
+			jwtEncode: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{user},
+				Output:   []interface{}{tokenHash, nil},
+			},
+			expectedToken: tokenHash,
+			expectedErr:   nil,
+		},
+		"error login": {
+			paramEmail:    user.Email,
+			paramPassword: password,
+			login: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, email},
+				Output:   []interface{}{sa.User{}, errors.New("internal server error")},
+			},
+			jwtEncode:     testdata.FuncCaller{},
+			expectedToken: "",
+			expectedErr:   errors.New("internal server error"),
+		},
+		"invalid password": {
+			paramEmail:    user.Email,
+			paramPassword: "wrong password",
+			login: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, email},
+				Output:   []interface{}{user, nil},
+			},
+			jwtEncode:     testdata.FuncCaller{},
+			expectedToken: "",
+			expectedErr:   bcrypt.ErrMismatchedHashAndPassword,
+		},
+		"error hash token": {
+			paramEmail:    user.Email,
+			paramPassword: password,
+			login: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, email},
+				Output:   []interface{}{user, nil},
+			},
+			jwtEncode: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{user},
+				Output:   []interface{}{"", errors.New("internal server error")},
+			},
+			expectedToken: "",
+			expectedErr:   errors.New("internal server error"),
+		},
+	}
+
+	for testName, test := range tests {
+		t.Run(testName, func(t *testing.T) {
+			userRepoMock := new(mocks.UserRepository)
+			jwtHashMock := new(mocks.JwtHash)
+
+			if test.login.IsCalled {
+				userRepoMock.On("Login", test.login.Input...).
+					Return(test.login.Output...).
+					Once()
+			}
+
+			if test.jwtEncode.IsCalled {
+				jwtHashMock.On("Encode", test.jwtEncode.Input...).
+					Return(test.jwtEncode.Output...).
+					Once()
+			}
+
+			userService := _user.NewUserService(userRepoMock, jwtHashMock)
+			token, err := userService.Login(context.Background(), test.paramEmail, test.paramPassword)
+			userRepoMock.AssertExpectations(t)
+			jwtHashMock.AssertExpectations(t)
+
+			if err != nil {
+				require.Error(t, err)
+				require.Equal(t, test.expectedErr, err)
+
+				return
+			}
+
+			require.NoError(t, err)
+			require.NotEmpty(t, token)
+			require.Equal(t, test.expectedToken, token)
 		})
 	}
 }
