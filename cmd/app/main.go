@@ -31,7 +31,11 @@ func main() {
 	opts := make([]_graphql.SchemaOpt, 0)
 	opts = append(opts, _graphql.SubscribeResolverTimeout(10*time.Second))
 
-	rootResolver := graphql.NewRootGraphql(cmd.BankQuery, cmd.UserMutation)
+	rootResolver := graphql.NewRootGraphql(
+		cmd.BankQuery,
+		cmd.CountryQuery,
+		cmd.UserMutation,
+	)
 
 	graphQlSchema := _graphql.MustParseSchema(schema.String(), rootResolver, opts...)
 

@@ -3,14 +3,16 @@ package query_test
 import (
 	"context"
 	"errors"
+	"testing"
+
+	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
+
 	sa "github.com/Nusantara-Muda/scholarship-api"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/query"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/resolver"
 	"github.com/Nusantara-Muda/scholarship-api/mocks"
 	"github.com/Nusantara-Muda/scholarship-api/testdata"
-	"github.com/stretchr/testify/mock"
-	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestBankQuery_Fetch(t *testing.T) {

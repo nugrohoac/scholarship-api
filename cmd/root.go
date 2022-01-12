@@ -4,12 +4,13 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
-	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/mutation"
-	"github.com/Nusantara-Muda/scholarship-api/user"
 	"log"
 
 	"github.com/spf13/viper"
 
+	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/mutation"
+	"github.com/Nusantara-Muda/scholarship-api/user"
+	"github.com/Nusantara-Muda/scholarship-api/country"
 	sa "github.com/Nusantara-Muda/scholarship-api"
 	"github.com/Nusantara-Muda/scholarship-api/bank"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/query"
@@ -20,14 +21,18 @@ var (
 	// Database
 	dsn string
 
-	bankRepo sa.BankRepository
+	bankRepo    sa.BankRepository
+	countryRepo sa.CountryRepository
 	userRepo sa.UserRepository
 
-	bankService sa.BankService
+	bankService    sa.BankService
+	countryService sa.CountryService
 	userService sa.UserService
 
 	// BankQuery ...
 	BankQuery query.BankQuery
+	// CountryQuery ...
+	CountryQuery query.CountryQuery
 	// UserMutation ...
 	UserMutation mutation.UserMutation
 
@@ -87,10 +92,13 @@ func initApp() {
 
 	bankRepo = postgresql.NewBankRepository(db)
 	userRepo = postgresql.NewUserRepository(db)
+	countryRepo = postgresql.NewCountryRepository(db)
 
 	bankService = bank.NewBankService(bankRepo)
 	userService = user.NewUserService(userRepo)
+	countryService = country.NewCountryService(countryRepo)
 
 	BankQuery = query.NewBankQuery(bankService)
 	UserMutation = mutation.NewUserMutation(userService)
+	CountryQuery = query.NewCountryQuery(countryService)
 }

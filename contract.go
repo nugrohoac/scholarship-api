@@ -21,3 +21,13 @@ type UserRepository interface {
 type UserService interface {
 	Store(ctx context.Context, user User) (User, error)
 }
+
+// CountryRepository .
+type CountryRepository interface {
+	Fetch(ctx context.Context, filter CountryFilter) ([]Country, string, error)
+}
+
+// CountryService .
+type CountryService interface {
+	Fetch(ctx context.Context, filter CountryFilter) (CountryFeed, error)
+}

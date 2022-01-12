@@ -23,3 +23,18 @@ func SeedBanks(db *sql.DB, t *testing.T, banks []sa.Bank) {
 	_, err = db.Exec(query, args...)
 	require.NoError(t, err)
 }
+
+// SeedCountries ...
+func SeedCountries(db *sql.DB, t *testing.T, countries []sa.Country) {
+	qInsert := sq.Insert("country").Columns("name", "created_at")
+
+	for _, country := range countries {
+		qInsert = qInsert.Values(country.Name, country.CreatedAt)
+	}
+
+	query, args, err := qInsert.PlaceholderFormat(sq.Dollar).ToSql()
+	require.NoError(t, err)
+
+	_, err = db.Exec(query, args...)
+	require.NoError(t, err)
+}

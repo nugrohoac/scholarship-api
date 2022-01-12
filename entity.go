@@ -88,3 +88,30 @@ type InputRegisterUser struct {
 	BankAccountNo   string
 	BankAccountName string
 }
+
+// Country ...
+type Country struct {
+	ID        int32     `json:"id"`
+	Name      string    `json:"name"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
+// CountryFeed ...
+type CountryFeed struct {
+	Cursor    string
+	Countries []Country `json:"countries"`
+}
+
+// CountryFilter ...
+type CountryFilter struct {
+	Limit  int
+	Cursor string
+	Name   string
+}
+
+// InputCountryFilter ...
+type InputCountryFilter struct {
+	Limit  *int32
+	Cursor *string
+	Name   *string
+}
