@@ -11,33 +11,25 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	"testing"
-	"time"
 )
 
 func TestUserMutationRegisterUser(t *testing.T) {
 	users := make([]sa.User, 0)
 	testdata.GoldenJSONUnmarshal(t, "users", &users)
 
-	users[0].CompanyName = ""
-	users[0].CreatedAt = time.Time{}
+	user := sa.User{
+		Type:     sa.Sponsor,
+		Email:    users[0].Email,
+		PhoneNo:  users[0].PhoneNo,
+		Password: "password",
+	}
 
-	userResolver := resolver.UserResolver{User: users[0]}
+	userResolver := resolver.UserResolver{User: user}
 	inputRegisterUser := sa.InputRegisterUser{
-		Name:    users[0].Name,
-		Type:    users[0].Type,
-		Email:   users[0].Email,
-		PhoneNo: users[0].PhoneNo,
-		Photo: sa.InputImage{
-			URL:    users[0].Photo.URL,
-			Width:  users[0].Photo.Width,
-			Height: users[0].Photo.Height,
-		},
-		CountryID:       users[0].CountryID,
-		PostalCode:      users[0].PostalCode,
-		Address:         users[0].Address,
-		BankID:          users[0].BankID,
-		BankAccountNo:   users[0].BankAccountNo,
-		BankAccountName: users[0].BankAccountName,
+		Type:     users[0].Type,
+		Email:    users[0].Email,
+		PhoneNo:  users[0].PhoneNo,
+		Password: "password",
 	}
 
 	tests := map[string]struct {
@@ -50,8 +42,8 @@ func TestUserMutationRegisterUser(t *testing.T) {
 			paramUser: inputRegisterUser,
 			storeUser: testdata.FuncCaller{
 				IsCalled: true,
-				Input:    []interface{}{mock.Anything, users[0]},
-				Output:   []interface{}{users[0], nil},
+				Input:    []interface{}{mock.Anything, user},
+				Output:   []interface{}{user, nil},
 			},
 			expectedResp: &userResolver,
 			expectedErr:  nil,
@@ -60,7 +52,7 @@ func TestUserMutationRegisterUser(t *testing.T) {
 			paramUser: inputRegisterUser,
 			storeUser: testdata.FuncCaller{
 				IsCalled: true,
-				Input:    []interface{}{mock.Anything, users[0]},
+				Input:    []interface{}{mock.Anything, user},
 				Output:   []interface{}{sa.User{}, errors.New("internal server error")},
 			},
 			expectedResp: nil,
