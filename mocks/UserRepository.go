@@ -14,6 +14,36 @@ type UserRepository struct {
 	mock.Mock
 }
 
+// Fetch provides a mock function with given fields: ctx, filter
+func (_m *UserRepository) Fetch(ctx context.Context, filter scholarship_api.UserFilter) ([]scholarship_api.User, string, error) {
+	ret := _m.Called(ctx, filter)
+
+	var r0 []scholarship_api.User
+	if rf, ok := ret.Get(0).(func(context.Context, scholarship_api.UserFilter) []scholarship_api.User); ok {
+		r0 = rf(ctx, filter)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]scholarship_api.User)
+		}
+	}
+
+	var r1 string
+	if rf, ok := ret.Get(1).(func(context.Context, scholarship_api.UserFilter) string); ok {
+		r1 = rf(ctx, filter)
+	} else {
+		r1 = ret.Get(1).(string)
+	}
+
+	var r2 error
+	if rf, ok := ret.Get(2).(func(context.Context, scholarship_api.UserFilter) error); ok {
+		r2 = rf(ctx, filter)
+	} else {
+		r2 = ret.Error(2)
+	}
+
+	return r0, r1, r2
+}
+
 // Store provides a mock function with given fields: ctx, user
 func (_m *UserRepository) Store(ctx context.Context, user scholarship_api.User) (scholarship_api.User, error) {
 	ret := _m.Called(ctx, user)

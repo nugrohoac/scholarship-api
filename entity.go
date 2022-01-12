@@ -78,6 +78,11 @@ type User struct {
 	UpdatedAt       time.Time `json:"-"`
 }
 
+// UserFilter ...
+type UserFilter struct {
+	Email string
+}
+
 // InputRegisterUser .
 type InputRegisterUser struct {
 	Type     string

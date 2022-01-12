@@ -15,6 +15,7 @@ type BankService interface {
 // UserRepository ....
 type UserRepository interface {
 	Store(ctx context.Context, user User) (User, error)
+	Fetch(ctx context.Context, filter UserFilter) ([]User, string, error)
 }
 
 // UserService ....

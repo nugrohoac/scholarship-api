@@ -21,12 +21,18 @@ func TestUserServiceStore(t *testing.T) {
 
 	tests := map[string]struct {
 		paramUser    sa.User
+		fetchUser    testdata.FuncCaller
 		storeUser    testdata.FuncCaller
 		expectedResp sa.User
 		expectedErr  error
 	}{
 		"success": {
 			paramUser: user,
+			fetchUser: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, sa.UserFilter{Email: users[0].Email}},
+				Output:   []interface{}{nil, "", nil},
+			},
 			storeUser: testdata.FuncCaller{
 				IsCalled: true,
 				Input:    []interface{}{mock.Anything, mock.Anything},
@@ -34,6 +40,28 @@ func TestUserServiceStore(t *testing.T) {
 			},
 			expectedResp: user,
 			expectedErr:  nil,
+		},
+		"error fetch user": {
+			paramUser: user,
+			fetchUser: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, sa.UserFilter{Email: users[0].Email}},
+				Output:   []interface{}{nil, "", errors.New("internal server error")},
+			},
+			storeUser:    testdata.FuncCaller{},
+			expectedResp: sa.User{},
+			expectedErr:  errors.New("internal server error"),
+		},
+		"error email already exist": {
+			paramUser: user,
+			fetchUser: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, sa.UserFilter{Email: users[0].Email}},
+				Output:   []interface{}{[]sa.User{users[0]}, "cursor", nil},
+			},
+			storeUser:    testdata.FuncCaller{},
+			expectedResp: sa.User{},
+			expectedErr:  sa.ErrorDuplicate{Message: "email already exist"},
 		},
 		"error": {
 			paramUser: user,
@@ -50,6 +78,12 @@ func TestUserServiceStore(t *testing.T) {
 	for testName, test := range tests {
 		t.Run(testName, func(t *testing.T) {
 			userRepoMock := new(mocks.UserRepository)
+
+			if test.fetchUser.IsCalled {
+				userRepoMock.On("Fetch", test.fetchUser.Input...).
+					Return(test.fetchUser.Output...).
+					Once()
+			}
 
 			if test.storeUser.IsCalled {
 				userRepoMock.On("Store", test.storeUser.Input...).
