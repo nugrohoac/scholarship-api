@@ -34,6 +34,7 @@ func main() {
 	rootResolver := graphql.NewRootGraphql(
 		cmd.BankQuery,
 		cmd.CountryQuery,
+		cmd.UserMutation,
 	)
 
 	graphQlSchema := _graphql.MustParseSchema(schema.String(), rootResolver, opts...)

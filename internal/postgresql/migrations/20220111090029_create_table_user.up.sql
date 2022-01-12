@@ -1,0 +1,21 @@
+CREATE TABLE "user" (
+    "id" SERIAL PRIMARY KEY,
+    "name" varchar(100) NOT NULL,
+    "type" varchar(30) NOT NULL,
+    "email" varchar(100) NOT NULL,
+    "phone_no" varchar(20) NOT NULL,
+    "photo" json NOT NULL,
+    "company_name" varchar(255) NOT null,
+    "password" varchar(255) NOT NULL,
+    "status" smallint default 0,
+    "country_id" bigint not null,
+    "postal_code" varchar(50) NOT NULL,
+    "address" varchar(255) NOT NULL,
+    "gender" varchar(15) NOT NULL,
+    "ethnic" varchar(30) NOT NULL,
+    "bank_id" bigint not null,
+    "bank_account_no" varchar(50) NOT NULL,
+    "bank_account_name" varchar(100) NOT NULL,
+    "created_at" timestamp(3) DEFAULT CURRENT_TIMESTAMP(3),
+    "updated_at" timestamp(3) NULL
+);
