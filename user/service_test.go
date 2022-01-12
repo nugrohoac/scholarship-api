@@ -65,6 +65,11 @@ func TestUserServiceStore(t *testing.T) {
 		},
 		"error": {
 			paramUser: user,
+			fetchUser: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, sa.UserFilter{Email: users[0].Email}},
+				Output:   []interface{}{nil, "", nil},
+			},
 			storeUser: testdata.FuncCaller{
 				IsCalled: true,
 				Input:    []interface{}{mock.Anything, mock.Anything},

@@ -1,6 +1,10 @@
 package scholarship_api
 
-import "time"
+import (
+	"time"
+
+	"github.com/golang-jwt/jwt"
+)
 
 const (
 	// Sponsor ...
@@ -116,4 +120,12 @@ type InputCountryFilter struct {
 	Limit  *int32
 	Cursor *string
 	Name   *string
+}
+
+// Claim ...
+type Claim struct {
+	Name  string
+	Email string
+	Type  string
+	jwt.StandardClaims
 }

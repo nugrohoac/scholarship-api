@@ -138,6 +138,36 @@ func (u userRepo) Fetch(ctx context.Context, filter sa.UserFilter) ([]sa.User, s
 	return users, cursorStr, nil
 }
 
+// Login is use just for login
+// Different select columns with fetch
+func (u userRepo) Login(ctx context.Context, email string) (sa.User, error) {
+	query, args, err := sq.Select("id",
+		"name",
+		"type",
+		"email",
+		"password",
+	).From("\"user\"").
+		Where(sq.Eq{"email": email}).
+		OrderBy("created_at desc").
+		PlaceholderFormat(sq.Dollar).ToSql()
+	if err != nil {
+		return sa.User{}, err
+	}
+
+	row := u.db.QueryRowContext(ctx, query, args...)
+	var user sa.User
+	if err = row.Scan(&user.ID,
+		&user.Name,
+		&user.Type,
+		&user.Email,
+		&user.Password,
+	); err != nil {
+		return sa.User{}, err
+	}
+
+	return user, nil
+}
+
 // NewUserRepository .
 func NewUserRepository(db *sql.DB) sa.UserRepository {
 	return userRepo{db: db}

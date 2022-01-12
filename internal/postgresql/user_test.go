@@ -51,3 +51,17 @@ func (u userSuite) TestUserRepoFetch() {
 	require.Equal(t, 1, len(usersResp))
 	require.Equal(t, users[0].Name, usersResp[0].Name)
 }
+
+func (u userSuite) TestUserRepoLogin() {
+	t := u.T()
+	users := make([]sa.User, 0)
+	testdata.GoldenJSONUnmarshal(t, "users", &users)
+	postgresql.SeedUsers(u.DBConn, t, users)
+
+	userRepo := postgresql.NewUserRepository(u.DBConn)
+	user, err := userRepo.Login(context.Background(), users[0].Email)
+	require.NoError(t, err)
+	require.Equal(t, users[0].Name, user.Name)
+	require.Equal(t, users[0].Type, user.Type)
+	require.Equal(t, users[0].Email, user.Email)
+}

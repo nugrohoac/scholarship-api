@@ -16,6 +16,7 @@ type BankService interface {
 type UserRepository interface {
 	Store(ctx context.Context, user User) (User, error)
 	Fetch(ctx context.Context, filter UserFilter) ([]User, string, error)
+	Login(ctx context.Context, email string) (User, error)
 }
 
 // UserService ....
@@ -31,4 +32,10 @@ type CountryRepository interface {
 // CountryService .
 type CountryService interface {
 	Fetch(ctx context.Context, filter CountryFilter) (CountryFeed, error)
+}
+
+// JwtHash ...
+type JwtHash interface {
+	Encode(user User) (string, error)
+	Decode(tokenString string, claim *Claim) error
 }
