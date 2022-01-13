@@ -22,7 +22,7 @@ func TestUserRepository(t *testing.T) {
 	suite.Run(t, new(userSuite))
 }
 
-func (u userSuite) TestUserRepoFetch() {
+func (u userSuite) TestUserRepoStore() {
 	t := u.T()
 	users := make([]sa.User, 0)
 	testdata.GoldenJSONUnmarshal(t, "users", &users)
@@ -36,4 +36,32 @@ func (u userSuite) TestUserRepoFetch() {
 	err = row.Scan(&phoneNo)
 	require.NoError(t, err)
 	require.Equal(t, users[0].PhoneNo, phoneNo)
+}
+
+func (u userSuite) TestUserRepoFetch() {
+	t := u.T()
+	users := make([]sa.User, 0)
+	testdata.GoldenJSONUnmarshal(t, "users", &users)
+	postgresql.SeedUsers(u.DBConn, t, users)
+
+	userRepo := postgresql.NewUserRepository(u.DBConn)
+	usersResp, cursor, err := userRepo.Fetch(context.Background(), sa.UserFilter{Email: users[0].Email})
+	require.NoError(t, err)
+	require.Equal(t, "MjAyMi0wMS0xMVQxNzozMzo1OC40MDNa", cursor)
+	require.Equal(t, 1, len(usersResp))
+	require.Equal(t, users[0].Name, usersResp[0].Name)
+}
+
+func (u userSuite) TestUserRepoLogin() {
+	t := u.T()
+	users := make([]sa.User, 0)
+	testdata.GoldenJSONUnmarshal(t, "users", &users)
+	postgresql.SeedUsers(u.DBConn, t, users)
+
+	userRepo := postgresql.NewUserRepository(u.DBConn)
+	user, err := userRepo.Login(context.Background(), users[0].Email)
+	require.NoError(t, err)
+	require.Equal(t, users[0].Name, user.Name)
+	require.Equal(t, users[0].Type, user.Type)
+	require.Equal(t, users[0].Email, user.Email)
 }

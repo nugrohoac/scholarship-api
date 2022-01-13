@@ -4,17 +4,19 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
+	"github.com/Nusantara-Muda/scholarship-api/jwt_hash"
 	"log"
+	"time"
 
 	"github.com/spf13/viper"
 
-	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/mutation"
-	"github.com/Nusantara-Muda/scholarship-api/user"
-	"github.com/Nusantara-Muda/scholarship-api/country"
 	sa "github.com/Nusantara-Muda/scholarship-api"
 	"github.com/Nusantara-Muda/scholarship-api/bank"
+	"github.com/Nusantara-Muda/scholarship-api/country"
+	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/mutation"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/query"
 	"github.com/Nusantara-Muda/scholarship-api/internal/postgresql"
+	"github.com/Nusantara-Muda/scholarship-api/user"
 )
 
 var (
@@ -23,16 +25,20 @@ var (
 
 	bankRepo    sa.BankRepository
 	countryRepo sa.CountryRepository
-	userRepo sa.UserRepository
+	userRepo    sa.UserRepository
 
 	bankService    sa.BankService
 	countryService sa.CountryService
-	userService sa.UserService
+	userService    sa.UserService
 
 	// BankQuery ...
 	BankQuery query.BankQuery
 	// CountryQuery ...
 	CountryQuery query.CountryQuery
+
+	// UserQuery ...
+	UserQuery query.UserQuery
+
 	// UserMutation ...
 	UserMutation mutation.UserMutation
 
@@ -40,6 +46,9 @@ var (
 	PortApp = 7070
 
 	configPath *string
+
+	secretKey    string
+	tokeDuration time.Duration
 )
 
 func init() {
@@ -81,6 +90,17 @@ func initEnv() {
 		PortApp = _portApp
 	}
 
+	secretKey = viper.GetString("secret_key")
+	if secretKey == "" {
+		log.Fatal("Please provide secret key.......!!!")
+	}
+
+	duration := viper.GetInt("token_duration")
+	if duration == 0 {
+		log.Fatal("Please provide token duration.......!!!")
+	}
+	tokeDuration = time.Duration(duration) * time.Second
+
 	viper.WatchConfig()
 }
 
@@ -90,15 +110,19 @@ func initApp() {
 		log.Fatalln("Error init database connection : ", err)
 	}
 
+	jwtHash := jwt_hash.NewJwtHash([]byte(secretKey), tokeDuration)
+
 	bankRepo = postgresql.NewBankRepository(db)
 	userRepo = postgresql.NewUserRepository(db)
 	countryRepo = postgresql.NewCountryRepository(db)
 
 	bankService = bank.NewBankService(bankRepo)
-	userService = user.NewUserService(userRepo)
+	userService = user.NewUserService(userRepo, jwtHash)
 	countryService = country.NewCountryService(countryRepo)
 
-	BankQuery = query.NewBankQuery(bankService)
 	UserMutation = mutation.NewUserMutation(userService)
+
+	BankQuery = query.NewBankQuery(bankService)
 	CountryQuery = query.NewCountryQuery(countryService)
+	UserQuery = query.NewUserQuery(userService)
 }

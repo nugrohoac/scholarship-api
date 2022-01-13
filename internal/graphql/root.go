@@ -9,14 +9,21 @@ import (
 type RootGraphql struct {
 	query.BankQuery
 	query.CountryQuery
+	query.UserQuery
 	mutation.UserMutation
 }
 
 // NewRootGraphql ...
-func NewRootGraphql(bankQuery query.BankQuery, countryQuery query.CountryQuery, userMutation mutation.UserMutation) *RootGraphql {
+func NewRootGraphql(
+	bankQuery query.BankQuery,
+	countryQuery query.CountryQuery,
+	userQuery query.UserQuery,
+	userMutation mutation.UserMutation,
+) *RootGraphql {
 	return &RootGraphql{
 		bankQuery,
 		countryQuery,
+		userQuery,
 		userMutation,
 	}
 }

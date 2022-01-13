@@ -13,7 +13,7 @@ type CountryQuery struct {
 }
 
 // FetchCountry .
-func (c CountryQuery) FetchCountry(ctx context.Context, param sa.InputBankFilter) (*resolver.CountryFeedResolver, error) {
+func (c CountryQuery) FetchCountry(ctx context.Context, param sa.InputCountryFilter) (*resolver.CountryFeedResolver, error) {
 	filter := sa.CountryFilter{}
 
 	if param.Limit != nil {
