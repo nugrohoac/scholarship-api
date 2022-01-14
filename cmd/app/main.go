@@ -45,8 +45,8 @@ func main() {
 
 	e.File("/scholarship/graphiql", "web/scholarship/graphiql.html")
 
-	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "OK!")
+	e.GET("/scholarship/ping", func(c echo.Context) error {
+		return c.String(http.StatusOK, "PONG")
 	})
 
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", cmd.PortApp)))
