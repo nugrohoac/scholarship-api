@@ -16,3 +16,5 @@ lint:
 
 run:
 	@go run cmd/app/main.go
+build:
+	@go build -o scholarship-api cmd/app/main.go
