@@ -17,6 +17,11 @@ type user {
     bankAccountName: String
 }
 
+type loginResponse {
+    token: String
+    user: user
+}
+
 #type inputUser {
 #    name: String!
 #    type: userType!

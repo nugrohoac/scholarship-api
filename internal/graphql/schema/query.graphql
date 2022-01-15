@@ -14,5 +14,5 @@ type Query {
     Login(
         email: String!
         password: String!
-    ): String
+    ): loginResponse
 }

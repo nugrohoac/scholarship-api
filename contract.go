@@ -22,7 +22,7 @@ type UserRepository interface {
 // UserService ....
 type UserService interface {
 	Store(ctx context.Context, user User) (User, error)
-	Login(ctx context.Context, email, password string) (string, error)
+	Login(ctx context.Context, email, password string) (LoginResponse, error)
 }
 
 // CountryRepository .
