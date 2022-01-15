@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"github.com/sirupsen/logrus"
 	"time"
 
@@ -165,6 +166,98 @@ func (u userRepo) Login(ctx context.Context, email string) (sa.User, error) {
 		&user.Password,
 	); err != nil {
 		return sa.User{}, err
+	}
+
+	return user, nil
+}
+
+// UpdateByID ...
+// Update at table user
+// insert into table card identity
+// use transaction !!!!!!!!!!!
+func (u userRepo) UpdateByID(ctx context.Context, ID int64, user sa.User) (sa.User, error) {
+	tx, err := u.db.BeginTx(ctx, nil)
+	if err != nil {
+		return sa.User{}, err
+	}
+
+	var (
+		timeNow     = time.Now()
+		bytesImg    []byte
+		errRollback error
+	)
+
+	query, args, err := sq.Update("\"user\"").
+		SetMap(sq.Eq{
+			"name":              user.Name,
+			"company_name":      user.CompanyName,
+			"country_id":        user.CountryID,
+			"address":           user.Address,
+			"postal_code":       user.PostalCode,
+			"bank_id":           user.BankID,
+			"bank_account_no":   user.BankAccountNo,
+			"bank_account_name": user.BankAccountName,
+			"updated_at":        timeNow,
+		}).Where(sq.Eq{"id": ID}).
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+	if err != nil {
+		return sa.User{}, err
+	}
+
+	if _, err = tx.ExecContext(ctx, query, args...); err != nil {
+		return sa.User{}, err
+	}
+
+	qInsert := sq.Insert("card_identity").
+		Columns("type",
+			"no",
+			"image",
+			"user_id",
+			"created_at",
+		)
+	for _, cardIdentity := range user.CardIdentities {
+		bytesImg, err = json.Marshal(cardIdentity.Image)
+		if err != nil {
+			if errRollback = tx.Rollback(); errRollback != nil {
+				fmt.Println("Err rollback update profile at json marshal image : ", errRollback)
+			}
+
+			return sa.User{}, err
+		}
+
+		qInsert = qInsert.Values(
+			cardIdentity.Type,
+			cardIdentity.No,
+			bytesImg,
+			cardIdentity.UserID,
+			timeNow,
+		)
+	}
+
+	query, args, err = qInsert.
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+	if err != nil {
+		if errRollback = tx.Rollback(); errRollback != nil {
+			fmt.Println("Err rollback update profile generate query insert card identity : ", errRollback)
+		}
+
+		return sa.User{}, err
+	}
+
+	if _, err = tx.ExecContext(ctx, query, args...); err != nil {
+		if errRollback = tx.Rollback(); errRollback != nil {
+			fmt.Println("Err rollback update profile exec insert card identity : ", errRollback)
+		}
+
+		return sa.User{}, err
+	}
+
+	if errCommit := tx.Commit(); errCommit != nil {
+		if errRollback = tx.Rollback(); errRollback != nil {
+			fmt.Println("Err rollback update profile at commit : ", errRollback)
+		}
 	}
 
 	return user, nil

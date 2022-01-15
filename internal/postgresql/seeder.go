@@ -43,7 +43,8 @@ func SeedCountries(db *sql.DB, t *testing.T, countries []sa.Country) {
 // SeedUsers ...
 func SeedUsers(db *sql.DB, t *testing.T, users []sa.User) {
 	qInsert := sq.Insert("\"user\"").
-		Columns("name",
+		Columns("id",
+			"name",
 			"type",
 			"email",
 			"phone_no",
@@ -66,6 +67,7 @@ func SeedUsers(db *sql.DB, t *testing.T, users []sa.User) {
 		require.NoError(t, err)
 
 		qInsert = qInsert.Values(
+			user.ID,
 			user.Name,
 			user.Type,
 			user.Email,
@@ -83,6 +85,43 @@ func SeedUsers(db *sql.DB, t *testing.T, users []sa.User) {
 			user.BankAccountNo,
 			user.BankAccountName,
 			user.CreatedAt,
+		)
+	}
+
+	query, args, err := qInsert.PlaceholderFormat(sq.Dollar).ToSql()
+	require.NoError(t, err)
+
+	_, err = db.Exec(query, args...)
+	require.NoError(t, err)
+}
+
+// SeedCardIdentities ...
+func SeedCardIdentities(db *sql.DB, t *testing.T, cardIdentities []sa.CardIdentity) {
+	var (
+		byteImg []byte
+		err     error
+	)
+
+	qInsert := sq.Insert("card_identity").
+		Columns("id",
+			"type",
+			"no",
+			"image",
+			"user_id",
+			"created_at",
+		)
+
+	for _, cardIdentity := range cardIdentities {
+		byteImg, err = json.Marshal(cardIdentity.Image)
+		require.NoError(t, err)
+
+		qInsert = qInsert.Values(
+			cardIdentity.ID,
+			cardIdentity.Type,
+			cardIdentity.No,
+			byteImg,
+			cardIdentity.UserID,
+			cardIdentity.CreatedAt,
 		)
 	}
 

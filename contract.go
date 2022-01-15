@@ -17,6 +17,7 @@ type UserRepository interface {
 	Store(ctx context.Context, user User) (User, error)
 	Fetch(ctx context.Context, filter UserFilter) ([]User, string, error)
 	Login(ctx context.Context, email string) (User, error)
+	UpdateByID(ctx context.Context, ID int64, user User) (User, error)
 }
 
 // UserService ....

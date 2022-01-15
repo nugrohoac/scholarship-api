@@ -65,3 +65,42 @@ func (u userSuite) TestUserRepoLogin() {
 	require.Equal(t, users[0].Type, user.Type)
 	require.Equal(t, users[0].Email, user.Email)
 }
+
+func (u userSuite) TestUserRepoUpdateByID() {
+	t := u.T()
+
+	users := make([]sa.User, 0)
+	testdata.GoldenJSONUnmarshal(t, "users", &users)
+	user := users[0]
+
+	for i := range users {
+		users[i].Name = ""
+		users[i].Photo = sa.Image{}
+		users[i].CompanyName = ""
+		users[i].CountryID = 0
+		users[i].PostalCode = ""
+		users[i].Address = ""
+		users[i].BankID = 0
+		users[i].BankAccountNo = ""
+		users[i].BankAccountName = ""
+	}
+
+	postgresql.SeedUsers(u.DBConn, t, users)
+
+	cardIdentities := make([]sa.CardIdentity, 0)
+	testdata.GoldenJSONUnmarshal(t, "card_identities", &cardIdentities)
+
+	user.CardIdentities = cardIdentities
+
+	userRepo := postgresql.NewUserRepository(u.DBConn)
+	userResp, err := userRepo.UpdateByID(context.Background(), user.ID, user)
+
+	require.NoError(t, err)
+	require.NotEqual(t, sa.User{}, userResp)
+
+	var count int
+	row := u.DBConn.QueryRow("SELECT COUNT(id) FROM card_identity WHERE user_id = $1", user.ID)
+	err = row.Scan(&count)
+	require.NoError(t, err)
+	require.Equal(t, 2, count)
+}
