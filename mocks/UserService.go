@@ -15,14 +15,14 @@ type UserService struct {
 }
 
 // Login provides a mock function with given fields: ctx, email, password
-func (_m *UserService) Login(ctx context.Context, email string, password string) (string, error) {
+func (_m *UserService) Login(ctx context.Context, email string, password string) (scholarship_api.LoginResponse, error) {
 	ret := _m.Called(ctx, email, password)
 
-	var r0 string
-	if rf, ok := ret.Get(0).(func(context.Context, string, string) string); ok {
+	var r0 scholarship_api.LoginResponse
+	if rf, ok := ret.Get(0).(func(context.Context, string, string) scholarship_api.LoginResponse); ok {
 		r0 = rf(ctx, email, password)
 	} else {
-		r0 = ret.Get(0).(string)
+		r0 = ret.Get(0).(scholarship_api.LoginResponse)
 	}
 
 	var r1 error

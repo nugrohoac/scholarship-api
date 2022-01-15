@@ -91,3 +91,18 @@ func (u UserResolver) BankAccountNo() *string {
 func (u UserResolver) BankAccountName() *string {
 	return &u.User.BankAccountName
 }
+
+// LoginResponseResolver ...
+type LoginResponseResolver struct {
+	LoginResponse sa.LoginResponse
+}
+
+// Token ...
+func (l LoginResponseResolver) Token() *string {
+	return &l.LoginResponse.Token
+}
+
+// User ...
+func (l LoginResponseResolver) User() *UserResolver {
+	return &UserResolver{User: l.LoginResponse.User}
+}

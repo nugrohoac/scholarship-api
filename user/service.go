@@ -35,22 +35,22 @@ func (u userService) Store(ctx context.Context, user sa.User) (sa.User, error) {
 }
 
 // Login ....
-func (u userService) Login(ctx context.Context, email, password string) (string, error) {
+func (u userService) Login(ctx context.Context, email, password string) (sa.LoginResponse, error) {
 	user, err := u.userRepo.Login(ctx, email)
 	if err != nil {
-		return "", err
+		return sa.LoginResponse{}, err
 	}
 
 	if err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
-		return "", err
+		return sa.LoginResponse{}, err
 	}
 
 	token, err := u.jwtHash.Encode(user)
 	if err != nil {
-		return "", err
+		return sa.LoginResponse{}, err
 	}
 
-	return token, nil
+	return sa.LoginResponse{Token: token, User: user}, nil
 }
 
 // NewUserService .

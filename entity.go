@@ -124,9 +124,10 @@ type InputCountryFilter struct {
 
 // Claim ...
 type Claim struct {
-	Name  string
-	Email string
-	Type  string
+	Name   string
+	Email  string
+	Type   string
+	Status int
 	jwt.StandardClaims
 }
 
@@ -134,4 +135,10 @@ type Claim struct {
 type InputLogin struct {
 	Email    string
 	Password string
+}
+
+// LoginResponse ...
+type LoginResponse struct {
+	Token string
+	User  User
 }

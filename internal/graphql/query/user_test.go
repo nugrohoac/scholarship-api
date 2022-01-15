@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	sa "github.com/Nusantara-Muda/scholarship-api"
+	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/resolver"
 	"github.com/Nusantara-Muda/scholarship-api/mocks"
 	"github.com/Nusantara-Muda/scholarship-api/testdata"
 	"github.com/stretchr/testify/mock"
@@ -15,34 +16,45 @@ func TestUserQueryLogin(t *testing.T) {
 	var (
 		email    = "jhon@wick.com"
 		password = "password"
-		token    = "token"
 	)
 
+	users := make([]sa.User, 0)
+	testdata.GoldenJSONUnmarshal(t, "users", &users)
+
+	loginResp := sa.LoginResponse{
+		Token: "token",
+		User:  users[0],
+	}
+
+	loginResponseResolver := resolver.LoginResponseResolver{
+		LoginResponse: loginResp,
+	}
+
 	tests := map[string]struct {
-		paramLogin    sa.InputLogin
-		login         testdata.FuncCaller
-		expectedToken *string
-		expectedErr   error
+		paramLogin   sa.InputLogin
+		login        testdata.FuncCaller
+		expectedResp *resolver.LoginResponseResolver
+		expectedErr  error
 	}{
 		"success": {
 			paramLogin: sa.InputLogin{Email: email, Password: password},
 			login: testdata.FuncCaller{
 				IsCalled: true,
 				Input:    []interface{}{mock.Anything, email, password},
-				Output:   []interface{}{token, nil},
+				Output:   []interface{}{loginResp, nil},
 			},
-			expectedToken: &token,
-			expectedErr:   nil,
+			expectedResp: &loginResponseResolver,
+			expectedErr:  nil,
 		},
 		"error": {
 			paramLogin: sa.InputLogin{Email: email, Password: password},
 			login: testdata.FuncCaller{
 				IsCalled: true,
 				Input:    []interface{}{mock.Anything, email, password},
-				Output:   []interface{}{"", errors.New("internal server error")},
+				Output:   []interface{}{sa.LoginResponse{}, errors.New("internal server error")},
 			},
-			expectedToken: &token,
-			expectedErr:   errors.New("internal server error"),
+			expectedResp: &loginResponseResolver,
+			expectedErr:  errors.New("internal server error"),
 		},
 	}
 
@@ -68,7 +80,7 @@ func TestUserQueryLogin(t *testing.T) {
 			}
 
 			require.NoError(t, err)
-			require.Equal(t, test.expectedToken, tokenResp)
+			require.Equal(t, test.expectedResp, tokenResp)
 		})
 	}
 }

@@ -127,12 +127,14 @@ func TestUserServiceLogin(t *testing.T) {
 	password := "ini password"
 	tokenHash := "token-hash"
 
+	loginResponse := sa.LoginResponse{Token: tokenHash, User: user}
+
 	tests := map[string]struct {
 		paramEmail    string
 		paramPassword string
 		login         testdata.FuncCaller
 		jwtEncode     testdata.FuncCaller
-		expectedToken string
+		expectedResp  sa.LoginResponse
 		expectedErr   error
 	}{
 		"success": {
@@ -148,8 +150,8 @@ func TestUserServiceLogin(t *testing.T) {
 				Input:    []interface{}{user},
 				Output:   []interface{}{tokenHash, nil},
 			},
-			expectedToken: tokenHash,
-			expectedErr:   nil,
+			expectedResp: loginResponse,
+			expectedErr:  nil,
 		},
 		"error login": {
 			paramEmail:    user.Email,
@@ -159,9 +161,9 @@ func TestUserServiceLogin(t *testing.T) {
 				Input:    []interface{}{mock.Anything, email},
 				Output:   []interface{}{sa.User{}, errors.New("internal server error")},
 			},
-			jwtEncode:     testdata.FuncCaller{},
-			expectedToken: "",
-			expectedErr:   errors.New("internal server error"),
+			jwtEncode:    testdata.FuncCaller{},
+			expectedResp: loginResponse,
+			expectedErr:  errors.New("internal server error"),
 		},
 		"invalid password": {
 			paramEmail:    user.Email,
@@ -171,9 +173,9 @@ func TestUserServiceLogin(t *testing.T) {
 				Input:    []interface{}{mock.Anything, email},
 				Output:   []interface{}{user, nil},
 			},
-			jwtEncode:     testdata.FuncCaller{},
-			expectedToken: "",
-			expectedErr:   bcrypt.ErrMismatchedHashAndPassword,
+			jwtEncode:    testdata.FuncCaller{},
+			expectedResp: loginResponse,
+			expectedErr:  bcrypt.ErrMismatchedHashAndPassword,
 		},
 		"error hash token": {
 			paramEmail:    user.Email,
@@ -188,8 +190,8 @@ func TestUserServiceLogin(t *testing.T) {
 				Input:    []interface{}{user},
 				Output:   []interface{}{"", errors.New("internal server error")},
 			},
-			expectedToken: "",
-			expectedErr:   errors.New("internal server error"),
+			expectedResp: sa.LoginResponse{},
+			expectedErr:  errors.New("internal server error"),
 		},
 	}
 
@@ -211,7 +213,7 @@ func TestUserServiceLogin(t *testing.T) {
 			}
 
 			userService := _user.NewUserService(userRepoMock, jwtHashMock)
-			token, err := userService.Login(context.Background(), test.paramEmail, test.paramPassword)
+			response, err := userService.Login(context.Background(), test.paramEmail, test.paramPassword)
 			userRepoMock.AssertExpectations(t)
 			jwtHashMock.AssertExpectations(t)
 
@@ -223,8 +225,7 @@ func TestUserServiceLogin(t *testing.T) {
 			}
 
 			require.NoError(t, err)
-			require.NotEmpty(t, token)
-			require.Equal(t, test.expectedToken, token)
+			require.Equal(t, test.expectedResp, response)
 		})
 	}
 }

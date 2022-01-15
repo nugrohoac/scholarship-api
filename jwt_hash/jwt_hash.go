@@ -19,9 +19,10 @@ func (j jwtHash) Encode(user sa.User) (string, error) {
 	expireTime := time.Now().Add(j.duration)
 
 	c := sa.Claim{
-		Name:  user.Name,
-		Email: user.Email,
-		Type:  user.Type,
+		Name:   user.Name,
+		Email:  user.Email,
+		Type:   user.Type,
+		Status: user.Status,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expireTime.Unix(),
 		},

@@ -145,6 +145,7 @@ func (u userRepo) Login(ctx context.Context, email string) (sa.User, error) {
 		"name",
 		"type",
 		"email",
+		"status",
 		"password",
 	).From("\"user\"").
 		Where(sq.Eq{"email": email}).
@@ -160,6 +161,7 @@ func (u userRepo) Login(ctx context.Context, email string) (sa.User, error) {
 		&user.Name,
 		&user.Type,
 		&user.Email,
+		&user.Status,
 		&user.Password,
 	); err != nil {
 		return sa.User{}, err
