@@ -29,7 +29,7 @@ func TestCountryQuery(t *testing.T) {
 	}
 
 	countryFeedResolver := resolver.CountryFeedResolver{
-		countryFeed,
+		CountryFeed: countryFeed,
 	}
 
 	tests := map[string]struct {

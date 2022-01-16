@@ -53,6 +53,30 @@ func (u userService) Login(ctx context.Context, email, password string) (sa.Logi
 	return sa.LoginResponse{Token: token, User: user}, nil
 }
 
+// UpdateByID ...
+// update for sponsor currently
+func (u userService) UpdateByID(ctx context.Context, ID int64, user sa.User) (sa.User, error) {
+	users, _, err := u.userRepo.Fetch(ctx, sa.UserFilter{IDs: []int64{ID}})
+	if err != nil {
+		return sa.User{}, err
+	}
+
+	if len(users) == 0 {
+		return sa.User{}, sa.ErrNotFound{Message: "user not found"}
+	}
+
+	userOnCtx, err := sa.GetUserOnContext(ctx)
+	if err != nil {
+		return sa.User{}, err
+	}
+
+	if userOnCtx.Email != users[0].Email {
+		return sa.User{}, sa.ErrUnAuthorize{Message: "user is not sync"}
+	}
+
+	return u.userRepo.UpdateByID(ctx, ID, user)
+}
+
 // NewUserService .
 func NewUserService(userRepo sa.UserRepository, jwtHash sa.JwtHash) sa.UserService {
 	return userService{userRepo: userRepo, jwtHash: jwtHash}

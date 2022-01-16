@@ -1,16 +1,28 @@
 package scholarship_api
 
 import (
-	"net/http"
-
-	"github.com/labstack/echo/v4"
+	"context"
 )
 
-// GraphQLHandler handle handler wrapper between go-graphql relay with echo
-func GraphQLHandler(h http.Handler) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		h.ServeHTTP(c.Response(), c.Request())
+type keyContext string
 
-		return nil
+func (k keyContext) String() string {
+	return string(k)
+}
+
+const keyUser = keyContext("user")
+
+// SetUserOnContext ...
+func SetUserOnContext(ctx context.Context, user User) context.Context {
+	return context.WithValue(ctx, keyUser, user)
+}
+
+// GetUserOnContext .
+func GetUserOnContext(ctx context.Context) (User, error) {
+	user, ok := ctx.Value(keyUser).(User)
+	if !ok {
+		return User{}, ErrBadRequest{Message: "failed casting key to string"}
 	}
+
+	return user, nil
 }

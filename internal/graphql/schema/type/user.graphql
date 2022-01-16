@@ -12,6 +12,7 @@ type user {
     address: String
     gender: gender
     ethnic: String
+    cardIdentities: [cardIdentity]
     bankId: Int
     bankAccountNo: String
     bankAccountName: String
@@ -21,23 +22,6 @@ type loginResponse {
     token: String
     user: user
 }
-
-#type inputUser {
-#    name: String!
-#    type: userType!
-#    email: String!
-#    phoneNo: String!
-#    photo: image!
-#    companyName: String
-#    countryId: Int!
-#    postalCode: String!
-#    address: String!
-#    gender: gender
-#    ethnic: String
-#    bankId: Int!
-#    bankAccountNo: String!
-#    bankAccountName: String!
-#}
 
 enum userType {
     sponsor

@@ -9,7 +9,7 @@ import (
 const (
 	// Sponsor ...
 	Sponsor = "sponsor"
-	//// Student ...
+	// KTP // Student ...
 	//Student = "student"
 	// KTP ...
 	KTP = "ktp"
@@ -90,6 +90,7 @@ type User struct {
 // UserFilter ...
 type UserFilter struct {
 	Email string
+	IDs   []int64
 }
 
 // InputRegisterUser .
@@ -156,4 +157,26 @@ type CardIdentity struct {
 	Image     Image     `json:"image"`
 	UserID    int64     `json:"user_id"`
 	CreatedAt time.Time `json:"created_at"`
+}
+
+// InputCardIdentity ...
+type InputCardIdentity struct {
+	Type  string
+	No    string
+	Image InputImage
+}
+
+// InputUpdateUser ...
+type InputUpdateUser struct {
+	ID              int32
+	Name            string
+	Photo           InputImage
+	CompanyName     string
+	CountryID       int32
+	Address         string
+	PostalCode      string
+	CardIdentities  []InputCardIdentity
+	BankID          int32
+	BankAccountNo   string
+	BankAccountName string
 }

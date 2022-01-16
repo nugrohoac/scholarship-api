@@ -74,6 +74,10 @@ func (u userRepo) Fetch(ctx context.Context, filter sa.UserFilter) ([]sa.User, s
 		qSelect = qSelect.Where(sq.Eq{"email": filter.Email})
 	}
 
+	if len(filter.IDs) > 0 {
+		qSelect = qSelect.Where(sq.Eq{"id": filter.IDs})
+	}
+
 	query, args, err := qSelect.ToSql()
 	if err != nil {
 		return nil, "", err
@@ -187,9 +191,15 @@ func (u userRepo) UpdateByID(ctx context.Context, ID int64, user sa.User) (sa.Us
 		errRollback error
 	)
 
+	bytesImg, err = json.Marshal(user.Photo)
+	if err != nil {
+		return sa.User{}, err
+	}
+
 	query, args, err := sq.Update("\"user\"").
 		SetMap(sq.Eq{
 			"name":              user.Name,
+			"photo":             bytesImg,
 			"company_name":      user.CompanyName,
 			"country_id":        user.CountryID,
 			"address":           user.Address,
@@ -235,9 +245,7 @@ func (u userRepo) UpdateByID(ctx context.Context, ID int64, user sa.User) (sa.Us
 		)
 	}
 
-	query, args, err = qInsert.
-		PlaceholderFormat(sq.Dollar).
-		ToSql()
+	query, args, err = qInsert.PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
 		if errRollback = tx.Rollback(); errRollback != nil {
 			fmt.Println("Err rollback update profile generate query insert card identity : ", errRollback)

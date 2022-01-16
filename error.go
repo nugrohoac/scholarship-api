@@ -9,11 +9,29 @@ func (e ErrorDuplicate) Error() string {
 	return e.Message
 }
 
-// ErrorUnAuthorize ...
-type ErrorUnAuthorize struct {
+// ErrUnAuthorize ...
+type ErrUnAuthorize struct {
 	Message string
 }
 
-func (e ErrorUnAuthorize) Error() string {
+func (e ErrUnAuthorize) Error() string {
+	return e.Message
+}
+
+// ErrBadRequest ..
+type ErrBadRequest struct {
+	Message string
+}
+
+func (e ErrBadRequest) Error() string {
+	return e.Message
+}
+
+// ErrNotFound ...
+type ErrNotFound struct {
+	Message string
+}
+
+func (e ErrNotFound) Error() string {
 	return e.Message
 }

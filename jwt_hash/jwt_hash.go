@@ -44,11 +44,11 @@ func (j jwtHash) Decode(tokenString string, c *sa.Claim) error {
 	})
 
 	if err != nil {
-		return sa.ErrorUnAuthorize{Message: err.Error()}
+		return sa.ErrUnAuthorize{Message: err.Error()}
 	}
 
 	if !token.Valid {
-		return sa.ErrorUnAuthorize{Message: "token is invalid"}
+		return sa.ErrUnAuthorize{Message: "token is invalid"}
 	}
 
 	return nil

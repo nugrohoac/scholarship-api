@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
-	"github.com/Nusantara-Muda/scholarship-api/jwt_hash"
 	"log"
 	"time"
 
@@ -16,6 +15,8 @@ import (
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/mutation"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/query"
 	"github.com/Nusantara-Muda/scholarship-api/internal/postgresql"
+	"github.com/Nusantara-Muda/scholarship-api/jwt_hash"
+	_middleware "github.com/Nusantara-Muda/scholarship-api/middleware"
 	"github.com/Nusantara-Muda/scholarship-api/user"
 )
 
@@ -49,6 +50,9 @@ var (
 
 	secretKey    string
 	tokeDuration time.Duration
+
+	// Middleware ...
+	Middleware _middleware.Middleware
 )
 
 func init() {
@@ -111,6 +115,7 @@ func initApp() {
 	}
 
 	jwtHash := jwt_hash.NewJwtHash([]byte(secretKey), tokeDuration)
+	Middleware = _middleware.New(jwtHash)
 
 	bankRepo = postgresql.NewBankRepository(db)
 	userRepo = postgresql.NewUserRepository(db)
