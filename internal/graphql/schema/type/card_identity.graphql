@@ -1,0 +1,18 @@
+type cardIdentity {
+    id: Int
+    type: String
+    no: String
+    image: image
+    userId: Int
+}
+
+input inputCardIdentity {
+    type: cardIdentityType!
+    no: String!
+    image: inputImage!
+}
+
+enum cardIdentityType {
+    ktp
+    npwp
+}

@@ -5,4 +5,18 @@ type Mutation {
         phoneNo: String!
         password: String!
     ): user
+
+    UpdateUser(
+        id: Int!
+        name: String!
+        photo: inputImage!
+        companyName: String!
+        countryId: Int!
+        address: String!
+        postalCode: String!
+        cardIdentities: [inputCardIdentity!]!
+        bankId: Int!
+        bankAccountNo: String!
+        bankAccountName: String!
+    ): user
 }

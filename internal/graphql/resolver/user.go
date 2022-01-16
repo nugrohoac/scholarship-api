@@ -21,6 +21,10 @@ func (u UserResolver) Name() *string {
 
 // Type ...
 func (u UserResolver) Type() *string {
+	if u.User.Type == "" {
+		return nil
+	}
+
 	return &u.User.Type
 }
 
@@ -90,6 +94,18 @@ func (u UserResolver) BankAccountNo() *string {
 // BankAccountName ...
 func (u UserResolver) BankAccountName() *string {
 	return &u.User.BankAccountName
+}
+
+// CardIdentities ...
+func (u UserResolver) CardIdentities() *[]*CardIdentityResolver {
+	cards := make([]*CardIdentityResolver, 0)
+
+	for _, c := range u.User.CardIdentities {
+		c := c
+		cards = append(cards, &CardIdentityResolver{CardIdentity: c})
+	}
+
+	return &cards
 }
 
 // LoginResponseResolver ...

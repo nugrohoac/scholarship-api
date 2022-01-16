@@ -9,8 +9,12 @@ import (
 const (
 	// Sponsor ...
 	Sponsor = "sponsor"
-	//// Student ...
+	// KTP // Student ...
 	//Student = "student"
+	// KTP ...
+	KTP = "ktp"
+	// NPWP ...
+	NPWP = "npwp"
 )
 
 // Bank ...
@@ -61,30 +65,32 @@ type InputImage struct {
 
 // User ....
 type User struct {
-	ID              int64     `json:"id"`
-	Name            string    `json:"name"`
-	Type            string    `json:"type"`
-	Email           string    `json:"email"`
-	PhoneNo         string    `json:"phone_no"`
-	Photo           Image     `json:"photo"`
-	CompanyName     string    `json:"company_name"`
-	Password        string    `json:"-"`
-	Status          int       `json:"status"`
-	CountryID       int32     `json:"country_id"`
-	PostalCode      string    `json:"postal_code"`
-	Address         string    `json:"address"`
-	Gender          string    `json:"gender"`
-	Ethnic          string    `json:"ethnic"`
-	BankID          int32     `json:"bank_id"`
-	BankAccountNo   string    `json:"bank_account_no"`
-	BankAccountName string    `json:"bank_account_name"`
-	CreatedAt       time.Time `json:"created_at"`
-	UpdatedAt       time.Time `json:"-"`
+	ID              int64          `json:"id"`
+	Name            string         `json:"name"`
+	Type            string         `json:"type"`
+	Email           string         `json:"email"`
+	PhoneNo         string         `json:"phone_no"`
+	Photo           Image          `json:"photo"`
+	CompanyName     string         `json:"company_name"`
+	Password        string         `json:"-"`
+	Status          int            `json:"status"`
+	CountryID       int32          `json:"country_id"`
+	PostalCode      string         `json:"postal_code"`
+	Address         string         `json:"address"`
+	Gender          string         `json:"gender"`
+	Ethnic          string         `json:"ethnic"`
+	CardIdentities  []CardIdentity `json:"card_identities"`
+	BankID          int32          `json:"bank_id"`
+	BankAccountNo   string         `json:"bank_account_no"`
+	BankAccountName string         `json:"bank_account_name"`
+	CreatedAt       time.Time      `json:"created_at"`
+	UpdatedAt       time.Time      `json:"-"`
 }
 
 // UserFilter ...
 type UserFilter struct {
 	Email string
+	IDs   []int64
 }
 
 // InputRegisterUser .
@@ -141,4 +147,36 @@ type InputLogin struct {
 type LoginResponse struct {
 	Token string
 	User  User
+}
+
+// CardIdentity ...
+type CardIdentity struct {
+	ID        int64     `json:"id"`
+	Type      string    `json:"type"`
+	No        string    `json:"no"`
+	Image     Image     `json:"image"`
+	UserID    int64     `json:"user_id"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
+// InputCardIdentity ...
+type InputCardIdentity struct {
+	Type  string
+	No    string
+	Image InputImage
+}
+
+// InputUpdateUser ...
+type InputUpdateUser struct {
+	ID              int32
+	Name            string
+	Photo           InputImage
+	CompanyName     string
+	CountryID       int32
+	Address         string
+	PostalCode      string
+	CardIdentities  []InputCardIdentity
+	BankID          int32
+	BankAccountNo   string
+	BankAccountName string
 }

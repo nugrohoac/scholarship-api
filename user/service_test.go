@@ -15,6 +15,8 @@ import (
 	_user "github.com/Nusantara-Muda/scholarship-api/user"
 )
 
+var cursor = "cursor"
+
 func TestUserServiceStore(t *testing.T) {
 	users := make([]sa.User, 0)
 	testdata.GoldenJSONUnmarshal(t, "users", &users)
@@ -226,6 +228,150 @@ func TestUserServiceLogin(t *testing.T) {
 
 			require.NoError(t, err)
 			require.Equal(t, test.expectedResp, response)
+		})
+	}
+}
+
+func TestUserServiceUpdateByID(t *testing.T) {
+	users := make([]sa.User, 0)
+	testdata.GoldenJSONUnmarshal(t, "users", &users)
+
+	user := users[0]
+	userInvalid := user
+	userInvalid.Email = "email@invalid.com"
+
+	ctx := sa.SetUserOnContext(context.Background(), user)
+	ctxInvalid := sa.SetUserOnContext(context.Background(), userInvalid)
+
+	tests := map[string]struct {
+		paramCtx     context.Context
+		paramID      int64
+		paramUser    sa.User
+		fetchUser    testdata.FuncCaller
+		updateUser   testdata.FuncCaller
+		expectedResp sa.User
+		expectedErr  error
+	}{
+		"success": {
+			paramCtx:  ctx,
+			paramID:   user.ID,
+			paramUser: user,
+			fetchUser: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{ctx, sa.UserFilter{IDs: []int64{user.ID}}},
+				Output:   []interface{}{users, cursor, nil},
+			},
+			updateUser: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{ctx, user.ID, user},
+				Output:   []interface{}{user, nil},
+			},
+			expectedResp: user,
+			expectedErr:  nil,
+		},
+		"error fetch user": {
+			paramCtx:  ctx,
+			paramID:   user.ID,
+			paramUser: user,
+			fetchUser: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{ctx, sa.UserFilter{IDs: []int64{user.ID}}},
+				Output:   []interface{}{nil, "", errors.New("internal server error")},
+			},
+			updateUser:   testdata.FuncCaller{},
+			expectedResp: sa.User{},
+			expectedErr:  errors.New("internal server error"),
+		},
+		"user not found": {
+			paramCtx:  ctx,
+			paramID:   user.ID,
+			paramUser: user,
+			fetchUser: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{ctx, sa.UserFilter{IDs: []int64{user.ID}}},
+				Output:   []interface{}{nil, "", nil},
+			},
+			updateUser:   testdata.FuncCaller{},
+			expectedResp: sa.User{},
+			expectedErr:  sa.ErrNotFound{Message: "user not found"},
+		},
+		"error get user on context": {
+			paramCtx:  context.Background(),
+			paramID:   user.ID,
+			paramUser: user,
+			fetchUser: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{context.Background(), sa.UserFilter{IDs: []int64{user.ID}}},
+				Output:   []interface{}{users, cursor, nil},
+			},
+			updateUser:   testdata.FuncCaller{},
+			expectedResp: sa.User{},
+			expectedErr:  sa.ErrBadRequest{Message: "failed casting key to string"},
+		},
+		"error user is not sync": {
+			paramCtx:  ctxInvalid,
+			paramID:   user.ID,
+			paramUser: user,
+			fetchUser: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{ctxInvalid, sa.UserFilter{IDs: []int64{user.ID}}},
+				Output:   []interface{}{users, cursor, nil},
+			},
+			updateUser:   testdata.FuncCaller{},
+			expectedResp: sa.User{},
+			expectedErr:  sa.ErrUnAuthorize{Message: "user is not sync"},
+		},
+		"error update user": {
+			paramCtx:  ctx,
+			paramID:   user.ID,
+			paramUser: user,
+			fetchUser: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{ctx, sa.UserFilter{IDs: []int64{user.ID}}},
+				Output:   []interface{}{users, cursor, nil},
+			},
+			updateUser: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{ctx, user.ID, user},
+				Output:   []interface{}{sa.User{}, errors.New("internal server error")},
+			},
+			expectedResp: sa.User{},
+			expectedErr:  errors.New("internal server error"),
+		},
+	}
+
+	for testName, test := range tests {
+		t.Run(testName, func(t *testing.T) {
+			userRepoMock := new(mocks.UserRepository)
+			jwtHashMock := new(mocks.JwtHash)
+
+			if test.fetchUser.IsCalled {
+				userRepoMock.On("Fetch", test.fetchUser.Input...).
+					Return(test.fetchUser.Output...).
+					Once()
+			}
+
+			if test.updateUser.IsCalled {
+				userRepoMock.On("UpdateByID", test.updateUser.Input...).
+					Return(test.updateUser.Output...).
+					Once()
+			}
+
+			userService := _user.NewUserService(userRepoMock, jwtHashMock)
+			userResp, err := userService.UpdateByID(test.paramCtx, test.paramID, test.paramUser)
+
+			userRepoMock.AssertExpectations(t)
+			jwtHashMock.AssertExpectations(t)
+
+			if err != nil {
+				require.Error(t, err)
+				require.Equal(t, test.expectedErr, err)
+
+				return
+			}
+
+			require.NoError(t, err)
+			require.Equal(t, test.expectedResp, userResp)
 		})
 	}
 }
