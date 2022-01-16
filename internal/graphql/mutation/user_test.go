@@ -95,7 +95,7 @@ func TestUserMutationUpdateUser(t *testing.T) {
 	cardIdentities := make([]sa.CardIdentity, 0)
 	testdata.GoldenJSONUnmarshal(t, "card_identities", &cardIdentities)
 
-	for i, _ := range cardIdentities {
+	for i := range cardIdentities {
 		cardIdentities[i].ID = 0
 		cardIdentities[i].CreatedAt = time.Time{}
 	}
