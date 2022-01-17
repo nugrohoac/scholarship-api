@@ -65,6 +65,20 @@ func (_m *UserRepository) Login(ctx context.Context, email string) (scholarship_
 	return r0, r1
 }
 
+// SetStatus provides a mock function with given fields: ctx, ID, status
+func (_m *UserRepository) SetStatus(ctx context.Context, ID int64, status int) error {
+	ret := _m.Called(ctx, ID, status)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, int64, int) error); ok {
+		r0 = rf(ctx, ID, status)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // Store provides a mock function with given fields: ctx, user
 func (_m *UserRepository) Store(ctx context.Context, user scholarship_api.User) (scholarship_api.User, error) {
 	ret := _m.Called(ctx, user)

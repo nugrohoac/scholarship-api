@@ -271,6 +271,27 @@ func (u userRepo) UpdateByID(ctx context.Context, ID int64, user sa.User) (sa.Us
 	return user, nil
 }
 
+// SetStatus ....
+// 1 active
+// 0 inactive
+func (u userRepo) SetStatus(ctx context.Context, ID int64, status int) error {
+	query, args, err := sq.Update("\"user\"").SetMap(sq.Eq{
+		"status":     status,
+		"updated_at": time.Now(),
+	}).Where(sq.Eq{"id": ID}).
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+	if err != nil {
+		return err
+	}
+
+	if _, err = u.db.ExecContext(ctx, query, args...); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // NewUserRepository .
 func NewUserRepository(db *sql.DB) sa.UserRepository {
 	return userRepo{db: db}
