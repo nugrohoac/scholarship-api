@@ -375,3 +375,170 @@ func TestUserServiceUpdateByID(t *testing.T) {
 		})
 	}
 }
+
+func TestUserServiceActivateStatus(t *testing.T) {
+	users := make([]sa.User, 0)
+	testdata.GoldenJSONUnmarshal(t, "users", &users)
+
+	user := users[0]
+	userInvalid := user
+	userInvalid.Email = "email@invalid.com"
+
+	token := "token"
+
+	tests := map[string]struct {
+		paramToken   string
+		jwtDecode    testdata.FuncCaller
+		fetchUser    testdata.FuncCaller
+		setStatus    testdata.FuncCaller
+		expectedResp string
+		expectedErr  error
+	}{
+		"success": {
+			paramToken: token,
+			jwtDecode: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{token, mock.Anything},
+				Output:   []interface{}{nil},
+			},
+			fetchUser: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, sa.UserFilter{Email: user.Email}},
+				Output:   []interface{}{users, cursor, nil},
+			},
+			setStatus: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, user.ID, 1},
+				Output:   []interface{}{nil},
+			},
+			expectedResp: "success",
+			expectedErr:  nil,
+		},
+		"error decode": {
+			paramToken: token,
+			jwtDecode: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{token, mock.Anything},
+				Output:   []interface{}{errors.New("internal server error")},
+			},
+			fetchUser:    testdata.FuncCaller{},
+			setStatus:    testdata.FuncCaller{},
+			expectedResp: "",
+			expectedErr:  errors.New("internal server error"),
+		},
+		"error fetch user": {
+			paramToken: token,
+			jwtDecode: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{token, mock.Anything},
+				Output:   []interface{}{nil},
+			},
+			fetchUser: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, sa.UserFilter{Email: user.Email}},
+				Output:   []interface{}{nil, "", errors.New("error")},
+			},
+			setStatus:    testdata.FuncCaller{},
+			expectedResp: "",
+			expectedErr:  errors.New("error"),
+		},
+		"user not found": {
+			paramToken: token,
+			jwtDecode: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{token, mock.Anything},
+				Output:   []interface{}{nil},
+			},
+			fetchUser: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, sa.UserFilter{Email: user.Email}},
+				Output:   []interface{}{nil, "", nil},
+			},
+			setStatus:    testdata.FuncCaller{},
+			expectedResp: "",
+			expectedErr:  sa.ErrNotFound{Message: "user not found"},
+		},
+		"user not sync": {
+			paramToken: token,
+			jwtDecode: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{token, mock.Anything},
+				Output:   []interface{}{nil},
+			},
+			fetchUser: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, sa.UserFilter{Email: user.Email}},
+				Output:   []interface{}{[]sa.User{userInvalid}, "", nil},
+			},
+			setStatus:    testdata.FuncCaller{},
+			expectedResp: "",
+			expectedErr:  sa.ErrUnAuthorize{Message: "user is not sync"},
+		},
+		"error set status": {
+			paramToken: token,
+			jwtDecode: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{token, mock.Anything},
+				Output:   []interface{}{nil},
+			},
+			fetchUser: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, sa.UserFilter{Email: user.Email}},
+				Output:   []interface{}{users, cursor, nil},
+			},
+			setStatus: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, user.ID, 1},
+				Output:   []interface{}{errors.New("error")},
+			},
+			expectedResp: "",
+			expectedErr:  errors.New("error"),
+		},
+	}
+
+	for testName, test := range tests {
+		t.Run(testName, func(t *testing.T) {
+			userRepoMock := new(mocks.UserRepository)
+			jwtHashMock := new(mocks.JwtHash)
+
+			if test.jwtDecode.IsCalled {
+				jwtHashMock.On("Decode", test.jwtDecode.Input...).
+					Return(test.jwtDecode.Output...).
+					Run(func(args mock.Arguments) {
+						arg := args.Get(1).(*sa.Claim)
+						arg.Email = user.Email
+						arg.Name = user.Name
+						arg.Type = user.Type
+						arg.Status = user.Status
+					}).Once()
+			}
+
+			if test.fetchUser.IsCalled {
+				userRepoMock.On("Fetch", test.fetchUser.Input...).
+					Return(test.fetchUser.Output...).
+					Once()
+			}
+
+			if test.setStatus.IsCalled {
+				userRepoMock.On("SetStatus", test.setStatus.Input...).
+					Return(test.setStatus.Output...).
+					Once()
+			}
+
+			userService := _user.NewUserService(userRepoMock, jwtHashMock)
+			message, err := userService.ActivateStatus(context.Background(), token)
+			userRepoMock.AssertExpectations(t)
+			jwtHashMock.AssertExpectations(t)
+
+			if err != nil {
+				require.Error(t, err)
+				require.Equal(t, test.expectedErr, err)
+
+				return
+			}
+
+			require.NoError(t, err)
+			require.Equal(t, test.expectedResp, message)
+		})
+	}
+}

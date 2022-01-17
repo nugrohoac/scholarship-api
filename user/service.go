@@ -77,6 +77,37 @@ func (u userService) UpdateByID(ctx context.Context, ID int64, user sa.User) (sa
 	return u.userRepo.UpdateByID(ctx, ID, user)
 }
 
+// ActivateStatus ...
+func (u userService) ActivateStatus(ctx context.Context, token string) (string, error) {
+	var c sa.Claim
+	if err := u.jwtHash.Decode(token, &c); err != nil {
+		return "", err
+	}
+
+	users, _, err := u.userRepo.Fetch(ctx, sa.UserFilter{Email: c.Email})
+	if err != nil {
+		return "", err
+	}
+
+	if len(users) == 0 {
+		return "", sa.ErrNotFound{Message: "user not found"}
+	}
+
+	if c.Email != users[0].Email {
+		return "", sa.ErrUnAuthorize{Message: "user is not sync"}
+	}
+
+	if users[0].Status == 1 {
+		return "", sa.ErrNotAllowed{Message: "user has ben activated"}
+	}
+
+	if err = u.userRepo.SetStatus(ctx, users[0].ID, 1); err != nil {
+		return "", err
+	}
+
+	return "success", nil
+}
+
 // NewUserService .
 func NewUserService(userRepo sa.UserRepository, jwtHash sa.JwtHash) sa.UserService {
 	return userService{userRepo: userRepo, jwtHash: jwtHash}

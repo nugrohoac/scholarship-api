@@ -206,3 +206,66 @@ func TestUserMutationUpdateUser(t *testing.T) {
 		})
 	}
 }
+
+func TestUserMutationActivateUser(t *testing.T) {
+	token := "token"
+	success := "success"
+
+	tests := map[string]struct {
+		paramToken     struct{ Token string }
+		activateStatus testdata.FuncCaller
+		expectedResp   *string
+		expectedErr    error
+	}{
+		"success": {
+			paramToken: struct {
+				Token string
+			}{Token: token},
+			activateStatus: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, token},
+				Output:   []interface{}{success, nil},
+			},
+			expectedResp: &success,
+			expectedErr:  nil,
+		},
+		"error": {
+			paramToken: struct {
+				Token string
+			}{Token: token},
+			activateStatus: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, token},
+				Output:   []interface{}{"", errors.New("error")},
+			},
+			expectedResp: nil,
+			expectedErr:  errors.New("error"),
+		},
+	}
+
+	for testName, test := range tests {
+		t.Run(testName, func(t *testing.T) {
+			userServiceMock := new(mocks.UserService)
+
+			if test.activateStatus.IsCalled {
+				userServiceMock.On("ActivateStatus", test.activateStatus.Input...).
+					Return(test.activateStatus.Output...).
+					Once()
+			}
+
+			userMutation := mutation.NewUserMutation(userServiceMock)
+			message, err := userMutation.ActivateUser(context.Background(), test.paramToken)
+			userServiceMock.AssertExpectations(t)
+
+			if err != nil {
+				require.Error(t, err)
+				require.Equal(t, test.expectedErr, err)
+
+				return
+			}
+
+			require.NoError(t, err)
+			require.Equal(t, test.expectedResp, message)
+		})
+	}
+}

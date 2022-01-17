@@ -104,3 +104,21 @@ func (u userSuite) TestUserRepoUpdateByID() {
 	require.NoError(t, err)
 	require.Equal(t, 2, count)
 }
+
+func (u userSuite) TestUserSetStatus() {
+	t := u.T()
+	users := make([]sa.User, 0)
+	testdata.GoldenJSONUnmarshal(t, "users", &users)
+
+	postgresql.SeedUsers(u.DBConn, t, users)
+
+	userRepo := postgresql.NewUserRepository(u.DBConn)
+	err := userRepo.SetStatus(context.Background(), users[0].ID, 1)
+	require.NoError(t, err)
+
+	var status int
+	row := u.DBConn.QueryRow("SELECT status FROM \"user\" WHERE id = $1", users[0].ID)
+	err = row.Scan(&status)
+	require.NoError(t, err)
+	require.Equal(t, 1, status)
+}

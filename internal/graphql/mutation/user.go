@@ -70,6 +70,16 @@ func (u UserMutation) UpdateUser(ctx context.Context, param sa.InputUpdateUser) 
 	return &resolver.UserResolver{User: userUpdated}, nil
 }
 
+// ActivateUser ...
+func (u UserMutation) ActivateUser(ctx context.Context, param struct{ Token string }) (*string, error) {
+	message, err := u.userService.ActivateStatus(ctx, param.Token)
+	if err != nil {
+		return nil, err
+	}
+
+	return &message, nil
+}
+
 // NewUserMutation ...
 func NewUserMutation(userService sa.UserService) UserMutation {
 	return UserMutation{userService: userService}
