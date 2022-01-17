@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
+	"github.com/Nusantara-Muda/scholarship-api/internal/email"
+	"github.com/mailgun/mailgun-go/v4"
 	"log"
 	"time"
 
@@ -27,10 +29,17 @@ var (
 	bankRepo    sa.BankRepository
 	countryRepo sa.CountryRepository
 	userRepo    sa.UserRepository
+	emailRepo   sa.EmailRepository
 
 	bankService    sa.BankService
 	countryService sa.CountryService
 	userService    sa.UserService
+
+	// email
+	emailDomain      string
+	emailApiKey      string
+	pathActivateUser string
+	emailSender      string
 
 	// BankQuery ...
 	BankQuery query.BankQuery
@@ -105,6 +114,11 @@ func initEnv() {
 	}
 	tokeDuration = time.Duration(duration) * time.Second
 
+	emailDomain = viper.GetString("email_domain")
+	emailApiKey = viper.GetString("email_api_key")
+	pathActivateUser = viper.GetString("email_path_activate_user")
+	emailSender = viper.GetString("email_sender")
+
 	viper.WatchConfig()
 }
 
@@ -114,6 +128,10 @@ func initApp() {
 		log.Fatalln("Error init database connection : ", err)
 	}
 
+	// email
+	mg := mailgun.NewMailgun(emailDomain, emailApiKey)
+	emailRepo = email.NewEmailRepository(mg, emailSender, pathActivateUser)
+
 	jwtHash := jwt_hash.NewJwtHash([]byte(secretKey), tokeDuration)
 	Middleware = _middleware.New(jwtHash)
 
@@ -122,7 +140,7 @@ func initApp() {
 	countryRepo = postgresql.NewCountryRepository(db)
 
 	bankService = bank.NewBankService(bankRepo)
-	userService = user.NewUserService(userRepo, jwtHash)
+	userService = user.NewUserService(userRepo, jwtHash, emailRepo)
 	countryService = country.NewCountryService(countryRepo)
 
 	UserMutation = mutation.NewUserMutation(userService)

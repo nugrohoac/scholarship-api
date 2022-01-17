@@ -44,3 +44,8 @@ type JwtHash interface {
 	Encode(user User) (string, error)
 	Decode(tokenString string, claim *Claim) error
 }
+
+// EmailRepository ...
+type EmailRepository interface {
+	SendActivateUser(ctx context.Context, email string) error
+}

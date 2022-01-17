@@ -99,7 +99,7 @@ func mutationGraphql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "mutation.graphql", size: 533, mode: os.FileMode(420), modTime: time.Unix(1642397336, 0)}
+	info := bindataFileInfo{name: "mutation.graphql", size: 533, mode: os.FileMode(420), modTime: time.Unix(1642413242, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }

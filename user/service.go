@@ -2,6 +2,8 @@ package user
 
 import (
 	"context"
+	"fmt"
+	"github.com/sirupsen/logrus"
 
 	"golang.org/x/crypto/bcrypt"
 
@@ -9,8 +11,9 @@ import (
 )
 
 type userService struct {
-	userRepo sa.UserRepository
-	jwtHash  sa.JwtHash
+	userRepo  sa.UserRepository
+	jwtHash   sa.JwtHash
+	emailRepo sa.EmailRepository
 }
 
 // Store ...
@@ -30,6 +33,13 @@ func (u userService) Store(ctx context.Context, user sa.User) (sa.User, error) {
 	}
 
 	user.Password = string(bytesPassword)
+
+	go func() {
+		if err = u.emailRepo.SendActivateUser(context.Background(), user.Email); err != nil {
+			msg := fmt.Sprintf("Error sending email to %s", user.Email)
+			logrus.Error("Error sending email to ", msg)
+		}
+	}()
 
 	return u.userRepo.Store(ctx, user)
 }
@@ -109,6 +119,6 @@ func (u userService) ActivateStatus(ctx context.Context, token string) (string, 
 }
 
 // NewUserService .
-func NewUserService(userRepo sa.UserRepository, jwtHash sa.JwtHash) sa.UserService {
-	return userService{userRepo: userRepo, jwtHash: jwtHash}
+func NewUserService(userRepo sa.UserRepository, jwtHash sa.JwtHash, emailRepo sa.EmailRepository) sa.UserService {
+	return userService{userRepo: userRepo, jwtHash: jwtHash, emailRepo: emailRepo}
 }
