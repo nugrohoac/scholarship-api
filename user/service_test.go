@@ -375,3 +375,123 @@ func TestUserServiceUpdateByID(t *testing.T) {
 		})
 	}
 }
+
+func TestUserServiceActivateStatus(t *testing.T) {
+	users := make([]sa.User, 0)
+	testdata.GoldenJSONUnmarshal(t, "users", &users)
+
+	user := users[0]
+	userInvalid := user
+	userInvalid.Email = "email@invalid.com"
+
+	ctx := sa.SetUserOnContext(context.Background(), user)
+	ctxInvalid := sa.SetUserOnContext(context.Background(), userInvalid)
+
+	tests := map[string]struct {
+		paramCtx     context.Context
+		paramID      int64
+		fetchUser    testdata.FuncCaller
+		setStatus    testdata.FuncCaller
+		expectedResp string
+		expectedErr  error
+	}{
+		"success": {
+			paramCtx: ctx,
+			paramID:  user.ID,
+			fetchUser: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{ctx, sa.UserFilter{IDs: []int64{user.ID}}},
+				Output:   []interface{}{users, cursor, nil},
+			},
+			setStatus: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{ctx, user.ID, 1},
+				Output:   []interface{}{nil},
+			},
+			expectedResp: "success",
+			expectedErr:  nil,
+		},
+		"error get user on context": {
+			paramCtx:     context.Background(),
+			paramID:      user.ID,
+			fetchUser:    testdata.FuncCaller{},
+			setStatus:    testdata.FuncCaller{},
+			expectedResp: "",
+			expectedErr:  sa.ErrBadRequest{Message: "failed casting key to string"},
+		},
+		"error fetch user": {
+			paramCtx: ctx,
+			paramID:  user.ID,
+			fetchUser: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{ctx, sa.UserFilter{IDs: []int64{user.ID}}},
+				Output:   []interface{}{nil, "", errors.New("internal server error")},
+			},
+			setStatus:    testdata.FuncCaller{},
+			expectedResp: "",
+			expectedErr:  errors.New("internal server error"),
+		},
+		"error user is not sync": {
+			paramCtx: ctxInvalid,
+			paramID:  user.ID,
+			fetchUser: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{ctxInvalid, sa.UserFilter{IDs: []int64{user.ID}}},
+				Output:   []interface{}{users, cursor, nil},
+			},
+			setStatus:    testdata.FuncCaller{},
+			expectedResp: "",
+			expectedErr:  sa.ErrUnAuthorize{Message: "user is not sync"},
+		},
+		"error set status": {
+			paramCtx: ctx,
+			paramID:  user.ID,
+			fetchUser: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{ctx, sa.UserFilter{IDs: []int64{user.ID}}},
+				Output:   []interface{}{users, cursor, nil},
+			},
+			setStatus: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{ctx, user.ID, 1},
+				Output:   []interface{}{errors.New("internal server error")},
+			},
+			expectedResp: "",
+			expectedErr:  errors.New("internal server error"),
+		},
+	}
+
+	for testName, test := range tests {
+		t.Run(testName, func(t *testing.T) {
+			userRepoMock := new(mocks.UserRepository)
+			jwtHashMock := new(mocks.JwtHash)
+
+			if test.fetchUser.IsCalled {
+				userRepoMock.On("Fetch", test.fetchUser.Input...).
+					Return(test.fetchUser.Output...).
+					Once()
+			}
+
+			if test.setStatus.IsCalled {
+				userRepoMock.On("SetStatus", test.setStatus.Input...).
+					Return(test.setStatus.Output...).
+					Once()
+			}
+
+			userService := _user.NewUserService(userRepoMock, jwtHashMock)
+			message, err := userService.ActivateStatus(test.paramCtx, test.paramID)
+			userRepoMock.AssertExpectations(t)
+			jwtHashMock.AssertExpectations(t)
+
+			if err != nil {
+				require.Error(t, err)
+				require.Equal(t, test.expectedErr, err)
+
+				return
+			}
+
+			require.NoError(t, err)
+			require.Equal(t, test.expectedResp, message)
+		})
+	}
+}
