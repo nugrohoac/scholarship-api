@@ -384,80 +384,115 @@ func TestUserServiceActivateStatus(t *testing.T) {
 	userInvalid := user
 	userInvalid.Email = "email@invalid.com"
 
-	ctx := sa.SetUserOnContext(context.Background(), user)
-	ctxInvalid := sa.SetUserOnContext(context.Background(), userInvalid)
+	token := "token"
 
 	tests := map[string]struct {
-		paramCtx     context.Context
-		paramID      int64
+		paramToken   string
+		jwtDecode    testdata.FuncCaller
 		fetchUser    testdata.FuncCaller
 		setStatus    testdata.FuncCaller
 		expectedResp string
 		expectedErr  error
 	}{
 		"success": {
-			paramCtx: ctx,
-			paramID:  user.ID,
+			paramToken: token,
+			jwtDecode: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{token, mock.Anything},
+				Output:   []interface{}{nil},
+			},
 			fetchUser: testdata.FuncCaller{
 				IsCalled: true,
-				Input:    []interface{}{ctx, sa.UserFilter{IDs: []int64{user.ID}}},
+				Input:    []interface{}{mock.Anything, sa.UserFilter{Email: user.Email}},
 				Output:   []interface{}{users, cursor, nil},
 			},
 			setStatus: testdata.FuncCaller{
 				IsCalled: true,
-				Input:    []interface{}{ctx, user.ID, 1},
+				Input:    []interface{}{mock.Anything, user.ID, 1},
 				Output:   []interface{}{nil},
 			},
 			expectedResp: "success",
 			expectedErr:  nil,
 		},
-		"error get user on context": {
-			paramCtx:     context.Background(),
-			paramID:      user.ID,
-			fetchUser:    testdata.FuncCaller{},
-			setStatus:    testdata.FuncCaller{},
-			expectedResp: "",
-			expectedErr:  sa.ErrBadRequest{Message: "failed casting key to string"},
-		},
-		"error fetch user": {
-			paramCtx: ctx,
-			paramID:  user.ID,
-			fetchUser: testdata.FuncCaller{
+		"error decode": {
+			paramToken: token,
+			jwtDecode: testdata.FuncCaller{
 				IsCalled: true,
-				Input:    []interface{}{ctx, sa.UserFilter{IDs: []int64{user.ID}}},
-				Output:   []interface{}{nil, "", errors.New("internal server error")},
+				Input:    []interface{}{token, mock.Anything},
+				Output:   []interface{}{errors.New("internal server error")},
 			},
+			fetchUser:    testdata.FuncCaller{},
 			setStatus:    testdata.FuncCaller{},
 			expectedResp: "",
 			expectedErr:  errors.New("internal server error"),
 		},
-		"error user is not sync": {
-			paramCtx: ctxInvalid,
-			paramID:  user.ID,
+		"error fetch user": {
+			paramToken: token,
+			jwtDecode: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{token, mock.Anything},
+				Output:   []interface{}{nil},
+			},
 			fetchUser: testdata.FuncCaller{
 				IsCalled: true,
-				Input:    []interface{}{ctxInvalid, sa.UserFilter{IDs: []int64{user.ID}}},
-				Output:   []interface{}{users, cursor, nil},
+				Input:    []interface{}{mock.Anything, sa.UserFilter{Email: user.Email}},
+				Output:   []interface{}{nil, "", errors.New("error")},
+			},
+			setStatus:    testdata.FuncCaller{},
+			expectedResp: "",
+			expectedErr:  errors.New("error"),
+		},
+		"user not found": {
+			paramToken: token,
+			jwtDecode: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{token, mock.Anything},
+				Output:   []interface{}{nil},
+			},
+			fetchUser: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, sa.UserFilter{Email: user.Email}},
+				Output:   []interface{}{nil, "", nil},
+			},
+			setStatus:    testdata.FuncCaller{},
+			expectedResp: "",
+			expectedErr:  sa.ErrNotFound{Message: "user not found"},
+		},
+		"user not sync": {
+			paramToken: token,
+			jwtDecode: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{token, mock.Anything},
+				Output:   []interface{}{nil},
+			},
+			fetchUser: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, sa.UserFilter{Email: user.Email}},
+				Output:   []interface{}{[]sa.User{userInvalid}, "", nil},
 			},
 			setStatus:    testdata.FuncCaller{},
 			expectedResp: "",
 			expectedErr:  sa.ErrUnAuthorize{Message: "user is not sync"},
 		},
 		"error set status": {
-			paramCtx: ctx,
-			paramID:  user.ID,
+			paramToken: token,
+			jwtDecode: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{token, mock.Anything},
+				Output:   []interface{}{nil},
+			},
 			fetchUser: testdata.FuncCaller{
 				IsCalled: true,
-				Input:    []interface{}{ctx, sa.UserFilter{IDs: []int64{user.ID}}},
+				Input:    []interface{}{mock.Anything, sa.UserFilter{Email: user.Email}},
 				Output:   []interface{}{users, cursor, nil},
 			},
 			setStatus: testdata.FuncCaller{
 				IsCalled: true,
-				Input:    []interface{}{ctx, user.ID, 1},
-				Output:   []interface{}{errors.New("internal server error")},
+				Input:    []interface{}{mock.Anything, user.ID, 1},
+				Output:   []interface{}{errors.New("error")},
 			},
 			expectedResp: "",
-			expectedErr:  errors.New("internal server error"),
+			expectedErr:  errors.New("error"),
 		},
 	}
 
@@ -465,6 +500,18 @@ func TestUserServiceActivateStatus(t *testing.T) {
 		t.Run(testName, func(t *testing.T) {
 			userRepoMock := new(mocks.UserRepository)
 			jwtHashMock := new(mocks.JwtHash)
+
+			if test.jwtDecode.IsCalled {
+				jwtHashMock.On("Decode", test.jwtDecode.Input...).
+					Return(test.jwtDecode.Output...).
+					Run(func(args mock.Arguments) {
+						arg := args.Get(1).(*sa.Claim)
+						arg.Email = user.Email
+						arg.Name = user.Name
+						arg.Type = user.Type
+						arg.Status = user.Status
+					}).Once()
+			}
 
 			if test.fetchUser.IsCalled {
 				userRepoMock.On("Fetch", test.fetchUser.Input...).
@@ -479,7 +526,7 @@ func TestUserServiceActivateStatus(t *testing.T) {
 			}
 
 			userService := _user.NewUserService(userRepoMock, jwtHashMock)
-			message, err := userService.ActivateStatus(test.paramCtx, test.paramID)
+			message, err := userService.ActivateStatus(context.Background(), token)
 			userRepoMock.AssertExpectations(t)
 			jwtHashMock.AssertExpectations(t)
 
