@@ -35,3 +35,12 @@ type ErrNotFound struct {
 func (e ErrNotFound) Error() string {
 	return e.Message
 }
+
+// ErrNotAllowed ...
+type ErrNotAllowed struct {
+	Message string
+}
+
+func (e ErrNotAllowed) Error() string {
+	return e.Message
+}

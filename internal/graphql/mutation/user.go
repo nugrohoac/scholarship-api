@@ -71,10 +71,13 @@ func (u UserMutation) UpdateUser(ctx context.Context, param sa.InputUpdateUser) 
 }
 
 // ActivateUser ...
-func (u UserMutation) ActivateUser(ctx context.Context, param struct{ token string }) (*string, error) {
+func (u UserMutation) ActivateUser(ctx context.Context, param struct{ Token string }) (*string, error) {
+	message, err := u.userService.ActivateStatus(ctx, param.Token)
+	if err != nil {
+		return nil, err
+	}
 
-	//u.userService.ActivateStatus(ctx, )
-	return nil, nil
+	return &message, nil
 }
 
 // NewUserMutation ...

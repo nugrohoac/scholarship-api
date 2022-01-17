@@ -97,6 +97,10 @@ func (u userService) ActivateStatus(ctx context.Context, token string) (string, 
 		return "", sa.ErrUnAuthorize{Message: "user is not sync"}
 	}
 
+	if users[0].Status == 1 {
+		return "", sa.ErrNotAllowed{Message: "user has ben activated"}
+	}
+
 	if err = u.userRepo.SetStatus(ctx, users[0].ID, 1); err != nil {
 		return "", err
 	}

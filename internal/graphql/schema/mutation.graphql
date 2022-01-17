@@ -19,4 +19,8 @@ type Mutation {
         bankAccountNo: String!
         bankAccountName: String!
     ): user
+
+    ActivateUser(
+        token: String!
+    ): String
 }
