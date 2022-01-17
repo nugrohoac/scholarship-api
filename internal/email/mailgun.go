@@ -50,7 +50,11 @@ var html = `
       border: none;
       outline: none;
       border-radius: 4px;
+	  cursor: pointer;
     }
+	a {
+	  cursor: pointer;
+	}
   </style>
 </head>
 <body>

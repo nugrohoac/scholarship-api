@@ -88,34 +88,36 @@ func (u userService) UpdateByID(ctx context.Context, ID int64, user sa.User) (sa
 }
 
 // ActivateStatus ...
-func (u userService) ActivateStatus(ctx context.Context, token string) (string, error) {
+func (u userService) ActivateStatus(ctx context.Context, token string) (sa.User, error) {
 	var c sa.Claim
 	if err := u.jwtHash.Decode(token, &c); err != nil {
-		return "", err
+		return sa.User{}, err
 	}
 
 	users, _, err := u.userRepo.Fetch(ctx, sa.UserFilter{Email: c.Email})
 	if err != nil {
-		return "", err
+		return sa.User{}, err
 	}
 
 	if len(users) == 0 {
-		return "", sa.ErrNotFound{Message: "user not found"}
+		return sa.User{}, sa.ErrNotFound{Message: "user not found"}
 	}
 
-	if c.Email != users[0].Email {
-		return "", sa.ErrUnAuthorize{Message: "user is not sync"}
+	user := users[0]
+
+	if c.Email != user.Email {
+		return sa.User{}, sa.ErrUnAuthorize{Message: "user is not sync"}
 	}
 
-	if users[0].Status == 1 {
-		return "", sa.ErrNotAllowed{Message: "user has ben activated"}
+	if user.Status == 1 {
+		return sa.User{}, sa.ErrNotAllowed{Message: "user has ben activated"}
 	}
 
-	if err = u.userRepo.SetStatus(ctx, users[0].ID, 1); err != nil {
-		return "", err
+	if err = u.userRepo.SetStatus(ctx, user.ID, 1); err != nil {
+		return sa.User{}, err
 	}
 
-	return "success", nil
+	return user, nil
 }
 
 // NewUserService .

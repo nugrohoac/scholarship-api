@@ -22,5 +22,5 @@ type Mutation {
 
     ActivateUser(
         token: String!
-    ): String
+    ): user
 }

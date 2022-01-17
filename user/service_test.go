@@ -413,7 +413,7 @@ func TestUserServiceActivateStatus(t *testing.T) {
 		jwtDecode    testdata.FuncCaller
 		fetchUser    testdata.FuncCaller
 		setStatus    testdata.FuncCaller
-		expectedResp string
+		expectedResp sa.User
 		expectedErr  error
 	}{
 		"success": {
@@ -433,7 +433,7 @@ func TestUserServiceActivateStatus(t *testing.T) {
 				Input:    []interface{}{mock.Anything, user.ID, 1},
 				Output:   []interface{}{nil},
 			},
-			expectedResp: "success",
+			expectedResp: user,
 			expectedErr:  nil,
 		},
 		"error decode": {
@@ -445,7 +445,7 @@ func TestUserServiceActivateStatus(t *testing.T) {
 			},
 			fetchUser:    testdata.FuncCaller{},
 			setStatus:    testdata.FuncCaller{},
-			expectedResp: "",
+			expectedResp: sa.User{},
 			expectedErr:  errors.New("internal server error"),
 		},
 		"error fetch user": {
@@ -461,7 +461,7 @@ func TestUserServiceActivateStatus(t *testing.T) {
 				Output:   []interface{}{nil, "", errors.New("error")},
 			},
 			setStatus:    testdata.FuncCaller{},
-			expectedResp: "",
+			expectedResp: sa.User{},
 			expectedErr:  errors.New("error"),
 		},
 		"user not found": {
@@ -477,7 +477,7 @@ func TestUserServiceActivateStatus(t *testing.T) {
 				Output:   []interface{}{nil, "", nil},
 			},
 			setStatus:    testdata.FuncCaller{},
-			expectedResp: "",
+			expectedResp: sa.User{},
 			expectedErr:  sa.ErrNotFound{Message: "user not found"},
 		},
 		"user not sync": {
@@ -493,7 +493,7 @@ func TestUserServiceActivateStatus(t *testing.T) {
 				Output:   []interface{}{[]sa.User{userInvalid}, "", nil},
 			},
 			setStatus:    testdata.FuncCaller{},
-			expectedResp: "",
+			expectedResp: sa.User{},
 			expectedErr:  sa.ErrUnAuthorize{Message: "user is not sync"},
 		},
 		"error set status": {
@@ -513,7 +513,7 @@ func TestUserServiceActivateStatus(t *testing.T) {
 				Input:    []interface{}{mock.Anything, user.ID, 1},
 				Output:   []interface{}{errors.New("error")},
 			},
-			expectedResp: "",
+			expectedResp: sa.User{},
 			expectedErr:  errors.New("error"),
 		},
 	}
