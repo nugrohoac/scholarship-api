@@ -21,11 +21,13 @@ func TestUserServiceStore(t *testing.T) {
 	users := make([]sa.User, 0)
 	testdata.GoldenJSONUnmarshal(t, "users", &users)
 	user := users[0]
+	token := "token"
 
 	tests := map[string]struct {
 		paramUser    sa.User
 		fetchUser    testdata.FuncCaller
 		storeUser    testdata.FuncCaller
+		encodeToken  testdata.FuncCaller
 		sendEmail    testdata.FuncCaller
 		expectedResp sa.User
 		expectedErr  error
@@ -42,9 +44,14 @@ func TestUserServiceStore(t *testing.T) {
 				Input:    []interface{}{mock.Anything, mock.Anything},
 				Output:   []interface{}{user, nil},
 			},
+			encodeToken: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{user},
+				Output:   []interface{}{token, nil},
+			},
 			sendEmail: testdata.FuncCaller{
 				IsCalled: true,
-				Input:    []interface{}{mock.Anything, user.Email},
+				Input:    []interface{}{mock.Anything, user.Email, token},
 				Output:   []interface{}{nil},
 			},
 			expectedResp: user,
@@ -86,11 +93,8 @@ func TestUserServiceStore(t *testing.T) {
 				Input:    []interface{}{mock.Anything, mock.Anything},
 				Output:   []interface{}{sa.User{}, errors.New("internal server error")},
 			},
-			sendEmail: testdata.FuncCaller{
-				IsCalled: true,
-				Input:    []interface{}{mock.Anything, user.Email},
-				Output:   []interface{}{nil},
-			},
+			encodeToken:  testdata.FuncCaller{},
+			sendEmail:    testdata.FuncCaller{},
 			expectedResp: sa.User{},
 			expectedErr:  errors.New("internal server error"),
 		},
@@ -111,6 +115,12 @@ func TestUserServiceStore(t *testing.T) {
 			if test.storeUser.IsCalled {
 				userRepoMock.On("Store", test.storeUser.Input...).
 					Return(test.storeUser.Output...).
+					Once()
+			}
+
+			if test.encodeToken.IsCalled {
+				jwtHashMock.On("Encode", test.encodeToken.Input...).
+					Return(test.encodeToken.Output...).
 					Once()
 			}
 

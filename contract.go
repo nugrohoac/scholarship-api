@@ -47,5 +47,5 @@ type JwtHash interface {
 
 // EmailRepository ...
 type EmailRepository interface {
-	SendActivateUser(ctx context.Context, email string) error
+	SendActivateUser(ctx context.Context, email, token string) error
 }

@@ -75,12 +75,13 @@ type emailRepo struct {
 }
 
 // SendActivateUser ...
-func (e emailRepo) SendActivateUser(ctx context.Context, email string) error {
+func (e emailRepo) SendActivateUser(ctx context.Context, email, token string) error {
 	subject := "Activate User Bangun"
 	recipient := email
 
 	message := e.mailgunImpl.NewMessage(e.sender, subject, "", recipient)
-	html = fmt.Sprintf(html, e.pathActivateUser)
+	path := e.pathActivateUser + "?token=" + token
+	html = fmt.Sprintf(html, path)
 	message.SetHtml(html)
 
 	_, _, err := e.mailgunImpl.Send(ctx, message)

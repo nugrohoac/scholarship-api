@@ -2,9 +2,6 @@ package user
 
 import (
 	"context"
-	"fmt"
-	"github.com/sirupsen/logrus"
-
 	"golang.org/x/crypto/bcrypt"
 
 	sa "github.com/Nusantara-Muda/scholarship-api"
@@ -34,14 +31,29 @@ func (u userService) Store(ctx context.Context, user sa.User) (sa.User, error) {
 
 	user.Password = string(bytesPassword)
 
-	go func() {
-		if err = u.emailRepo.SendActivateUser(context.Background(), user.Email); err != nil {
-			msg := fmt.Sprintf("Error sending email to %s", user.Email)
-			logrus.Error("Error sending email to ", msg)
-		}
-	}()
+	user, err = u.userRepo.Store(ctx, user)
+	if err != nil {
+		return sa.User{}, err
+	}
 
-	return u.userRepo.Store(ctx, user)
+	if err = u.sendEmail(user); err != nil {
+		return sa.User{}, err
+	}
+
+	return user, nil
+}
+
+func (u userService) sendEmail(user sa.User) error {
+	token, err := u.jwtHash.Encode(user)
+	if err != nil {
+		return err
+	}
+
+	if err = u.emailRepo.SendActivateUser(context.Background(), user.Email, token); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Login ....

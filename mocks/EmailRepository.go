@@ -13,13 +13,13 @@ type EmailRepository struct {
 	mock.Mock
 }
 
-// SendActivateUser provides a mock function with given fields: ctx, email
-func (_m *EmailRepository) SendActivateUser(ctx context.Context, email string) error {
-	ret := _m.Called(ctx, email)
+// SendActivateUser provides a mock function with given fields: ctx, email, token
+func (_m *EmailRepository) SendActivateUser(ctx context.Context, email string, token string) error {
+	ret := _m.Called(ctx, email, token)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, string) error); ok {
-		r0 = rf(ctx, email)
+	if rf, ok := ret.Get(0).(func(context.Context, string, string) error); ok {
+		r0 = rf(ctx, email, token)
 	} else {
 		r0 = ret.Error(0)
 	}
