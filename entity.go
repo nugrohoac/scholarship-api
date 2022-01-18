@@ -171,7 +171,7 @@ type InputUpdateUser struct {
 	ID              int32
 	Name            string
 	Photo           InputImage
-	CompanyName     string
+	CompanyName     *string
 	CountryID       int32
 	Address         string
 	PostalCode      string

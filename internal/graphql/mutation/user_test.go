@@ -140,7 +140,7 @@ func TestUserMutationUpdateUser(t *testing.T) {
 			Width:  users[0].Photo.Width,
 			Height: users[0].Photo.Height,
 		},
-		CompanyName:     users[0].CompanyName,
+		CompanyName:     &users[0].CompanyName,
 		CountryID:       users[0].CountryID,
 		Address:         users[0].Address,
 		PostalCode:      users[0].PostalCode,

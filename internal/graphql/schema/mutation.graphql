@@ -10,7 +10,7 @@ type Mutation {
         id: Int!
         name: String!
         photo: inputImage!
-        companyName: String!
+        companyName: String
         countryId: Int!
         address: String!
         postalCode: String!
