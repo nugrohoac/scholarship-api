@@ -21,11 +21,14 @@ func TestUserServiceStore(t *testing.T) {
 	users := make([]sa.User, 0)
 	testdata.GoldenJSONUnmarshal(t, "users", &users)
 	user := users[0]
+	token := "token"
 
 	tests := map[string]struct {
 		paramUser    sa.User
 		fetchUser    testdata.FuncCaller
 		storeUser    testdata.FuncCaller
+		encodeToken  testdata.FuncCaller
+		sendEmail    testdata.FuncCaller
 		expectedResp sa.User
 		expectedErr  error
 	}{
@@ -41,6 +44,16 @@ func TestUserServiceStore(t *testing.T) {
 				Input:    []interface{}{mock.Anything, mock.Anything},
 				Output:   []interface{}{user, nil},
 			},
+			encodeToken: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{user},
+				Output:   []interface{}{token, nil},
+			},
+			sendEmail: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, user.Email, token},
+				Output:   []interface{}{nil},
+			},
 			expectedResp: user,
 			expectedErr:  nil,
 		},
@@ -52,6 +65,7 @@ func TestUserServiceStore(t *testing.T) {
 				Output:   []interface{}{nil, "", errors.New("internal server error")},
 			},
 			storeUser:    testdata.FuncCaller{},
+			sendEmail:    testdata.FuncCaller{},
 			expectedResp: sa.User{},
 			expectedErr:  errors.New("internal server error"),
 		},
@@ -63,6 +77,7 @@ func TestUserServiceStore(t *testing.T) {
 				Output:   []interface{}{[]sa.User{users[0]}, "cursor", nil},
 			},
 			storeUser:    testdata.FuncCaller{},
+			sendEmail:    testdata.FuncCaller{},
 			expectedResp: sa.User{},
 			expectedErr:  sa.ErrorDuplicate{Message: "email already exist"},
 		},
@@ -78,6 +93,8 @@ func TestUserServiceStore(t *testing.T) {
 				Input:    []interface{}{mock.Anything, mock.Anything},
 				Output:   []interface{}{sa.User{}, errors.New("internal server error")},
 			},
+			encodeToken:  testdata.FuncCaller{},
+			sendEmail:    testdata.FuncCaller{},
 			expectedResp: sa.User{},
 			expectedErr:  errors.New("internal server error"),
 		},
@@ -87,6 +104,7 @@ func TestUserServiceStore(t *testing.T) {
 		t.Run(testName, func(t *testing.T) {
 			userRepoMock := new(mocks.UserRepository)
 			jwtHashMock := new(mocks.JwtHash)
+			emailRepoMock := new(mocks.EmailRepository)
 
 			if test.fetchUser.IsCalled {
 				userRepoMock.On("Fetch", test.fetchUser.Input...).
@@ -100,7 +118,19 @@ func TestUserServiceStore(t *testing.T) {
 					Once()
 			}
 
-			userService := _user.NewUserService(userRepoMock, jwtHashMock)
+			if test.encodeToken.IsCalled {
+				jwtHashMock.On("Encode", test.encodeToken.Input...).
+					Return(test.encodeToken.Output...).
+					Once()
+			}
+
+			if test.sendEmail.IsCalled {
+				emailRepoMock.On("SendActivateUser", test.sendEmail.Input...).
+					Return(test.sendEmail.Output...).
+					Once()
+			}
+
+			userService := _user.NewUserService(userRepoMock, jwtHashMock, emailRepoMock)
 			userResp, err := userService.Store(context.Background(), test.paramUser)
 			userRepoMock.AssertExpectations(t)
 			jwtHashMock.AssertExpectations(t)
@@ -201,6 +231,7 @@ func TestUserServiceLogin(t *testing.T) {
 		t.Run(testName, func(t *testing.T) {
 			userRepoMock := new(mocks.UserRepository)
 			jwtHashMock := new(mocks.JwtHash)
+			emailRepoMock := new(mocks.EmailRepository)
 
 			if test.login.IsCalled {
 				userRepoMock.On("Login", test.login.Input...).
@@ -214,7 +245,7 @@ func TestUserServiceLogin(t *testing.T) {
 					Once()
 			}
 
-			userService := _user.NewUserService(userRepoMock, jwtHashMock)
+			userService := _user.NewUserService(userRepoMock, jwtHashMock, emailRepoMock)
 			response, err := userService.Login(context.Background(), test.paramEmail, test.paramPassword)
 			userRepoMock.AssertExpectations(t)
 			jwtHashMock.AssertExpectations(t)
@@ -344,6 +375,7 @@ func TestUserServiceUpdateByID(t *testing.T) {
 		t.Run(testName, func(t *testing.T) {
 			userRepoMock := new(mocks.UserRepository)
 			jwtHashMock := new(mocks.JwtHash)
+			emailRepoMock := new(mocks.EmailRepository)
 
 			if test.fetchUser.IsCalled {
 				userRepoMock.On("Fetch", test.fetchUser.Input...).
@@ -357,7 +389,7 @@ func TestUserServiceUpdateByID(t *testing.T) {
 					Once()
 			}
 
-			userService := _user.NewUserService(userRepoMock, jwtHashMock)
+			userService := _user.NewUserService(userRepoMock, jwtHashMock, emailRepoMock)
 			userResp, err := userService.UpdateByID(test.paramCtx, test.paramID, test.paramUser)
 
 			userRepoMock.AssertExpectations(t)
@@ -391,7 +423,7 @@ func TestUserServiceActivateStatus(t *testing.T) {
 		jwtDecode    testdata.FuncCaller
 		fetchUser    testdata.FuncCaller
 		setStatus    testdata.FuncCaller
-		expectedResp string
+		expectedResp sa.User
 		expectedErr  error
 	}{
 		"success": {
@@ -411,7 +443,7 @@ func TestUserServiceActivateStatus(t *testing.T) {
 				Input:    []interface{}{mock.Anything, user.ID, 1},
 				Output:   []interface{}{nil},
 			},
-			expectedResp: "success",
+			expectedResp: user,
 			expectedErr:  nil,
 		},
 		"error decode": {
@@ -423,7 +455,7 @@ func TestUserServiceActivateStatus(t *testing.T) {
 			},
 			fetchUser:    testdata.FuncCaller{},
 			setStatus:    testdata.FuncCaller{},
-			expectedResp: "",
+			expectedResp: sa.User{},
 			expectedErr:  errors.New("internal server error"),
 		},
 		"error fetch user": {
@@ -439,7 +471,7 @@ func TestUserServiceActivateStatus(t *testing.T) {
 				Output:   []interface{}{nil, "", errors.New("error")},
 			},
 			setStatus:    testdata.FuncCaller{},
-			expectedResp: "",
+			expectedResp: sa.User{},
 			expectedErr:  errors.New("error"),
 		},
 		"user not found": {
@@ -455,7 +487,7 @@ func TestUserServiceActivateStatus(t *testing.T) {
 				Output:   []interface{}{nil, "", nil},
 			},
 			setStatus:    testdata.FuncCaller{},
-			expectedResp: "",
+			expectedResp: sa.User{},
 			expectedErr:  sa.ErrNotFound{Message: "user not found"},
 		},
 		"user not sync": {
@@ -471,7 +503,7 @@ func TestUserServiceActivateStatus(t *testing.T) {
 				Output:   []interface{}{[]sa.User{userInvalid}, "", nil},
 			},
 			setStatus:    testdata.FuncCaller{},
-			expectedResp: "",
+			expectedResp: sa.User{},
 			expectedErr:  sa.ErrUnAuthorize{Message: "user is not sync"},
 		},
 		"error set status": {
@@ -491,7 +523,7 @@ func TestUserServiceActivateStatus(t *testing.T) {
 				Input:    []interface{}{mock.Anything, user.ID, 1},
 				Output:   []interface{}{errors.New("error")},
 			},
-			expectedResp: "",
+			expectedResp: sa.User{},
 			expectedErr:  errors.New("error"),
 		},
 	}
@@ -500,6 +532,7 @@ func TestUserServiceActivateStatus(t *testing.T) {
 		t.Run(testName, func(t *testing.T) {
 			userRepoMock := new(mocks.UserRepository)
 			jwtHashMock := new(mocks.JwtHash)
+			emailRepoMock := new(mocks.EmailRepository)
 
 			if test.jwtDecode.IsCalled {
 				jwtHashMock.On("Decode", test.jwtDecode.Input...).
@@ -525,7 +558,7 @@ func TestUserServiceActivateStatus(t *testing.T) {
 					Once()
 			}
 
-			userService := _user.NewUserService(userRepoMock, jwtHashMock)
+			userService := _user.NewUserService(userRepoMock, jwtHashMock, emailRepoMock)
 			message, err := userService.ActivateStatus(context.Background(), token)
 			userRepoMock.AssertExpectations(t)
 			jwtHashMock.AssertExpectations(t)

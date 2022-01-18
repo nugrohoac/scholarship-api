@@ -208,13 +208,17 @@ func TestUserMutationUpdateUser(t *testing.T) {
 }
 
 func TestUserMutationActivateUser(t *testing.T) {
+	users := make([]sa.User, 0)
+	testdata.GoldenJSONUnmarshal(t, "users", &users)
+
 	token := "token"
-	success := "success"
+	user := users[0]
+	userResolver := resolver.UserResolver{User: user}
 
 	tests := map[string]struct {
 		paramToken     struct{ Token string }
 		activateStatus testdata.FuncCaller
-		expectedResp   *string
+		expectedResp   *resolver.UserResolver
 		expectedErr    error
 	}{
 		"success": {
@@ -224,9 +228,9 @@ func TestUserMutationActivateUser(t *testing.T) {
 			activateStatus: testdata.FuncCaller{
 				IsCalled: true,
 				Input:    []interface{}{mock.Anything, token},
-				Output:   []interface{}{success, nil},
+				Output:   []interface{}{user, nil},
 			},
-			expectedResp: &success,
+			expectedResp: &userResolver,
 			expectedErr:  nil,
 		},
 		"error": {
@@ -236,7 +240,7 @@ func TestUserMutationActivateUser(t *testing.T) {
 			activateStatus: testdata.FuncCaller{
 				IsCalled: true,
 				Input:    []interface{}{mock.Anything, token},
-				Output:   []interface{}{"", errors.New("error")},
+				Output:   []interface{}{sa.User{}, errors.New("error")},
 			},
 			expectedResp: nil,
 			expectedErr:  errors.New("error"),

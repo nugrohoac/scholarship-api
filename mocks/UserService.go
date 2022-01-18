@@ -15,14 +15,14 @@ type UserService struct {
 }
 
 // ActivateStatus provides a mock function with given fields: ctx, token
-func (_m *UserService) ActivateStatus(ctx context.Context, token string) (string, error) {
+func (_m *UserService) ActivateStatus(ctx context.Context, token string) (scholarship_api.User, error) {
 	ret := _m.Called(ctx, token)
 
-	var r0 string
-	if rf, ok := ret.Get(0).(func(context.Context, string) string); ok {
+	var r0 scholarship_api.User
+	if rf, ok := ret.Get(0).(func(context.Context, string) scholarship_api.User); ok {
 		r0 = rf(ctx, token)
 	} else {
-		r0 = ret.Get(0).(string)
+		r0 = ret.Get(0).(scholarship_api.User)
 	}
 
 	var r1 error
