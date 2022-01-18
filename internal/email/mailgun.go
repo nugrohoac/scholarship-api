@@ -81,8 +81,10 @@ func (e emailRepo) SendActivateUser(ctx context.Context, email, token string) er
 
 	message := e.mailgunImpl.NewMessage(e.sender, subject, "", recipient)
 	path := e.pathActivateUser + "?token=" + token
-	html = fmt.Sprintf(html, path)
-	message.SetHtml(html)
+	// html copy, if sending to send email more, it will more extra string
+	_html := html
+	_html = fmt.Sprintf(_html, path)
+	message.SetHtml(_html)
 
 	_, _, err := e.mailgunImpl.Send(ctx, message)
 	if err != nil {
