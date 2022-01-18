@@ -15,54 +15,18 @@ var html = `
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+  
   <title>Activate account</title>
-  <style>
-    h1, h3, p {
-      margin: 0;
-    }
-    h3 {
-      margin-top: 32px;
-      font-weight: 700;
-      font-size: 18px;
-      line-height: 24px;
-    }
-    p {
-      font-size: 12px;
-      line-height: 16px;
-    }
-    body {
-      font-family: "Quicksand";
-      color: #464952;
-      background: #EAECF1;
-      font-weight: 500;
-      padding: 16px;
-    }
-    button {
-      background: #B31E1A;
-      color: #FEFFFF;
-      padding: 8px 16px;
-      font-size: 16px;
-      line-height: 24px;
-      margin-top: 24px;
-      border: none;
-      outline: none;
-      border-radius: 4px;
-	  cursor: pointer;
-    }
-	a {
-	  cursor: pointer;
-	}
-  </style>
+  
 </head>
-<body>
-  <h1>Bangun Scholarship</h1>
-  <h3>Please confirm your email address.</h3>
-  <p>Click the button below to activate your account.</p>
-  <a href="%s" target="_blank">
-    <button type="button">Activate my account</button>
+<body style="font-family: &quot;Quicksand&quot;;color: #464952;background: #EAECF1;font-weight: 500;padding: 16px;">
+  <h1 style="margin: 0;">Bangun Scholarship</h1>
+  <h3 style="margin: 0;margin-top: 32px;font-weight: 700;font-size: 18px;line-height: 24px;">Please confirm your email address.</h3>
+  <p style="margin: 0;font-size: 12px;line-height: 16px;">Click the button below to activate your account.</p>
+  <a href="%s" target="_blank" style="cursor: pointer;">
+    <button type="button" style="background: #B31E1A;color: #FEFFFF;padding: 8px 16px;font-size: 16px;line-height: 24px;margin-top: 24px;border: none;outline: none;border-radius: 4px;cursor: pointer;">Activate my account</button>
   </a>
 </body>
 </html>
