@@ -73,3 +73,8 @@ if your config env is custom
 ```bash
 $ go run cmd/app/main.go -config-path=your-custom-env
 ```
+
+## User status
+* 0 status un verification
+* 1 status verify but un complete profile
+* 2 status verify and complete profile

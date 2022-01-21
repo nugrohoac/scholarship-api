@@ -56,6 +56,27 @@ func (_m *UserService) Login(ctx context.Context, email string, password string)
 	return r0, r1
 }
 
+// ResendEmailVerification provides a mock function with given fields: ctx, email
+func (_m *UserService) ResendEmailVerification(ctx context.Context, email string) (string, error) {
+	ret := _m.Called(ctx, email)
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func(context.Context, string) string); ok {
+		r0 = rf(ctx, email)
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, email)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Store provides a mock function with given fields: ctx, user
 func (_m *UserService) Store(ctx context.Context, user scholarship_api.User) (scholarship_api.User, error) {
 	ret := _m.Called(ctx, user)

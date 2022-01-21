@@ -7,6 +7,10 @@ import (
 	sa "github.com/Nusantara-Muda/scholarship-api"
 )
 
+// 0 status un verification
+// 1 status verify but un complete profile
+// 2 status verify and complete profile
+
 type userService struct {
 	userRepo  sa.UserRepository
 	jwtHash   sa.JwtHash
@@ -130,6 +134,29 @@ func (u userService) ActivateStatus(ctx context.Context, token string) (sa.User,
 	}
 
 	return user, nil
+}
+
+// ResendEmailVerification ...
+func (u userService) ResendEmailVerification(ctx context.Context, email string) (string, error) {
+	users, _, err := u.userRepo.Fetch(ctx, sa.UserFilter{Email: email})
+	if err != nil {
+		return "", err
+	}
+
+	if len(users) == 0 {
+		return "", sa.ErrNotFound{Message: "user is not found"}
+	}
+
+	token, err := u.jwtHash.Encode(users[0])
+	if err != nil {
+		return "", err
+	}
+
+	if err = u.emailRepo.SendActivateUser(ctx, email, token); err != nil {
+		return "", err
+	}
+
+	return "success", nil
 }
 
 // NewUserService .

@@ -15,4 +15,8 @@ type Query {
         email: String!
         password: String!
     ): loginResponse
+
+    ResendEmailVerification(
+        email: String!
+    ): String
 }
