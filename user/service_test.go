@@ -15,13 +15,15 @@ import (
 	_user "github.com/Nusantara-Muda/scholarship-api/user"
 )
 
-var cursor = "cursor"
+var (
+	cursor = "cursor"
+	token  = "token"
+)
 
 func TestUserServiceStore(t *testing.T) {
 	users := make([]sa.User, 0)
 	testdata.GoldenJSONUnmarshal(t, "users", &users)
 	user := users[0]
-	token := "token"
 
 	tests := map[string]struct {
 		paramUser    sa.User
@@ -562,6 +564,145 @@ func TestUserServiceActivateStatus(t *testing.T) {
 			message, err := userService.ActivateStatus(context.Background(), token)
 			userRepoMock.AssertExpectations(t)
 			jwtHashMock.AssertExpectations(t)
+
+			if err != nil {
+				require.Error(t, err)
+				require.Equal(t, test.expectedErr, err)
+
+				return
+			}
+
+			require.NoError(t, err)
+			require.Equal(t, test.expectedResp, message)
+		})
+	}
+}
+
+func TestUserServiceResendEmailVerification(t *testing.T) {
+	users := make([]sa.User, 0)
+	testdata.GoldenJSONUnmarshal(t, "users", &users)
+
+	email := users[0].Email
+
+	tests := map[string]struct {
+		paramEmail        string
+		fetchUser         testdata.FuncCaller
+		encodeUser        testdata.FuncCaller
+		emailSendActivate testdata.FuncCaller
+		expectedResp      string
+		expectedErr       error
+	}{
+		"success": {
+			paramEmail: email,
+			fetchUser: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, sa.UserFilter{Email: users[0].Email}},
+				Output:   []interface{}{users, cursor, nil},
+			},
+			encodeUser: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{users[0]},
+				Output:   []interface{}{token, nil},
+			},
+			emailSendActivate: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, email, token},
+				Output:   []interface{}{nil},
+			},
+			expectedResp: "success",
+			expectedErr:  nil,
+		},
+		"error fetch user": {
+			paramEmail: email,
+			fetchUser: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, sa.UserFilter{Email: users[0].Email}},
+				Output:   []interface{}{nil, "", errors.New("error")},
+			},
+			encodeUser:        testdata.FuncCaller{},
+			emailSendActivate: testdata.FuncCaller{},
+			expectedResp:      "",
+			expectedErr:       errors.New("error"),
+		},
+		"error user not found": {
+			paramEmail: email,
+			fetchUser: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, sa.UserFilter{Email: users[0].Email}},
+				Output:   []interface{}{[]sa.User{}, "", nil},
+			},
+			encodeUser:        testdata.FuncCaller{},
+			emailSendActivate: testdata.FuncCaller{},
+			expectedResp:      "",
+			expectedErr:       sa.ErrNotFound{Message: "user is not found"},
+		},
+		"error encode user": {
+			paramEmail: email,
+			fetchUser: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, sa.UserFilter{Email: users[0].Email}},
+				Output:   []interface{}{users, cursor, nil},
+			},
+			encodeUser: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{users[0]},
+				Output:   []interface{}{token, errors.New("error")},
+			},
+			emailSendActivate: testdata.FuncCaller{},
+			expectedResp:      "",
+			expectedErr:       errors.New("error"),
+		},
+		"error send activate user": {
+			paramEmail: email,
+			fetchUser: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, sa.UserFilter{Email: users[0].Email}},
+				Output:   []interface{}{users, cursor, nil},
+			},
+			encodeUser: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{users[0]},
+				Output:   []interface{}{token, nil},
+			},
+			emailSendActivate: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, email, token},
+				Output:   []interface{}{errors.New("error")},
+			},
+			expectedResp: "",
+			expectedErr:  errors.New("error"),
+		},
+	}
+
+	for testName, test := range tests {
+		t.Run(testName, func(t *testing.T) {
+			userRepoMock := new(mocks.UserRepository)
+			jwtHashMock := new(mocks.JwtHash)
+			emailRepoMock := new(mocks.EmailRepository)
+
+			if test.fetchUser.IsCalled {
+				userRepoMock.On("Fetch", test.fetchUser.Input...).
+					Return(test.fetchUser.Output...).
+					Once()
+			}
+
+			if test.encodeUser.IsCalled {
+				jwtHashMock.On("Encode", test.encodeUser.Input...).
+					Return(test.encodeUser.Output...).
+					Once()
+			}
+
+			if test.emailSendActivate.IsCalled {
+				emailRepoMock.On("SendActivateUser", test.emailSendActivate.Input...).
+					Return(test.emailSendActivate.Output...).
+					Once()
+			}
+
+			userService := _user.NewUserService(userRepoMock, jwtHashMock, emailRepoMock)
+			message, err := userService.ResendEmailVerification(context.Background(), test.paramEmail)
+			userRepoMock.AssertExpectations(t)
+			jwtHashMock.AssertExpectations(t)
+			emailRepoMock.AssertExpectations(t)
 
 			if err != nil {
 				require.Error(t, err)
