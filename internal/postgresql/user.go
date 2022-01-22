@@ -292,6 +292,26 @@ func (u userRepo) SetStatus(ctx context.Context, ID int64, status int) error {
 	return nil
 }
 
+// ResetPassword ...
+func (u userRepo) ResetPassword(ctx context.Context, email, password string) error {
+	query, args, err := sq.Update("\"user\"").
+		SetMap(sq.Eq{
+			"password":   password,
+			"updated_at": time.Now(),
+		}).Where(sq.Eq{"email": email}).
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+	if err != nil {
+		return err
+	}
+
+	if _, err = u.db.ExecContext(ctx, query, args...); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // NewUserRepository .
 func NewUserRepository(db *sql.DB) sa.UserRepository {
 	return userRepo{db: db}

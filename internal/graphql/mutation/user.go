@@ -80,6 +80,16 @@ func (u UserMutation) ActivateUser(ctx context.Context, param struct{ Token stri
 	return &resolver.UserResolver{User: user}, nil
 }
 
+// ResetPassword ...
+func (u UserMutation) ResetPassword(ctx context.Context, param struct{ Password string }) (*string, error) {
+	message, err := u.userService.ResetPassword(ctx, param.Password)
+	if err != nil {
+		return nil, err
+	}
+
+	return &message, nil
+}
+
 // NewUserMutation ...
 func NewUserMutation(userService sa.UserService) UserMutation {
 	return UserMutation{userService: userService}

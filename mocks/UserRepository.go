@@ -65,6 +65,20 @@ func (_m *UserRepository) Login(ctx context.Context, email string) (scholarship_
 	return r0, r1
 }
 
+// ResetPassword provides a mock function with given fields: ctx, email, password
+func (_m *UserRepository) ResetPassword(ctx context.Context, email string, password string) error {
+	ret := _m.Called(ctx, email, password)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, string, string) error); ok {
+		r0 = rf(ctx, email, password)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // SetStatus provides a mock function with given fields: ctx, ID, status
 func (_m *UserRepository) SetStatus(ctx context.Context, ID int64, status int) error {
 	ret := _m.Called(ctx, ID, status)

@@ -273,3 +273,69 @@ func TestUserMutationActivateUser(t *testing.T) {
 		})
 	}
 }
+
+func TestUserMutationResetPassword(t *testing.T) {
+	var user sa.User
+	testdata.GoldenJSONUnmarshal(t, "user", &user)
+
+	password := "new password"
+	message := "success"
+
+	tests := map[string]struct {
+		paramPassword struct{ Password string }
+		resetPasswd   testdata.FuncCaller
+		expectedResp  *string
+		expectedErr   error
+	}{
+		"success": {
+			paramPassword: struct {
+				Password string
+			}{Password: password},
+			resetPasswd: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, password},
+				Output:   []interface{}{message, nil},
+			},
+			expectedResp: &message,
+			expectedErr:  nil,
+		},
+		"error": {
+			paramPassword: struct {
+				Password string
+			}{Password: password},
+			resetPasswd: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, password},
+				Output:   []interface{}{"", errors.New("error")},
+			},
+			expectedResp: nil,
+			expectedErr:  errors.New("error"),
+		},
+	}
+
+	for testName, test := range tests {
+		t.Run(testName, func(t *testing.T) {
+			userServiceMock := new(mocks.UserService)
+
+			if test.resetPasswd.IsCalled {
+				userServiceMock.On("ResetPassword", test.resetPasswd.Input...).
+					Return(test.resetPasswd.Output...).
+					Once()
+			}
+
+			userMutation := mutation.NewUserMutation(userServiceMock)
+			_message, err := userMutation.ResetPassword(context.Background(), test.paramPassword)
+			userServiceMock.AssertExpectations(t)
+
+			if err != nil {
+				require.Error(t, err)
+				require.Equal(t, test.expectedErr, err)
+
+				return
+			}
+
+			require.NoError(t, err)
+			require.Equal(t, test.expectedResp, _message)
+		})
+	}
+}

@@ -23,4 +23,8 @@ type Mutation {
     ActivateUser(
         token: String!
     ): user
+
+    ResetPassword(
+        password: String!
+    ): String
 }
