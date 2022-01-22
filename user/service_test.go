@@ -272,6 +272,8 @@ func TestUserServiceUpdateByID(t *testing.T) {
 	user := users[0]
 	userInvalid := user
 	userInvalid.Email = "email@invalid.com"
+	userStatusComplete := user
+	userStatusComplete.Status = 2
 
 	ctx := sa.SetUserOnContext(context.Background(), user)
 	ctxInvalid := sa.SetUserOnContext(context.Background(), userInvalid)
@@ -296,7 +298,7 @@ func TestUserServiceUpdateByID(t *testing.T) {
 			},
 			updateUser: testdata.FuncCaller{
 				IsCalled: true,
-				Input:    []interface{}{ctx, user.ID, user},
+				Input:    []interface{}{ctx, user.ID, userStatusComplete},
 				Output:   []interface{}{user, nil},
 			},
 			expectedResp: user,
@@ -365,7 +367,7 @@ func TestUserServiceUpdateByID(t *testing.T) {
 			},
 			updateUser: testdata.FuncCaller{
 				IsCalled: true,
-				Input:    []interface{}{ctx, user.ID, user},
+				Input:    []interface{}{ctx, user.ID, userStatusComplete},
 				Output:   []interface{}{sa.User{}, errors.New("internal server error")},
 			},
 			expectedResp: sa.User{},

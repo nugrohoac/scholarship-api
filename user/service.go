@@ -100,6 +100,8 @@ func (u userService) UpdateByID(ctx context.Context, ID int64, user sa.User) (sa
 		return sa.User{}, sa.ErrUnAuthorize{Message: "user is not sync"}
 	}
 
+	// 2 = active and profile is complete
+	user.Status = 2
 	return u.userRepo.UpdateByID(ctx, ID, user)
 }
 
