@@ -27,6 +27,7 @@ type UserService interface {
 	Login(ctx context.Context, email, password string) (LoginResponse, error)
 	UpdateByID(ctx context.Context, ID int64, user User) (User, error)
 	ActivateStatus(ctx context.Context, token string) (User, error)
+	ResendEmailVerification(ctx context.Context, email string) (string, error)
 }
 
 // CountryRepository .
