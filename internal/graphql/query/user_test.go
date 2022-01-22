@@ -15,6 +15,7 @@ import (
 var (
 	email    = "jhon@wick.com"
 	password = "password"
+	message  = "success"
 )
 
 func TestUserQueryLogin(t *testing.T) {
@@ -86,8 +87,6 @@ func TestUserQueryLogin(t *testing.T) {
 }
 
 func TestUserQueryResendEmailVerification(t *testing.T) {
-	message := "success"
-
 	tests := map[string]struct {
 		paramEmail   struct{ Email string }
 		resendEmail  testdata.FuncCaller
@@ -132,6 +131,66 @@ func TestUserQueryResendEmailVerification(t *testing.T) {
 
 			userQuery := NewUserQuery(userServiceMock)
 			resp, err := userQuery.ResendEmailVerification(context.Background(), test.paramEmail)
+			userServiceMock.AssertExpectations(t)
+
+			if err != nil {
+				require.Error(t, err)
+				require.Equal(t, test.expectedErr, err)
+
+				return
+			}
+
+			require.NoError(t, err)
+			require.Equal(t, test.expectedResp, resp)
+		})
+	}
+}
+
+func TestUserQueryForgotPassword(t *testing.T) {
+	tests := map[string]struct {
+		paramEmail     struct{ Email string }
+		forgotPassword testdata.FuncCaller
+		expectedResp   *string
+		expectedErr    error
+	}{
+		"success": {
+			paramEmail: struct {
+				Email string
+			}{Email: email},
+			forgotPassword: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, email},
+				Output:   []interface{}{message, nil},
+			},
+			expectedResp: &message,
+			expectedErr:  nil,
+		},
+		"error": {
+			paramEmail: struct {
+				Email string
+			}{Email: email},
+			forgotPassword: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, email},
+				Output:   []interface{}{"", errors.New("error")},
+			},
+			expectedResp: nil,
+			expectedErr:  errors.New("error"),
+		},
+	}
+
+	for testName, test := range tests {
+		t.Run(testName, func(t *testing.T) {
+			userServiceMock := new(mocks.UserService)
+
+			if test.forgotPassword.IsCalled {
+				userServiceMock.On("ForgotPassword", test.forgotPassword.Input...).
+					Return(test.forgotPassword.Output...).
+					Once()
+			}
+
+			userQuery := NewUserQuery(userServiceMock)
+			resp, err := userQuery.ForgotPassword(context.Background(), test.paramEmail)
 			userServiceMock.AssertExpectations(t)
 
 			if err != nil {

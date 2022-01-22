@@ -19,4 +19,8 @@ type Query {
     ResendEmailVerification(
         email: String!
     ): String
+
+    ForgotPassword(
+        email: String!
+    ): String
 }

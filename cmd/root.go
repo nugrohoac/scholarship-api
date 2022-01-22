@@ -36,10 +36,11 @@ var (
 	userService    sa.UserService
 
 	// email
-	emailDomain      string
-	emailApiKey      string
-	pathActivateUser string
-	emailSender      string
+	emailDomain        string
+	emailApiKey        string
+	pathActivateUser   string
+	pathForgotPassword string
+	emailSender        string
 
 	// BankQuery ...
 	BankQuery query.BankQuery
@@ -117,6 +118,7 @@ func initEnv() {
 	emailDomain = viper.GetString("email_domain")
 	emailApiKey = viper.GetString("email_api_key")
 	pathActivateUser = viper.GetString("email_path_activate_user")
+	pathForgotPassword = viper.GetString("email_path_forgot_password")
 	emailSender = viper.GetString("email_sender")
 
 	viper.WatchConfig()
@@ -130,7 +132,7 @@ func initApp() {
 
 	// email
 	mg := mailgun.NewMailgun(emailDomain, emailApiKey)
-	emailRepo = email.NewEmailRepository(mg, emailSender, pathActivateUser)
+	emailRepo = email.NewEmailRepository(mg, emailSender, pathActivateUser, pathForgotPassword)
 
 	jwtHash := jwt_hash.NewJwtHash([]byte(secretKey), tokeDuration)
 	Middleware = _middleware.New(jwtHash)

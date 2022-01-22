@@ -35,6 +35,27 @@ func (_m *UserService) ActivateStatus(ctx context.Context, token string) (schola
 	return r0, r1
 }
 
+// ForgotPassword provides a mock function with given fields: ctx, email
+func (_m *UserService) ForgotPassword(ctx context.Context, email string) (string, error) {
+	ret := _m.Called(ctx, email)
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func(context.Context, string) string); ok {
+		r0 = rf(ctx, email)
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, email)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Login provides a mock function with given fields: ctx, email, password
 func (_m *UserService) Login(ctx context.Context, email string, password string) (scholarship_api.LoginResponse, error) {
 	ret := _m.Called(ctx, email, password)
