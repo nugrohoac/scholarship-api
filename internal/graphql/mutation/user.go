@@ -52,7 +52,7 @@ func (u UserMutation) UpdateUser(ctx context.Context, param sa.InputUpdateUser) 
 			Width:  param.Photo.Width,
 			Height: param.Photo.Height,
 		},
-		CompanyName:     param.CompanyName,
+		CompanyName:     *param.CompanyName,
 		CountryID:       param.CountryID,
 		PostalCode:      param.PostalCode,
 		Address:         param.Address,
