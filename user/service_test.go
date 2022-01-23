@@ -417,6 +417,8 @@ func TestUserServiceActivateStatus(t *testing.T) {
 	testdata.GoldenJSONUnmarshal(t, "users", &users)
 
 	user := users[0]
+	userResponse := user
+	userResponse.Status = 1
 	userInvalid := user
 	userInvalid.Email = "email@invalid.com"
 
@@ -447,7 +449,7 @@ func TestUserServiceActivateStatus(t *testing.T) {
 				Input:    []interface{}{mock.Anything, user.ID, 1},
 				Output:   []interface{}{nil},
 			},
-			expectedResp: user,
+			expectedResp: userResponse,
 			expectedErr:  nil,
 		},
 		"error decode": {
@@ -702,6 +704,150 @@ func TestUserServiceResendEmailVerification(t *testing.T) {
 
 			userService := _user.NewUserService(userRepoMock, jwtHashMock, emailRepoMock)
 			message, err := userService.ResendEmailVerification(context.Background(), test.paramEmail)
+			userRepoMock.AssertExpectations(t)
+			jwtHashMock.AssertExpectations(t)
+			emailRepoMock.AssertExpectations(t)
+
+			if err != nil {
+				require.Error(t, err)
+				require.Equal(t, test.expectedErr, err)
+
+				return
+			}
+
+			require.NoError(t, err)
+			require.Equal(t, test.expectedResp, message)
+		})
+	}
+}
+
+func TestUserServiceForgotPassword(t *testing.T) {
+	users := make([]sa.User, 0)
+	testdata.GoldenJSONUnmarshal(t, "users", &users)
+
+	email := users[0].Email
+	user := users[0]
+	user.Status = 1
+
+	userInactive := user
+	userInactive.Status = 0
+
+	tests := map[string]struct {
+		paramEmail            string
+		fetchUser             testdata.FuncCaller
+		encodeToken           testdata.FuncCaller
+		sendEmailForgotPasswd testdata.FuncCaller
+		expectedResp          string
+		expectedErr           error
+	}{
+		"success": {
+			paramEmail: email,
+			fetchUser: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, sa.UserFilter{Email: email}},
+				Output:   []interface{}{[]sa.User{user}, cursor, nil},
+			},
+			encodeToken: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{user},
+				Output:   []interface{}{token, nil},
+			},
+			sendEmailForgotPasswd: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, email, token},
+				Output:   []interface{}{nil},
+			},
+			expectedResp: "success",
+			expectedErr:  nil,
+		},
+		"error fetch user": {
+			paramEmail: email,
+			fetchUser: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, sa.UserFilter{Email: email}},
+				Output:   []interface{}{nil, "", errors.New("error")},
+			},
+			encodeToken:           testdata.FuncCaller{},
+			sendEmailForgotPasswd: testdata.FuncCaller{},
+			expectedResp:          "",
+			expectedErr:           errors.New("error"),
+		},
+		"user inactive": {
+			paramEmail: email,
+			fetchUser: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, sa.UserFilter{Email: email}},
+				Output:   []interface{}{[]sa.User{userInactive}, cursor, nil},
+			},
+			encodeToken:           testdata.FuncCaller{},
+			sendEmailForgotPasswd: testdata.FuncCaller{},
+			expectedResp:          "",
+			expectedErr:           sa.ErrNotAllowed{Message: "account is inactivate, please choose resend email activation"},
+		},
+		"error encode token": {
+			paramEmail: email,
+			fetchUser: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, sa.UserFilter{Email: email}},
+				Output:   []interface{}{[]sa.User{user}, cursor, nil},
+			},
+			encodeToken: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{user},
+				Output:   []interface{}{"", errors.New("error")},
+			},
+			sendEmailForgotPasswd: testdata.FuncCaller{},
+			expectedResp:          "",
+			expectedErr:           errors.New("error"),
+		},
+		"failed send email forgot password": {
+			paramEmail: email,
+			fetchUser: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, sa.UserFilter{Email: email}},
+				Output:   []interface{}{[]sa.User{user}, cursor, nil},
+			},
+			encodeToken: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{user},
+				Output:   []interface{}{token, nil},
+			},
+			sendEmailForgotPasswd: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, email, token},
+				Output:   []interface{}{errors.New("failed sending email")},
+			},
+			expectedResp: "",
+			expectedErr:  errors.New("failed sending email"),
+		},
+	}
+
+	for testName, test := range tests {
+		t.Run(testName, func(t *testing.T) {
+			userRepoMock := new(mocks.UserRepository)
+			jwtHashMock := new(mocks.JwtHash)
+			emailRepoMock := new(mocks.EmailRepository)
+
+			if test.fetchUser.IsCalled {
+				userRepoMock.On("Fetch", test.fetchUser.Input...).
+					Return(test.fetchUser.Output...).
+					Once()
+			}
+
+			if test.encodeToken.IsCalled {
+				jwtHashMock.On("Encode", test.encodeToken.Input...).
+					Return(test.encodeToken.Output...).
+					Once()
+			}
+
+			if test.sendEmailForgotPasswd.IsCalled {
+				emailRepoMock.On("SendForgotPassword", test.sendEmailForgotPasswd.Input...).
+					Return(test.sendEmailForgotPasswd.Output...).
+					Once()
+			}
+
+			userService := _user.NewUserService(userRepoMock, jwtHashMock, emailRepoMock)
+			message, err := userService.ForgotPassword(context.Background(), test.paramEmail)
 			userRepoMock.AssertExpectations(t)
 			jwtHashMock.AssertExpectations(t)
 			emailRepoMock.AssertExpectations(t)

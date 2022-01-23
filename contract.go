@@ -28,6 +28,7 @@ type UserService interface {
 	UpdateByID(ctx context.Context, ID int64, user User) (User, error)
 	ActivateStatus(ctx context.Context, token string) (User, error)
 	ResendEmailVerification(ctx context.Context, email string) (string, error)
+	ForgotPassword(ctx context.Context, email string) (string, error)
 }
 
 // CountryRepository .
@@ -49,4 +50,5 @@ type JwtHash interface {
 // EmailRepository ...
 type EmailRepository interface {
 	SendActivateUser(ctx context.Context, email, token string) error
+	SendForgotPassword(ctx context.Context, email, token string) error
 }
