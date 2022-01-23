@@ -279,12 +279,12 @@ func TestUserMutationResetPassword(t *testing.T) {
 	testdata.GoldenJSONUnmarshal(t, "user", &user)
 
 	password := "new password"
-	message := "success"
+	userResolver := resolver.UserResolver{User: user}
 
 	tests := map[string]struct {
 		paramPassword struct{ Password string }
 		resetPasswd   testdata.FuncCaller
-		expectedResp  *string
+		expectedResp  *resolver.UserResolver
 		expectedErr   error
 	}{
 		"success": {
@@ -294,9 +294,9 @@ func TestUserMutationResetPassword(t *testing.T) {
 			resetPasswd: testdata.FuncCaller{
 				IsCalled: true,
 				Input:    []interface{}{mock.Anything, password},
-				Output:   []interface{}{message, nil},
+				Output:   []interface{}{user, nil},
 			},
-			expectedResp: &message,
+			expectedResp: &userResolver,
 			expectedErr:  nil,
 		},
 		"error": {
@@ -306,7 +306,7 @@ func TestUserMutationResetPassword(t *testing.T) {
 			resetPasswd: testdata.FuncCaller{
 				IsCalled: true,
 				Input:    []interface{}{mock.Anything, password},
-				Output:   []interface{}{"", errors.New("error")},
+				Output:   []interface{}{sa.User{}, errors.New("error")},
 			},
 			expectedResp: nil,
 			expectedErr:  errors.New("error"),
