@@ -91,6 +91,7 @@ func (u userSuite) TestUserRepoUpdateByID() {
 	testdata.GoldenJSONUnmarshal(t, "card_identities", &cardIdentities)
 
 	user.CardIdentities = cardIdentities
+	user.Status = 2
 
 	userRepo := postgresql.NewUserRepository(u.DBConn)
 	userResp, err := userRepo.UpdateByID(context.Background(), user.ID, user)
@@ -103,6 +104,12 @@ func (u userSuite) TestUserRepoUpdateByID() {
 	err = row.Scan(&count)
 	require.NoError(t, err)
 	require.Equal(t, 2, count)
+
+	var status int
+	row = u.DBConn.QueryRow("SELECT status FROM \"user\" WHERE id = $1", users[0].ID)
+	err = row.Scan(&status)
+	require.NoError(t, err)
+	require.Equal(t, 2, status)
 }
 
 func (u userSuite) TestUserSetStatus() {
@@ -144,3 +151,4 @@ func (u userSuite) TestUserUpdatePassword() {
 
 	require.Equal(t, newPassword, password)
 }
+

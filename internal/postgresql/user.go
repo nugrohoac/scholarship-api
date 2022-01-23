@@ -207,6 +207,7 @@ func (u userRepo) UpdateByID(ctx context.Context, ID int64, user sa.User) (sa.Us
 			"bank_id":           user.BankID,
 			"bank_account_no":   user.BankAccountNo,
 			"bank_account_name": user.BankAccountName,
+			"status":            user.Status,
 			"updated_at":        timeNow,
 		}).Where(sq.Eq{"id": ID}).
 		PlaceholderFormat(sq.Dollar).

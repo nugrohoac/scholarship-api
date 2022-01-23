@@ -32,6 +32,16 @@ func (u UserQuery) ResendEmailVerification(ctx context.Context, param struct{ Em
 	return &message, nil
 }
 
+// ForgotPassword ...
+func (u UserQuery) ForgotPassword(ctx context.Context, param struct{ Email string }) (*string, error) {
+	message, err := u.userService.ForgotPassword(ctx, param.Email)
+	if err != nil {
+		return nil, err
+	}
+
+	return &message, nil
+}
+
 // NewUserQuery ...
 func NewUserQuery(userService sa.UserService) UserQuery {
 	return UserQuery{userService: userService}

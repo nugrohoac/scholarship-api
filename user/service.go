@@ -100,6 +100,8 @@ func (u userService) UpdateByID(ctx context.Context, ID int64, user sa.User) (sa
 		return sa.User{}, sa.ErrUnAuthorize{Message: "user is not sync"}
 	}
 
+	// 2 = active and profile is complete
+	user.Status = 2
 	return u.userRepo.UpdateByID(ctx, ID, user)
 }
 
@@ -129,6 +131,8 @@ func (u userService) ActivateStatus(ctx context.Context, token string) (sa.User,
 		return sa.User{}, err
 	}
 
+	user.Status = 1
+
 	return user, nil
 }
 
@@ -149,6 +153,33 @@ func (u userService) ResendEmailVerification(ctx context.Context, email string) 
 	}
 
 	if err = u.emailRepo.SendActivateUser(ctx, email, token); err != nil {
+		return "", err
+	}
+
+	return "success", nil
+}
+
+// ForgotPassword ...
+func (u userService) ForgotPassword(ctx context.Context, email string) (string, error) {
+	users, _, err := u.userRepo.Fetch(ctx, sa.UserFilter{Email: email})
+	if err != nil {
+		return "", err
+	}
+
+	if len(users) == 0 {
+		return "", sa.ErrNotFound{Message: "user is not found"}
+	}
+
+	if users[0].Status == 0 {
+		return "", sa.ErrNotAllowed{Message: "account is inactivate, please choose resend email activation"}
+	}
+
+	token, err := u.jwtHash.Encode(users[0])
+	if err != nil {
+		return "", err
+	}
+
+	if err = u.emailRepo.SendForgotPassword(ctx, email, token); err != nil {
 		return "", err
 	}
 
