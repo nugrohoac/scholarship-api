@@ -1,0 +1,25 @@
+{
+  "id":1,
+  "name":"Jhon wick",
+  "type":"sponsor",
+  "email":"jhon@wick.com",
+  "phone_no":"087654321001",
+  "photo":{
+     "url":"https://image.com",
+     "width":100,
+     "height":100,
+     "mime":"",
+     "caption":""
+  },
+  "company_name":"jhon company name",
+  "status":0,
+  "country_id":1,
+  "postal_code":"57281",
+  "address":"jl s parman no 30",
+  "gender":"",
+  "ethnic":"",
+  "bank_id":1,
+  "bank_account_no":"0912234",
+  "bank_account_name":"jhon wick",
+  "created_at":"2022-01-11T17:33:58.403414+07:00"
+}

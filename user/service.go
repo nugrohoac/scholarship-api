@@ -123,10 +123,6 @@ func (u userService) ActivateStatus(ctx context.Context, token string) (sa.User,
 
 	user := users[0]
 
-	if c.Email != user.Email {
-		return sa.User{}, sa.ErrUnAuthorize{Message: "user is not sync"}
-	}
-
 	if user.Status == 1 {
 		return sa.User{}, sa.ErrNotAllowed{Message: "user has ben activated"}
 	}
@@ -184,6 +180,25 @@ func (u userService) ForgotPassword(ctx context.Context, email string) (string, 
 	}
 
 	if err = u.emailRepo.SendForgotPassword(ctx, email, token); err != nil {
+		return "", err
+	}
+
+	return "success", nil
+}
+
+// ResetPassword ...
+func (u userService) ResetPassword(ctx context.Context, password string) (string, error) {
+	user, err := sa.GetUserOnContext(ctx)
+	if err != nil {
+		return "", err
+	}
+
+	bytePassword, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+	if err != nil {
+		return "", err
+	}
+
+	if err = u.userRepo.ResetPassword(ctx, user.Email, string(bytePassword)); err != nil {
 		return "", err
 	}
 

@@ -496,22 +496,6 @@ func TestUserServiceActivateStatus(t *testing.T) {
 			expectedResp: sa.User{},
 			expectedErr:  sa.ErrNotFound{Message: "user not found"},
 		},
-		"user not sync": {
-			paramToken: token,
-			jwtDecode: testdata.FuncCaller{
-				IsCalled: true,
-				Input:    []interface{}{token, mock.Anything},
-				Output:   []interface{}{nil},
-			},
-			fetchUser: testdata.FuncCaller{
-				IsCalled: true,
-				Input:    []interface{}{mock.Anything, sa.UserFilter{Email: user.Email}},
-				Output:   []interface{}{[]sa.User{userInvalid}, "", nil},
-			},
-			setStatus:    testdata.FuncCaller{},
-			expectedResp: sa.User{},
-			expectedErr:  sa.ErrUnAuthorize{Message: "user is not sync"},
-		},
 		"error set status": {
 			paramToken: token,
 			jwtDecode: testdata.FuncCaller{
@@ -717,6 +701,78 @@ func TestUserServiceResendEmailVerification(t *testing.T) {
 
 			require.NoError(t, err)
 			require.Equal(t, test.expectedResp, message)
+		})
+	}
+}
+
+func TestUserServiceResetPassword(t *testing.T) {
+	var user sa.User
+	testdata.GoldenJSONUnmarshal(t, "user", &user)
+
+	ctxValid := sa.SetUserOnContext(context.Background(), user)
+
+	tests := map[string]struct {
+		paramCtx      context.Context
+		paramPasswd   string
+		resetPassword testdata.FuncCaller
+		expectedResp  string
+		expectedErr   error
+	}{
+		"success": {
+			paramCtx: ctxValid,
+			resetPassword: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{ctxValid, user.Email, mock.Anything},
+				Output:   []interface{}{nil},
+			},
+			expectedResp: "success",
+			expectedErr:  nil,
+		},
+		"user doesnt contain user": {
+			paramCtx:      context.Background(),
+			resetPassword: testdata.FuncCaller{},
+			expectedResp:  "",
+			expectedErr:   sa.ErrBadRequest{Message: "failed casting key to string"},
+		},
+		"error": {
+			paramCtx: ctxValid,
+			resetPassword: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{ctxValid, user.Email, mock.Anything},
+				Output:   []interface{}{errors.New("error")},
+			},
+			expectedResp: "",
+			expectedErr:  errors.New("error"),
+		},
+	}
+
+	for testName, test := range tests {
+		t.Run(testName, func(t *testing.T) {
+			userRepoMock := new(mocks.UserRepository)
+			jwtHashMock := new(mocks.JwtHash)
+			emailRepoMock := new(mocks.EmailRepository)
+
+			if test.resetPassword.IsCalled {
+				userRepoMock.On("ResetPassword", test.resetPassword.Input...).
+					Return(test.resetPassword.Output...).
+					Once()
+			}
+
+			userService := _user.NewUserService(userRepoMock, jwtHashMock, emailRepoMock)
+			resp, err := userService.ResetPassword(test.paramCtx, test.paramPasswd)
+			userRepoMock.AssertExpectations(t)
+			jwtHashMock.AssertExpectations(t)
+			emailRepoMock.AssertExpectations(t)
+
+			if err != nil {
+				require.Error(t, err)
+				require.Equal(t, test.expectedErr, err)
+
+				return
+			}
+
+			require.NoError(t, err)
+			require.Equal(t, test.expectedResp, resp)
 		})
 	}
 }

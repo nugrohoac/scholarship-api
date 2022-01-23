@@ -129,3 +129,26 @@ func (u userSuite) TestUserSetStatus() {
 	require.NoError(t, err)
 	require.Equal(t, 1, status)
 }
+
+func (u userSuite) TestUserUpdatePassword() {
+	t := u.T()
+	users := make([]sa.User, 0)
+	testdata.GoldenJSONUnmarshal(t, "users", &users)
+
+	postgresql.SeedUsers(u.DBConn, t, users)
+
+	newPassword := "new password"
+	email := users[0].Email
+
+	userRepo := postgresql.NewUserRepository(u.DBConn)
+	err := userRepo.ResetPassword(context.Background(), email, newPassword)
+	require.NoError(t, err)
+
+	row := u.DBConn.QueryRow("SELECT password FROM \"user\" WHERE email = $1", email)
+	var password string
+	err = row.Scan(&password)
+	require.NoError(t, err)
+
+	require.Equal(t, newPassword, password)
+}
+
