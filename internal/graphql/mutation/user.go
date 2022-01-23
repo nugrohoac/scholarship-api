@@ -81,13 +81,13 @@ func (u UserMutation) ActivateUser(ctx context.Context, param struct{ Token stri
 }
 
 // ResetPassword ...
-func (u UserMutation) ResetPassword(ctx context.Context, param struct{ Password string }) (*string, error) {
-	message, err := u.userService.ResetPassword(ctx, param.Password)
+func (u UserMutation) ResetPassword(ctx context.Context, param struct{ Password string }) (*resolver.UserResolver, error) {
+	user, err := u.userService.ResetPassword(ctx, param.Password)
 	if err != nil {
 		return nil, err
 	}
 
-	return &message, nil
+	return &resolver.UserResolver{User: user}, nil
 }
 
 // NewUserMutation ...

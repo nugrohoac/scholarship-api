@@ -99,14 +99,14 @@ func (_m *UserService) ResendEmailVerification(ctx context.Context, email string
 }
 
 // ResetPassword provides a mock function with given fields: ctx, password
-func (_m *UserService) ResetPassword(ctx context.Context, password string) (string, error) {
+func (_m *UserService) ResetPassword(ctx context.Context, password string) (scholarship_api.User, error) {
 	ret := _m.Called(ctx, password)
 
-	var r0 string
-	if rf, ok := ret.Get(0).(func(context.Context, string) string); ok {
+	var r0 scholarship_api.User
+	if rf, ok := ret.Get(0).(func(context.Context, string) scholarship_api.User); ok {
 		r0 = rf(ctx, password)
 	} else {
-		r0 = ret.Get(0).(string)
+		r0 = ret.Get(0).(scholarship_api.User)
 	}
 
 	var r1 error

@@ -715,7 +715,7 @@ func TestUserServiceResetPassword(t *testing.T) {
 		paramCtx      context.Context
 		paramPasswd   string
 		resetPassword testdata.FuncCaller
-		expectedResp  string
+		expectedResp  sa.User
 		expectedErr   error
 	}{
 		"success": {
@@ -725,13 +725,13 @@ func TestUserServiceResetPassword(t *testing.T) {
 				Input:    []interface{}{ctxValid, user.Email, mock.Anything},
 				Output:   []interface{}{nil},
 			},
-			expectedResp: "success",
+			expectedResp: user,
 			expectedErr:  nil,
 		},
 		"user doesnt contain user": {
 			paramCtx:      context.Background(),
 			resetPassword: testdata.FuncCaller{},
-			expectedResp:  "",
+			expectedResp:  sa.User{},
 			expectedErr:   sa.ErrBadRequest{Message: "failed casting key to string"},
 		},
 		"error": {
@@ -741,7 +741,7 @@ func TestUserServiceResetPassword(t *testing.T) {
 				Input:    []interface{}{ctxValid, user.Email, mock.Anything},
 				Output:   []interface{}{errors.New("error")},
 			},
-			expectedResp: "",
+			expectedResp: sa.User{},
 			expectedErr:  errors.New("error"),
 		},
 	}

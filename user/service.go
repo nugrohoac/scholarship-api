@@ -187,22 +187,22 @@ func (u userService) ForgotPassword(ctx context.Context, email string) (string, 
 }
 
 // ResetPassword ...
-func (u userService) ResetPassword(ctx context.Context, password string) (string, error) {
+func (u userService) ResetPassword(ctx context.Context, password string) (sa.User, error) {
 	user, err := sa.GetUserOnContext(ctx)
 	if err != nil {
-		return "", err
+		return sa.User{}, err
 	}
 
 	bytePassword, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	if err != nil {
-		return "", err
+		return sa.User{}, err
 	}
 
 	if err = u.userRepo.ResetPassword(ctx, user.Email, string(bytePassword)); err != nil {
-		return "", err
+		return sa.User{}, err
 	}
 
-	return "success", nil
+	return user, nil
 }
 
 // NewUserService .

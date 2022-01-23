@@ -29,7 +29,7 @@ type UserService interface {
 	UpdateByID(ctx context.Context, ID int64, user User) (User, error)
 	ActivateStatus(ctx context.Context, token string) (User, error)
 	ResendEmailVerification(ctx context.Context, email string) (string, error)
-	ResetPassword(ctx context.Context, password string) (string, error)
+	ResetPassword(ctx context.Context, password string) (User, error)
 	ForgotPassword(ctx context.Context, email string) (string, error)
 }
 
