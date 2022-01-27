@@ -21,7 +21,7 @@ func SetUserOnContext(ctx context.Context, user User) context.Context {
 func GetUserOnContext(ctx context.Context) (User, error) {
 	user, ok := ctx.Value(keyUser).(User)
 	if !ok {
-		return User{}, ErrBadRequest{Message: "failed casting key to string"}
+		return User{}, ErrBadRequest{Message: "context doesn't contain user"}
 	}
 
 	return user, nil

@@ -130,6 +130,7 @@ type InputCountryFilter struct {
 
 // Claim ...
 type Claim struct {
+	ID     int64
 	Name   string
 	Email  string
 	Type   string
@@ -184,6 +185,8 @@ type InputUpdateUser struct {
 // Scholarship ...
 type Scholarship struct {
 	ID                     int64         `json:"id"`
+	SponsorID              int64         `json:"sponsor_id"`
+	Sponsor                User          `json:"sponsor"`
 	Name                   string        `json:"name"`
 	Amount                 int           `json:"amount"`
 	Status                 int           `json:"status"`

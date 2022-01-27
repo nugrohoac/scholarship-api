@@ -137,6 +137,7 @@ func SeedCardIdentities(db *sql.DB, t *testing.T, cardIdentities []sa.CardIdenti
 func SeedScholarship(db *sql.DB, t *testing.T, scholarships []sa.Scholarship) {
 	qInsert := sq.Insert("scholarship").
 		Columns("id",
+			"sponsor_id",
 			"name",
 			"amount",
 			"status",
@@ -155,6 +156,7 @@ func SeedScholarship(db *sql.DB, t *testing.T, scholarships []sa.Scholarship) {
 		require.NoError(t, err)
 
 		qInsert = qInsert.Values(scholarship.ID,
+			scholarship.SponsorID,
 			scholarship.Name,
 			scholarship.Amount,
 			scholarship.Status,

@@ -59,3 +59,8 @@ type EmailRepository interface {
 type ScholarshipRepository interface {
 	Create(ctx context.Context, scholarship Scholarship) (Scholarship, error)
 }
+
+// ScholarshipService ...
+type ScholarshipService interface {
+	Create(ctx context.Context, scholarship Scholarship) (Scholarship, error)
+}

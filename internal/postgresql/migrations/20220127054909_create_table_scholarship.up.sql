@@ -1,5 +1,6 @@
 CREATE TABLE "scholarship" (
     "id" SERIAL PRIMARY KEY,
+    "sponsor_id" bigint NOT NULL,
     "name" varchar(200) DEFAULT '',
     "amount" integer NOT NULL,
     "status" smallint DEFAULT 0,

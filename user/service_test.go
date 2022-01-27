@@ -341,7 +341,7 @@ func TestUserServiceUpdateByID(t *testing.T) {
 			},
 			updateUser:   testdata.FuncCaller{},
 			expectedResp: sa.User{},
-			expectedErr:  sa.ErrBadRequest{Message: "failed casting key to string"},
+			expectedErr:  sa.ErrBadRequest{Message: "context doesn't contain user"},
 		},
 		"error user is not sync": {
 			paramCtx:  ctxInvalid,
@@ -732,7 +732,7 @@ func TestUserServiceResetPassword(t *testing.T) {
 			paramCtx:      context.Background(),
 			resetPassword: testdata.FuncCaller{},
 			expectedResp:  sa.User{},
-			expectedErr:   sa.ErrBadRequest{Message: "failed casting key to string"},
+			expectedErr:   sa.ErrBadRequest{Message: "context doesn't contain user"},
 		},
 		"error": {
 			paramCtx: ctxValid,

@@ -34,7 +34,8 @@ func (s scholarshipRepo) Create(ctx context.Context, scholarship sa.Scholarship)
 	)
 
 	query, args, err := sq.Insert("scholarship").
-		Columns("name",
+		Columns("sponsor_id",
+			"name",
 			"amount",
 			"status",
 			"image",
@@ -45,7 +46,8 @@ func (s scholarshipRepo) Create(ctx context.Context, scholarship sa.Scholarship)
 			"funding_start",
 			"funding_end",
 			"created_at").
-		Values(scholarship.Name,
+		Values(scholarship.SponsorID,
+			scholarship.Name,
 			scholarship.Amount,
 			scholarship.Status,
 			byteImage,
