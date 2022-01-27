@@ -11,6 +11,7 @@ type RootGraphql struct {
 	query.CountryQuery
 	query.UserQuery
 	mutation.UserMutation
+	mutation.ScholarshipMutation
 }
 
 // NewRootGraphql ...
@@ -19,11 +20,13 @@ func NewRootGraphql(
 	countryQuery query.CountryQuery,
 	userQuery query.UserQuery,
 	userMutation mutation.UserMutation,
+	scholarshipMutation mutation.ScholarshipMutation,
 ) *RootGraphql {
 	return &RootGraphql{
 		bankQuery,
 		countryQuery,
 		userQuery,
 		userMutation,
+		scholarshipMutation,
 	}
 }

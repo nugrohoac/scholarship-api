@@ -213,3 +213,25 @@ type Requirement struct {
 	CreatedAt     time.Time `json:"created_at"`
 	UpdatedAt     time.Time `json:"updated_at"`
 }
+
+// InputScholarship ...
+type InputScholarship struct {
+	SponsorID              int32
+	Name                   string
+	Amount                 int
+	Image                  InputImage
+	Awardee                int
+	Deadline               time.Time
+	EligibilityDescription string
+	SubsidyDescription     string
+	FundingStart           time.Time
+	FundingEnd             time.Time
+	Requirements           []InputRequirement
+}
+
+// InputRequirement ...
+type InputRequirement struct {
+	Type  string
+	Name  string
+	Value string
+}

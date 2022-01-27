@@ -1,0 +1,17 @@
+type requirement {
+    id: Int
+    scholarshipId: Int
+    type: String
+    name: String
+    value: String
+}
+
+enum requirementType {
+    document
+}
+
+input inputRequirement {
+    type: String!
+    name: String!
+    value: String!
+}
