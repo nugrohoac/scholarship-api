@@ -54,3 +54,8 @@ type EmailRepository interface {
 	SendActivateUser(ctx context.Context, email, token string) error
 	SendForgotPassword(ctx context.Context, email, token string) error
 }
+
+// ScholarshipRepository ...
+type ScholarshipRepository interface {
+	Create(ctx context.Context, scholarship Scholarship) (Scholarship, error)
+}

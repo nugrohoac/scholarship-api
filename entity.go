@@ -180,3 +180,33 @@ type InputUpdateUser struct {
 	BankAccountNo   string
 	BankAccountName string
 }
+
+// Scholarship ...
+type Scholarship struct {
+	ID                     int64         `json:"id"`
+	Name                   string        `json:"name"`
+	Amount                 int           `json:"amount"`
+	Status                 int           `json:"status"`
+	Image                  Image         `json:"image"`
+	Awardee                int           `json:"awardee"`
+	CurrentApplicant       int           `json:"current_applicant"`
+	Deadline               time.Time     `json:"deadline"`
+	EligibilityDescription string        `json:"eligibility_description"`
+	SubsidyDescription     string        `json:"subsidy_description"`
+	FundingStart           time.Time     `json:"funding_start"`
+	FundingEnd             time.Time     `json:"funding_end"`
+	Requirements           []Requirement `json:"requirements"`
+	CreatedAt              time.Time     `json:"created_at"`
+	UpdatedAt              time.Time     `json:"updated_at"`
+}
+
+// Requirement ...
+type Requirement struct {
+	ID            int64     `json:"id"`
+	ScholarshipID int64     `json:"scholarship_id"`
+	Type          string    `json:"type"`
+	Name          string    `json:"name"`
+	Value         string    `json:"value"`
+	CreatedAt     time.Time `json:"created_at"`
+	UpdatedAt     time.Time `json:"updated_at"`
+}
