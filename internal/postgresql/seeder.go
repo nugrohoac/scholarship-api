@@ -3,8 +3,9 @@ package postgresql
 import (
 	"database/sql"
 	"encoding/json"
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 
 	sq "github.com/Masterminds/squirrel"
 	sa "github.com/Nusantara-Muda/scholarship-api"
@@ -122,6 +123,81 @@ func SeedCardIdentities(db *sql.DB, t *testing.T, cardIdentities []sa.CardIdenti
 			byteImg,
 			cardIdentity.UserID,
 			cardIdentity.CreatedAt,
+		)
+	}
+
+	query, args, err := qInsert.PlaceholderFormat(sq.Dollar).ToSql()
+	require.NoError(t, err)
+
+	_, err = db.Exec(query, args...)
+	require.NoError(t, err)
+}
+
+// SeedScholarship ...
+func SeedScholarship(db *sql.DB, t *testing.T, scholarships []sa.Scholarship) {
+	qInsert := sq.Insert("scholarship").
+		Columns("id",
+			"sponsor_id",
+			"name",
+			"amount",
+			"status",
+			"image",
+			"awardee",
+			"deadline",
+			"eligibility_description",
+			"subsidy_description",
+			"funding_start",
+			"funding_end",
+			"created_at",
+		)
+
+	for _, scholarship := range scholarships {
+		byteImage, err := json.Marshal(scholarship.Image)
+		require.NoError(t, err)
+
+		qInsert = qInsert.Values(scholarship.ID,
+			scholarship.SponsorID,
+			scholarship.Name,
+			scholarship.Amount,
+			scholarship.Status,
+			byteImage,
+			scholarship.Awardee,
+			scholarship.Deadline,
+			scholarship.EligibilityDescription,
+			scholarship.SubsidyDescription,
+			scholarship.FundingStart,
+			scholarship.FundingEnd,
+			scholarship.CreatedAt,
+		)
+	}
+
+	query, args, err := qInsert.PlaceholderFormat(sq.Dollar).ToSql()
+	if err != nil {
+		require.Error(t, err)
+	}
+
+	_, err = db.Exec(query, args...)
+	require.NoError(t, err)
+}
+
+// SeedRequirements ...
+func SeedRequirements(db *sql.DB, t *testing.T, requirements []sa.Requirement) {
+	qInsert := sq.Insert("requirement").
+		Columns("id",
+			"scholarship_id",
+			"type",
+			"name",
+			"value",
+			"created_at",
+		)
+
+	for _, req := range requirements {
+		qInsert = qInsert.Values(req.ID,
+			req.ScholarshipID,
+			req.Type,
+			req.Name,
+			req.Value,
+			req.CreatedAt,
 		)
 	}
 

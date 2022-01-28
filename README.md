@@ -78,3 +78,11 @@ $ go run cmd/app/main.go -config-path=your-custom-env
 * 0 status un verification
 * 1 status verify but un complete profile
 * 2 status verify and complete profile
+
+
+## Scholarship status
+* -1 = reject
+* 0 = waiting for payment
+* 1 = payment but not start
+* 2 = on going
+* 3 = done

@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/Nusantara-Muda/scholarship-api/internal/email"
+	"github.com/Nusantara-Muda/scholarship-api/scholarship"
 	"github.com/mailgun/mailgun-go/v4"
 	"log"
 	"time"
@@ -26,14 +27,16 @@ var (
 	// Database
 	dsn string
 
-	bankRepo    sa.BankRepository
-	countryRepo sa.CountryRepository
-	userRepo    sa.UserRepository
-	emailRepo   sa.EmailRepository
+	bankRepo        sa.BankRepository
+	countryRepo     sa.CountryRepository
+	userRepo        sa.UserRepository
+	emailRepo       sa.EmailRepository
+	scholarshipRepo sa.ScholarshipRepository
 
-	bankService    sa.BankService
-	countryService sa.CountryService
-	userService    sa.UserService
+	bankService        sa.BankService
+	countryService     sa.CountryService
+	userService        sa.UserService
+	scholarshipService sa.ScholarshipService
 
 	// email
 	emailDomain        string
@@ -52,6 +55,8 @@ var (
 
 	// UserMutation ...
 	UserMutation mutation.UserMutation
+	// ScholarshipMutation ...
+	ScholarshipMutation mutation.ScholarshipMutation
 
 	// PortApp apps
 	PortApp = 7070
@@ -140,12 +145,15 @@ func initApp() {
 	bankRepo = postgresql.NewBankRepository(db)
 	userRepo = postgresql.NewUserRepository(db)
 	countryRepo = postgresql.NewCountryRepository(db)
+	scholarshipRepo = postgresql.NewScholarshipRepository(db)
 
 	bankService = bank.NewBankService(bankRepo)
 	userService = user.NewUserService(userRepo, jwtHash, emailRepo)
 	countryService = country.NewCountryService(countryRepo)
+	scholarshipService = scholarship.NewScholarshipService(scholarshipRepo)
 
 	UserMutation = mutation.NewUserMutation(userService)
+	ScholarshipMutation = mutation.NewScholarshipMutation(scholarshipService)
 
 	BankQuery = query.NewBankQuery(bankService)
 	CountryQuery = query.NewCountryQuery(countryService)

@@ -19,6 +19,7 @@ func (j jwtHash) Encode(user sa.User) (string, error) {
 	expireTime := time.Now().Add(j.duration)
 
 	c := sa.Claim{
+		ID:     user.ID,
 		Name:   user.Name,
 		Email:  user.Email,
 		Type:   user.Type,

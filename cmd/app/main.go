@@ -36,6 +36,7 @@ func main() {
 		cmd.CountryQuery,
 		cmd.UserQuery,
 		cmd.UserMutation,
+		cmd.ScholarshipMutation,
 	)
 
 	graphQlSchema := _graphql.MustParseSchema(schema.String(), rootResolver, opts...)
