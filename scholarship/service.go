@@ -10,6 +10,7 @@ type scholarshipService struct {
 }
 
 // Create ...
+// Status of sponsor should 2
 func (s scholarshipService) Create(ctx context.Context, scholarship sa.Scholarship) (sa.Scholarship, error) {
 	sponsor, err := sa.GetUserOnContext(ctx)
 	if err != nil {
@@ -18,6 +19,10 @@ func (s scholarshipService) Create(ctx context.Context, scholarship sa.Scholarsh
 
 	if sponsor.ID != scholarship.SponsorID {
 		return sa.Scholarship{}, sa.ErrUnAuthorize{Message: "sponsor id is not match"}
+	}
+
+	if sponsor.Status != 2 {
+		return sa.Scholarship{}, sa.ErrNotAllowed{Message: "sponsor un complete profile"}
 	}
 
 	scholarship.Sponsor = sponsor
@@ -29,7 +34,7 @@ func (s scholarshipService) Create(ctx context.Context, scholarship sa.Scholarsh
 	if err != nil {
 		return sa.Scholarship{}, nil
 	}
-	
+
 	// crate invoice here, next sprint ( sprint 3 )
 
 	return scholarship, nil

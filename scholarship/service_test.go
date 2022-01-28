@@ -22,10 +22,17 @@ func TestScholarshipServiceCreate(t *testing.T) {
 	testdata.GoldenJSONUnmarshal(t, "scholarship", &scholarship)
 	testdata.GoldenJSONUnmarshal(t, "user", &user)
 
+	user.Status = 2
+
 	scholarship.Sponsor = user
 	scholarship.SponsorID = user.ID
 
+	userUnCompleteProfile := user
+	userUnCompleteProfile.Status = 0
+
 	ctxValid := sa.SetUserOnContext(context.Background(), user)
+	ctxUnComplete := sa.SetUserOnContext(context.Background(), userUnCompleteProfile)
+
 	scholarshipNotMatch := scholarship
 	scholarshipNotMatch.SponsorID = 2
 
@@ -49,6 +56,13 @@ func TestScholarshipServiceCreate(t *testing.T) {
 			createScholarship: testdata.FuncCaller{},
 			expectedResp:      sa.Scholarship{},
 			expectedErr:       sa.ErrUnAuthorize{Message: "sponsor id is not match"},
+		},
+		"sponsor status un complete": {
+			paramCtx:          ctxUnComplete,
+			paramScholarship:  scholarship,
+			createScholarship: testdata.FuncCaller{},
+			expectedResp:      sa.Scholarship{},
+			expectedErr:       sa.ErrNotAllowed{Message: "sponsor un complete profile"},
 		},
 		"failed create scholarship": {
 			paramCtx:         ctxValid,
