@@ -158,6 +158,10 @@ func (s scholarshipRepo) Fetch(ctx context.Context, filter sa.ScholarshipFilter)
 		qSelect = qSelect.Where(sq.Eq{"sponsor_id": filter.SponsorID})
 	}
 
+	if len(filter.Status) > 0 {
+		qSelect = qSelect.Where(sq.Eq{"status": filter.Status})
+	}
+
 	query, args, err := qSelect.ToSql()
 	if err != nil {
 		return nil, "", err

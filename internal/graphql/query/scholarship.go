@@ -12,9 +12,29 @@ type ScholarshipQuery struct {
 	scholarshipService sa.ScholarshipService
 }
 
-// GetScholarshipBySponsor ...
-func (s ScholarshipQuery) GetScholarshipBySponsor(ctx context.Context, param struct{ ID int32 }) (*resolver.ScholarshipFeedResolver, error) {
-	scholarshipFeed, err := s.scholarshipService.GetBySponsor(ctx, int64(param.ID))
+// FetchScholarship ...
+func (s ScholarshipQuery) FetchScholarship(ctx context.Context, param sa.InputScholarshipFilter) (*resolver.ScholarshipFeedResolver, error) {
+	filter := sa.ScholarshipFilter{}
+
+	if param.Limit != nil {
+		filter.Limit = uint64(*param.Limit)
+	}
+
+	if param.Cursor != nil {
+		filter.Cursor = *param.Cursor
+	}
+
+	if param.SponsorID != nil {
+		filter.SponsorID = int64(*param.SponsorID)
+	}
+
+	if param.Status != nil {
+		for _, status := range *param.Status {
+			filter.Status = append(filter.Status, *status)
+		}
+	}
+
+	scholarshipFeed, err := s.scholarshipService.Fetch(ctx, filter)
 	if err != nil {
 		return nil, err
 	}

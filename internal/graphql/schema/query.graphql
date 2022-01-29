@@ -24,7 +24,10 @@ type Query {
         email: String!
     ): String
 
-    GetScholarshipBySponsor(
-        id: Int!
+    FetchScholarship(
+        sponsorId: Int
+        cursor: String
+        limit: Int
+        status: [Int]
     ): scholarshipFeed
 }

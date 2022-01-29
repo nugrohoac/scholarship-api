@@ -208,6 +208,7 @@ type ScholarshipFilter struct {
 	Limit     uint64
 	Cursor    string
 	SponsorID int64
+	Status    []int32
 }
 
 // InputScholarshipFilter ...
@@ -215,6 +216,7 @@ type InputScholarshipFilter struct {
 	Limit     *int32
 	Cursor    *string
 	SponsorID *int32
+	Status    *[]*int32
 }
 
 // ScholarshipFeed ...

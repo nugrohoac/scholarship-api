@@ -40,18 +40,9 @@ func (s scholarshipService) Create(ctx context.Context, scholarship sa.Scholarsh
 	return scholarship, nil
 }
 
-// GetBySponsor ...
-func (s scholarshipService) GetBySponsor(ctx context.Context, sponsorID int64) (sa.ScholarshipFeed, error) {
-	sponsor, err := sa.GetUserOnContext(ctx)
-	if err != nil {
-		return sa.ScholarshipFeed{}, err
-	}
-
-	if sponsor.ID != sponsorID {
-		return sa.ScholarshipFeed{}, sa.ErrUnAuthorize{Message: "sponsor id is not match"}
-	}
-
-	scholarships, cursor, err := s.scholarshipRepo.Fetch(ctx, sa.ScholarshipFilter{SponsorID: sponsorID})
+// Fetch ...
+func (s scholarshipService) Fetch(ctx context.Context, filter sa.ScholarshipFilter) (sa.ScholarshipFeed, error) {
+	scholarships, cursor, err := s.scholarshipRepo.Fetch(ctx, filter)
 	if err != nil {
 		return sa.ScholarshipFeed{}, err
 	}

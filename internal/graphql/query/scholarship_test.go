@@ -36,30 +36,26 @@ func TestScholarshipQuery_GetScholarshipBySponsor(t *testing.T) {
 	}
 
 	tests := map[string]struct {
-		paramID                 struct{ ID int32 }
-		getScholarshipBySponsor testdata.FuncCaller
-		expectedResp            *resolver.ScholarshipFeedResolver
-		expectedErr             error
+		param            sa.InputScholarshipFilter
+		fetchScholarship testdata.FuncCaller
+		expectedResp     *resolver.ScholarshipFeedResolver
+		expectedErr      error
 	}{
 		"success": {
-			paramID: struct {
-				ID int32
-			}{ID: int32(sponsor.ID)},
-			getScholarshipBySponsor: testdata.FuncCaller{
+			param: sa.InputScholarshipFilter{},
+			fetchScholarship: testdata.FuncCaller{
 				IsCalled: true,
-				Input:    []interface{}{mock.Anything, sponsor.ID},
+				Input:    []interface{}{mock.Anything, sa.ScholarshipFilter{}},
 				Output:   []interface{}{sa.ScholarshipFeed{Cursor: cursor, Scholarships: scholarships}, nil},
 			},
 			expectedResp: &scholarshipFeedResolver,
 			expectedErr:  nil,
 		},
 		"error": {
-			paramID: struct {
-				ID int32
-			}{ID: int32(sponsor.ID)},
-			getScholarshipBySponsor: testdata.FuncCaller{
+			param: sa.InputScholarshipFilter{},
+			fetchScholarship: testdata.FuncCaller{
 				IsCalled: true,
-				Input:    []interface{}{mock.Anything, sponsor.ID},
+				Input:    []interface{}{mock.Anything, sa.ScholarshipFilter{}},
 				Output:   []interface{}{sa.ScholarshipFeed{}, errors.New("error")},
 			},
 			expectedResp: nil,
@@ -71,14 +67,14 @@ func TestScholarshipQuery_GetScholarshipBySponsor(t *testing.T) {
 		t.Run(testName, func(t *testing.T) {
 			scholarshipServiceMock := new(mocks.ScholarshipService)
 
-			if test.getScholarshipBySponsor.IsCalled {
-				scholarshipServiceMock.On("GetBySponsor", test.getScholarshipBySponsor.Input...).
-					Return(test.getScholarshipBySponsor.Output...).
+			if test.fetchScholarship.IsCalled {
+				scholarshipServiceMock.On("Fetch", test.fetchScholarship.Input...).
+					Return(test.fetchScholarship.Output...).
 					Once()
 			}
 
 			scholarshipQuery := query.NewScholarshipQuery(scholarshipServiceMock)
-			resp, err := scholarshipQuery.GetScholarshipBySponsor(context.Background(), test.paramID)
+			resp, err := scholarshipQuery.FetchScholarship(context.Background(), test.param)
 			scholarshipServiceMock.AssertExpectations(t)
 
 			if err != nil {

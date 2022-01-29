@@ -3,6 +3,7 @@ package scholarship_test
 import (
 	"context"
 	"errors"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 
 	"testing"
@@ -128,49 +129,30 @@ func TestScholarshipServiceGetBySponsor(t *testing.T) {
 	testdata.GoldenJSONUnmarshal(t, "scholarships", &scholarships)
 	testdata.GoldenJSONUnmarshal(t, "user", &sponsor)
 
-	ctxValid := sa.SetUserOnContext(context.Background(), sponsor)
-
 	scholarships[0].SponsorID = 1
 	scholarships[1].SponsorID = 1
 
 	tests := map[string]struct {
-		paramCtx         context.Context
-		paramSponsorID   int64
+		paramFilter      sa.ScholarshipFilter
 		fetchScholarship testdata.FuncCaller
 		expectedResp     sa.ScholarshipFeed
 		expectedErr      error
 	}{
-		"context doesn't content user": {
-			paramCtx:         context.Background(),
-			paramSponsorID:   scholarships[0].SponsorID,
-			fetchScholarship: testdata.FuncCaller{},
-			expectedResp:     sa.ScholarshipFeed{},
-			expectedErr:      sa.ErrBadRequest{Message: "context doesn't contain user"},
-		},
-		"sponsor id is not match": {
-			paramCtx:         ctxValid,
-			paramSponsorID:   10,
-			fetchScholarship: testdata.FuncCaller{},
-			expectedResp:     sa.ScholarshipFeed{},
-			expectedErr:      sa.ErrUnAuthorize{Message: "sponsor id is not match"},
-		},
 		"error fetch scholarship": {
-			paramCtx:       ctxValid,
-			paramSponsorID: scholarships[0].SponsorID,
+			paramFilter: sa.ScholarshipFilter{},
 			fetchScholarship: testdata.FuncCaller{
 				IsCalled: true,
-				Input:    []interface{}{ctxValid, sa.ScholarshipFilter{SponsorID: scholarships[0].SponsorID}},
+				Input:    []interface{}{mock.Anything, sa.ScholarshipFilter{}},
 				Output:   []interface{}{nil, "", errors.New("error")},
 			},
 			expectedResp: sa.ScholarshipFeed{},
 			expectedErr:  errors.New("error"),
 		},
 		"success": {
-			paramCtx:       ctxValid,
-			paramSponsorID: scholarships[0].SponsorID,
+			paramFilter: sa.ScholarshipFilter{},
 			fetchScholarship: testdata.FuncCaller{
 				IsCalled: true,
-				Input:    []interface{}{ctxValid, sa.ScholarshipFilter{SponsorID: scholarships[0].SponsorID}},
+				Input:    []interface{}{mock.Anything, sa.ScholarshipFilter{}},
 				Output:   []interface{}{scholarships, cursor, nil},
 			},
 			expectedResp: sa.ScholarshipFeed{Cursor: cursor, Scholarships: scholarships},
@@ -189,7 +171,7 @@ func TestScholarshipServiceGetBySponsor(t *testing.T) {
 			}
 
 			scholarshipService := _service.NewScholarshipService(scholarshipRepoMock)
-			resp, err := scholarshipService.GetBySponsor(test.paramCtx, test.paramSponsorID)
+			resp, err := scholarshipService.Fetch(context.Background(), test.paramFilter)
 			scholarshipRepoMock.AssertExpectations(t)
 
 			if err != nil {
