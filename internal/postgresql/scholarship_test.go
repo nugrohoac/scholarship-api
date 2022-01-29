@@ -44,3 +44,41 @@ func (s scholarshipSuite) TestScholarshipRepoCreate() {
 	require.NoError(s.T(), err)
 	require.Equal(s.T(), 1, count)
 }
+
+func (s scholarshipSuite) TestScholarshipRepoFetch() {
+	t := s.T()
+	scholarships := make([]sa.Scholarship, 0)
+	testdata.GoldenJSONUnmarshal(t, "scholarships", &scholarships)
+	postgresql.SeedScholarship(s.DBConn, t, scholarships)
+
+	scholarshipRepository := postgresql.NewScholarshipRepository(s.DBConn)
+
+	// without filter
+	response, cursor, err := scholarshipRepository.Fetch(context.Background(), sa.ScholarshipFilter{})
+	require.NoError(t, err)
+	require.Equal(t, "MjAyMi0wMS0yOVQxMzozMTowMS4yNjNa", cursor)
+	require.Equal(t, 2, len(response))
+	require.Equal(t, int64(3), response[0].ID)
+	require.Equal(t, int64(2), response[1].ID)
+
+	// filter limit 1
+	response, cursor, err = scholarshipRepository.Fetch(context.Background(), sa.ScholarshipFilter{Limit: 1})
+	require.NoError(t, err)
+	require.Equal(t, "MjAyMi0wMS0yOVQxMzozMTowMy4yNjNa", cursor)
+	require.Equal(t, 1, len(response))
+	require.Equal(t, int64(3), response[0].ID)
+
+	// filter cursor
+	response, cursor, err = scholarshipRepository.Fetch(context.Background(), sa.ScholarshipFilter{Cursor: "MjAyMi0wMS0yOVQxMzozMTowMy4yNjNa"})
+	require.NoError(t, err)
+	require.Equal(t, "MjAyMi0wMS0yOVQxMzozMTowMS4yNjNa", cursor)
+	require.Equal(t, 1, len(response))
+	require.Equal(t, int64(2), response[0].ID)
+
+	// filter sponsor id
+	response, cursor, err = scholarshipRepository.Fetch(context.Background(), sa.ScholarshipFilter{SponsorID: 1})
+	require.NoError(t, err)
+	require.Equal(t, "MjAyMi0wMS0yOVQxMzozMTowMS4yNjNa", cursor)
+	require.Equal(t, 1, len(response))
+	require.Equal(t, int64(2), response[0].ID)
+}

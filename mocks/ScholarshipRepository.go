@@ -34,3 +34,33 @@ func (_m *ScholarshipRepository) Create(ctx context.Context, scholarship scholar
 
 	return r0, r1
 }
+
+// Fetch provides a mock function with given fields: ctx, filter
+func (_m *ScholarshipRepository) Fetch(ctx context.Context, filter scholarship_api.ScholarshipFilter) ([]scholarship_api.Scholarship, string, error) {
+	ret := _m.Called(ctx, filter)
+
+	var r0 []scholarship_api.Scholarship
+	if rf, ok := ret.Get(0).(func(context.Context, scholarship_api.ScholarshipFilter) []scholarship_api.Scholarship); ok {
+		r0 = rf(ctx, filter)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]scholarship_api.Scholarship)
+		}
+	}
+
+	var r1 string
+	if rf, ok := ret.Get(1).(func(context.Context, scholarship_api.ScholarshipFilter) string); ok {
+		r1 = rf(ctx, filter)
+	} else {
+		r1 = ret.Get(1).(string)
+	}
+
+	var r2 error
+	if rf, ok := ret.Get(2).(func(context.Context, scholarship_api.ScholarshipFilter) error); ok {
+		r2 = rf(ctx, filter)
+	} else {
+		r2 = ret.Error(2)
+	}
+
+	return r0, r1, r2
+}

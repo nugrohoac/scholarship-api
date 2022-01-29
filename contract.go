@@ -58,6 +58,7 @@ type EmailRepository interface {
 // ScholarshipRepository ...
 type ScholarshipRepository interface {
 	Create(ctx context.Context, scholarship Scholarship) (Scholarship, error)
+	Fetch(ctx context.Context, filter ScholarshipFilter) ([]Scholarship, string, error)
 }
 
 // ScholarshipService ...
