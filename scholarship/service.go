@@ -40,6 +40,21 @@ func (s scholarshipService) Create(ctx context.Context, scholarship sa.Scholarsh
 	return scholarship, nil
 }
 
+// Fetch ...
+func (s scholarshipService) Fetch(ctx context.Context, filter sa.ScholarshipFilter) (sa.ScholarshipFeed, error) {
+	scholarships, cursor, err := s.scholarshipRepo.Fetch(ctx, filter)
+	if err != nil {
+		return sa.ScholarshipFeed{}, err
+	}
+
+	scholarshipFeed := sa.ScholarshipFeed{
+		Cursor:       cursor,
+		Scholarships: scholarships,
+	}
+
+	return scholarshipFeed, nil
+}
+
 // NewScholarshipService ...
 func NewScholarshipService(scholarshipRepo sa.ScholarshipRepository) sa.ScholarshipService {
 	return scholarshipService{scholarshipRepo: scholarshipRepo}

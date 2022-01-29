@@ -101,3 +101,26 @@ func (s ScholarshipResolver) Requirements() *[]*RequirementResolver {
 
 	return &rs
 }
+
+// ScholarshipFeedResolver ...
+type ScholarshipFeedResolver struct {
+	ScholarshipFeed sa.ScholarshipFeed
+}
+
+// Cursor ...
+func (s ScholarshipFeedResolver) Cursor() *string {
+	return &s.ScholarshipFeed.Cursor
+}
+
+// Scholarships ...
+func (s ScholarshipFeedResolver) Scholarships() *[]*ScholarshipResolver {
+	scholarshipResolvers := make([]*ScholarshipResolver, 0)
+
+	for _, scholarship := range s.ScholarshipFeed.Scholarships {
+		scholarship := scholarship
+
+		scholarshipResolvers = append(scholarshipResolvers, &ScholarshipResolver{Scholarship: scholarship})
+	}
+
+	return &scholarshipResolvers
+}

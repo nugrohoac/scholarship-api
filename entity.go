@@ -200,7 +200,29 @@ type Scholarship struct {
 	FundingEnd             time.Time     `json:"funding_end"`
 	Requirements           []Requirement `json:"requirements"`
 	CreatedAt              time.Time     `json:"created_at"`
-	UpdatedAt              time.Time     `json:"updated_at"`
+	UpdatedAt              time.Time     `json:"-"`
+}
+
+// ScholarshipFilter ...
+type ScholarshipFilter struct {
+	Limit     uint64
+	Cursor    string
+	SponsorID int64
+	Status    []int32
+}
+
+// InputScholarshipFilter ...
+type InputScholarshipFilter struct {
+	Limit     *int32
+	Cursor    *string
+	SponsorID *int32
+	Status    *[]*int32
+}
+
+// ScholarshipFeed ...
+type ScholarshipFeed struct {
+	Cursor       string
+	Scholarships []Scholarship
 }
 
 // Requirement ...
@@ -211,7 +233,7 @@ type Requirement struct {
 	Name          string    `json:"name"`
 	Value         string    `json:"value"`
 	CreatedAt     time.Time `json:"created_at"`
-	UpdatedAt     time.Time `json:"updated_at"`
+	UpdatedAt     time.Time `json:"-"`
 }
 
 // InputScholarship ...

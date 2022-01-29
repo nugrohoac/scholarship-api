@@ -3,6 +3,7 @@ package scholarship_test
 import (
 	"context"
 	"errors"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 
 	"testing"
@@ -12,6 +13,8 @@ import (
 	_service "github.com/Nusantara-Muda/scholarship-api/scholarship"
 	"github.com/Nusantara-Muda/scholarship-api/testdata"
 )
+
+var cursor = "next-cursor"
 
 func TestScholarshipServiceCreate(t *testing.T) {
 	var (
@@ -115,4 +118,71 @@ func TestScholarshipServiceCreate(t *testing.T) {
 
 	}
 
+}
+
+func TestScholarshipServiceGetBySponsor(t *testing.T) {
+	var (
+		scholarships = make([]sa.Scholarship, 0)
+		sponsor      sa.User
+	)
+
+	testdata.GoldenJSONUnmarshal(t, "scholarships", &scholarships)
+	testdata.GoldenJSONUnmarshal(t, "user", &sponsor)
+
+	scholarships[0].SponsorID = 1
+	scholarships[1].SponsorID = 1
+
+	tests := map[string]struct {
+		paramFilter      sa.ScholarshipFilter
+		fetchScholarship testdata.FuncCaller
+		expectedResp     sa.ScholarshipFeed
+		expectedErr      error
+	}{
+		"error fetch scholarship": {
+			paramFilter: sa.ScholarshipFilter{},
+			fetchScholarship: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, sa.ScholarshipFilter{}},
+				Output:   []interface{}{nil, "", errors.New("error")},
+			},
+			expectedResp: sa.ScholarshipFeed{},
+			expectedErr:  errors.New("error"),
+		},
+		"success": {
+			paramFilter: sa.ScholarshipFilter{},
+			fetchScholarship: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, sa.ScholarshipFilter{}},
+				Output:   []interface{}{scholarships, cursor, nil},
+			},
+			expectedResp: sa.ScholarshipFeed{Cursor: cursor, Scholarships: scholarships},
+			expectedErr:  nil,
+		},
+	}
+
+	for testName, test := range tests {
+		t.Run(testName, func(t *testing.T) {
+			scholarshipRepoMock := new(mocks.ScholarshipRepository)
+
+			if test.fetchScholarship.IsCalled {
+				scholarshipRepoMock.On("Fetch", test.fetchScholarship.Input...).
+					Return(test.fetchScholarship.Output...).
+					Once()
+			}
+
+			scholarshipService := _service.NewScholarshipService(scholarshipRepoMock)
+			resp, err := scholarshipService.Fetch(context.Background(), test.paramFilter)
+			scholarshipRepoMock.AssertExpectations(t)
+
+			if err != nil {
+				require.Error(t, err)
+				require.Equal(t, test.expectedErr, err)
+
+				return
+			}
+
+			require.NoError(t, err)
+			require.Equal(t, test.expectedResp, resp)
+		})
+	}
 }

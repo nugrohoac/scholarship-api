@@ -121,6 +121,110 @@ func (s scholarshipRepo) Create(ctx context.Context, scholarship sa.Scholarship)
 	return scholarship, nil
 }
 
+// Fetch ....
+func (s scholarshipRepo) Fetch(ctx context.Context, filter sa.ScholarshipFilter) ([]sa.Scholarship, string, error) {
+	qSelect := sq.Select("id",
+		"sponsor_id",
+		"name",
+		"amount",
+		"status",
+		"image",
+		"awardee",
+		"current_applicant",
+		"deadline",
+		"eligibility_description",
+		"subsidy_description",
+		"funding_start",
+		"funding_end",
+		"created_at",
+	).From("scholarship").
+		PlaceholderFormat(sq.Dollar).
+		OrderBy("created_at desc")
+
+	if filter.Limit > 0 {
+		qSelect = qSelect.Limit(filter.Limit)
+	}
+
+	if filter.Cursor != "" {
+		cursor, err := decodeCursor(filter.Cursor)
+		if err != nil {
+			return nil, "", err
+		}
+
+		qSelect = qSelect.Where(sq.Lt{"created_at": cursor})
+	}
+
+	if filter.SponsorID > 0 {
+		qSelect = qSelect.Where(sq.Eq{"sponsor_id": filter.SponsorID})
+	}
+
+	if len(filter.Status) > 0 {
+		qSelect = qSelect.Where(sq.Eq{"status": filter.Status})
+	}
+
+	query, args, err := qSelect.ToSql()
+	if err != nil {
+		return nil, "", err
+	}
+
+	rows, err := s.db.QueryContext(ctx, query, args...)
+	if err != nil {
+		return nil, "", err
+	}
+
+	defer func() {
+		if errClose := rows.Close(); errClose != nil {
+			logrus.Error(errClose)
+		}
+	}()
+
+	var (
+		scholarships = make([]sa.Scholarship, 0)
+		cursor       time.Time
+		cursorStr    string
+		byteImg      []byte
+	)
+
+	for rows.Next() {
+		var scholarship sa.Scholarship
+
+		if err = rows.Scan(
+			&scholarship.ID,
+			&scholarship.SponsorID,
+			&scholarship.Name,
+			&scholarship.Amount,
+			&scholarship.Status,
+			&byteImg,
+			&scholarship.Awardee,
+			&scholarship.CurrentApplicant,
+			&scholarship.Deadline,
+			&scholarship.EligibilityDescription,
+			&scholarship.SubsidyDescription,
+			&scholarship.FundingStart,
+			&scholarship.FundingEnd,
+			&scholarship.CreatedAt,
+		); err != nil {
+			return nil, "", err
+		}
+
+		if byteImg != nil {
+			if err = json.Unmarshal(byteImg, &scholarship.Image); err != nil {
+				return nil, "", err
+			}
+		}
+
+		cursor = scholarship.CreatedAt
+		scholarships = append(scholarships, scholarship)
+	}
+
+	cursorStr, err = encodeCursor(cursor)
+	if err != nil {
+		return nil, "", err
+	}
+
+	return scholarships, cursorStr, nil
+}
+
 // NewScholarshipRepository ...
 func NewScholarshipRepository(db *sql.DB) sa.ScholarshipRepository {
 	return scholarshipRepo{db: db}
