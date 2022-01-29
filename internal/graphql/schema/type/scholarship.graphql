@@ -15,3 +15,8 @@ type scholarship {
     FundingEnd: String
     requirements: [requirement]
 }
+
+type scholarshipFeed {
+    cursor: String
+    scholarships: [scholarship]
+}

@@ -35,6 +35,7 @@ func main() {
 		cmd.BankQuery,
 		cmd.CountryQuery,
 		cmd.UserQuery,
+		cmd.ScholarshipQuery,
 		cmd.UserMutation,
 		cmd.ScholarshipMutation,
 	)

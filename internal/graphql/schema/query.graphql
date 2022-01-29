@@ -23,4 +23,8 @@ type Query {
     ForgotPassword(
         email: String!
     ): String
+
+    GetScholarshipBySponsor(
+        id: Int!
+    ): scholarshipFeed
 }

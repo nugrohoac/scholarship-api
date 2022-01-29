@@ -57,6 +57,8 @@ var (
 	UserMutation mutation.UserMutation
 	// ScholarshipMutation ...
 	ScholarshipMutation mutation.ScholarshipMutation
+	// ScholarshipQuery ...
+	ScholarshipQuery query.ScholarshipQuery
 
 	// PortApp apps
 	PortApp = 7070
@@ -158,4 +160,5 @@ func initApp() {
 	BankQuery = query.NewBankQuery(bankService)
 	CountryQuery = query.NewCountryQuery(countryService)
 	UserQuery = query.NewUserQuery(userService)
+	ScholarshipQuery = query.NewScholarshipQuery(scholarshipService)
 }
