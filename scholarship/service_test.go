@@ -13,6 +13,8 @@ import (
 	"github.com/Nusantara-Muda/scholarship-api/testdata"
 )
 
+var cursor = "next-cursor"
+
 func TestScholarshipServiceCreate(t *testing.T) {
 	var (
 		scholarship sa.Scholarship
@@ -115,4 +117,90 @@ func TestScholarshipServiceCreate(t *testing.T) {
 
 	}
 
+}
+
+func TestScholarshipServiceGetBySponsor(t *testing.T) {
+	var (
+		scholarships = make([]sa.Scholarship, 0)
+		sponsor      sa.User
+	)
+
+	testdata.GoldenJSONUnmarshal(t, "scholarships", &scholarships)
+	testdata.GoldenJSONUnmarshal(t, "user", &sponsor)
+
+	ctxValid := sa.SetUserOnContext(context.Background(), sponsor)
+
+	scholarships[0].SponsorID = 1
+	scholarships[1].SponsorID = 1
+
+	tests := map[string]struct {
+		paramCtx         context.Context
+		paramSponsorID   int64
+		fetchScholarship testdata.FuncCaller
+		expectedResp     sa.ScholarshipFeed
+		expectedErr      error
+	}{
+		"context doesn't content user": {
+			paramCtx:         context.Background(),
+			paramSponsorID:   scholarships[0].SponsorID,
+			fetchScholarship: testdata.FuncCaller{},
+			expectedResp:     sa.ScholarshipFeed{},
+			expectedErr:      sa.ErrBadRequest{Message: "context doesn't contain user"},
+		},
+		"sponsor id is not match": {
+			paramCtx:         ctxValid,
+			paramSponsorID:   10,
+			fetchScholarship: testdata.FuncCaller{},
+			expectedResp:     sa.ScholarshipFeed{},
+			expectedErr:      sa.ErrUnAuthorize{Message: "sponsor id is not match"},
+		},
+		"error fetch scholarship": {
+			paramCtx:       ctxValid,
+			paramSponsorID: scholarships[0].SponsorID,
+			fetchScholarship: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{ctxValid, sa.ScholarshipFilter{SponsorID: scholarships[0].SponsorID}},
+				Output:   []interface{}{nil, "", errors.New("error")},
+			},
+			expectedResp: sa.ScholarshipFeed{},
+			expectedErr:  errors.New("error"),
+		},
+		"success": {
+			paramCtx:       ctxValid,
+			paramSponsorID: scholarships[0].SponsorID,
+			fetchScholarship: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{ctxValid, sa.ScholarshipFilter{SponsorID: scholarships[0].SponsorID}},
+				Output:   []interface{}{scholarships, cursor, nil},
+			},
+			expectedResp: sa.ScholarshipFeed{Cursor: cursor, Scholarships: scholarships},
+			expectedErr:  nil,
+		},
+	}
+
+	for testName, test := range tests {
+		t.Run(testName, func(t *testing.T) {
+			scholarshipRepoMock := new(mocks.ScholarshipRepository)
+
+			if test.fetchScholarship.IsCalled {
+				scholarshipRepoMock.On("Fetch", test.fetchScholarship.Input...).
+					Return(test.fetchScholarship.Output...).
+					Once()
+			}
+
+			scholarshipService := _service.NewScholarshipService(scholarshipRepoMock)
+			resp, err := scholarshipService.GetBySponsor(test.paramCtx, test.paramSponsorID)
+			scholarshipRepoMock.AssertExpectations(t)
+
+			if err != nil {
+				require.Error(t, err)
+				require.Equal(t, test.expectedErr, err)
+
+				return
+			}
+
+			require.NoError(t, err)
+			require.Equal(t, test.expectedResp, resp)
+		})
+	}
 }

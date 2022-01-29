@@ -64,4 +64,5 @@ type ScholarshipRepository interface {
 // ScholarshipService ...
 type ScholarshipService interface {
 	Create(ctx context.Context, scholarship Scholarship) (Scholarship, error)
+	GetBySponsor(ctx context.Context, sponsorID int64) (ScholarshipFeed, error)
 }

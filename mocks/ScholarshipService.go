@@ -34,3 +34,24 @@ func (_m *ScholarshipService) Create(ctx context.Context, scholarship scholarshi
 
 	return r0, r1
 }
+
+// GetBySponsor provides a mock function with given fields: ctx, sponsorID
+func (_m *ScholarshipService) GetBySponsor(ctx context.Context, sponsorID int64) (scholarship_api.ScholarshipFeed, error) {
+	ret := _m.Called(ctx, sponsorID)
+
+	var r0 scholarship_api.ScholarshipFeed
+	if rf, ok := ret.Get(0).(func(context.Context, int64) scholarship_api.ScholarshipFeed); ok {
+		r0 = rf(ctx, sponsorID)
+	} else {
+		r0 = ret.Get(0).(scholarship_api.ScholarshipFeed)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, int64) error); ok {
+		r1 = rf(ctx, sponsorID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
