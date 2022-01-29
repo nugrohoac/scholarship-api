@@ -240,14 +240,14 @@ type Requirement struct {
 type InputScholarship struct {
 	SponsorID              int32
 	Name                   string
-	Amount                 int
+	Amount                 int32
 	Image                  InputImage
-	Awardee                int
-	Deadline               time.Time
+	Awardee                int32
+	Deadline               string
 	EligibilityDescription string
 	SubsidyDescription     string
-	FundingStart           time.Time
-	FundingEnd             time.Time
+	FundingStart           string
+	FundingEnd             string
 	Requirements           []InputRequirement
 }
 

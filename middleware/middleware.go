@@ -44,6 +44,7 @@ func (m Middleware) Auth(handler echo.HandlerFunc) echo.HandlerFunc {
 		}
 
 		ctx = sa.SetUserOnContext(ctx, sa.User{
+			ID:     claim.ID,
 			Name:   claim.Name,
 			Email:  claim.Email,
 			Type:   claim.Type,

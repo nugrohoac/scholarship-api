@@ -4,6 +4,7 @@ import (
 	"context"
 	sa "github.com/Nusantara-Muda/scholarship-api"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/resolver"
+	"time"
 )
 
 // ScholarshipMutation ...
@@ -18,19 +19,34 @@ func (s ScholarshipMutation) CreateScholarship(ctx context.Context, param sa.Inp
 	scholarship := sa.Scholarship{
 		SponsorID: int64(param.SponsorID),
 		Name:      param.Name,
-		Amount:    param.Amount,
+		Amount:    int(param.Amount),
 		Image: sa.Image{
 			URL:    param.Image.URL,
 			Width:  param.Image.Width,
 			Height: param.Image.Height,
 		},
-		Awardee:                param.Awardee,
-		Deadline:               param.Deadline,
+		Awardee:                int(param.Awardee),
 		EligibilityDescription: param.EligibilityDescription,
 		SubsidyDescription:     param.SubsidyDescription,
-		FundingStart:           param.FundingStart,
-		FundingEnd:             param.FundingEnd,
 	}
+
+	deadline, err := time.Parse(time.RFC3339, param.Deadline)
+	if err != nil {
+		return nil, err
+	}
+	scholarship.Deadline = deadline
+
+	fundingStart, err := time.Parse(time.RFC3339, param.FundingStart)
+	if err != nil {
+		return nil, err
+	}
+	scholarship.FundingStart = fundingStart
+
+	fundingEnd, err := time.Parse(time.RFC3339, param.FundingEnd)
+	if err != nil {
+		return nil, err
+	}
+	scholarship.FundingEnd = fundingEnd
 
 	for _, req := range param.Requirements {
 		requirements = append(requirements, sa.Requirement{
@@ -42,7 +58,7 @@ func (s ScholarshipMutation) CreateScholarship(ctx context.Context, param sa.Inp
 
 	scholarship.Requirements = requirements
 
-	scholarship, err := s.scholarshipService.Create(ctx, scholarship)
+	scholarship, err = s.scholarshipService.Create(ctx, scholarship)
 	if err != nil {
 		return nil, err
 	}
