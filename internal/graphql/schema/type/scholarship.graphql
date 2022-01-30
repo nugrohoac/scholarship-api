@@ -12,7 +12,7 @@ type scholarship {
     eligibilityDescription: String
     subsidyDescription: String
     fundingStart: String
-    FundingEnd: String
+    fundingEnd: String
     requirements: [requirement]
 }
 
