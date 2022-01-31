@@ -82,3 +82,25 @@ func (s scholarshipSuite) TestScholarshipRepoFetch() {
 	require.Equal(t, 1, len(response))
 	require.Equal(t, int64(2), response[0].ID)
 }
+
+func (s scholarshipSuite) TestScholarshipRepoGetByID() {
+	var (
+		scholarship  sa.Scholarship
+		requirements = make([]sa.Requirement, 0)
+	)
+
+	testdata.GoldenJSONUnmarshal(s.T(), "scholarship", &scholarship)
+	testdata.GoldenJSONUnmarshal(s.T(), "requirements", &requirements)
+
+	requirements[0].ScholarshipID = 1
+	requirements[1].ScholarshipID = 1
+
+	postgresql.SeedScholarship(s.DBConn, s.T(), []sa.Scholarship{scholarship})
+	postgresql.SeedRequirements(s.DBConn, s.T(), requirements)
+
+	scholarshipRepo := postgresql.NewScholarshipRepository(s.DBConn)
+	response, err := scholarshipRepo.GetByID(context.Background(), scholarship.ID)
+	require.NoError(s.T(), err)
+	require.Equal(s.T(), 2, len(response.Requirements))
+	require.Equal(s.T(), 3, len(response.RequirementDescriptions))
+}
