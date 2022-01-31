@@ -32,12 +32,13 @@ func TestScholarshipMutationCreate(t *testing.T) {
 			Width:  scholarship.Image.Width,
 			Height: scholarship.Image.Height,
 		},
-		Awardee:                int32(scholarship.Awardee),
-		Deadline:               scholarship.Deadline.Format(time.RFC3339Nano),
-		EligibilityDescription: scholarship.EligibilityDescription,
-		SubsidyDescription:     scholarship.SubsidyDescription,
-		FundingStart:           scholarship.FundingStart.Format(time.RFC3339Nano),
-		FundingEnd:             scholarship.FundingEnd.Format(time.RFC3339Nano),
+		Awardee:                 int32(scholarship.Awardee),
+		Deadline:                scholarship.Deadline.Format(time.RFC3339Nano),
+		EligibilityDescription:  scholarship.EligibilityDescription,
+		SubsidyDescription:      scholarship.SubsidyDescription,
+		RequirementDescriptions: scholarship.RequirementDescriptions,
+		FundingStart:            scholarship.FundingStart.Format(time.RFC3339Nano),
+		FundingEnd:              scholarship.FundingEnd.Format(time.RFC3339Nano),
 	}
 
 	for i, req := range requirements {

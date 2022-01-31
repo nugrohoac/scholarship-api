@@ -10,6 +10,7 @@ CREATE TABLE "scholarship" (
     "deadline" timestamp(3) NOT NULL,
     "eligibility_description" text DEFAULT '',
     "subsidy_description" text DEFAULT '',
+    "requirement_descriptions" text DEFAULT '',
     "funding_start" timestamp(3) NOT NULL,
     "funding_end" timestamp(3) NOT NULL,
     "created_at" timestamp(3) DEFAULT CURRENT_TIMESTAMP(3),

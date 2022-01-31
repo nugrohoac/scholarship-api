@@ -16,6 +16,11 @@
    "deadline":"2022-01-30T13:14:10.045586+07:00",
    "eligibility_description":"eligibility description",
    "subsidy_description":"subsidy description",
+   "requirement_descriptions": [
+        "requirement_description1",
+        "requirement_description2",
+        "requirement_description3"
+   ],
    "funding_start":"2022-02-01T13:14:10.045586+07:00",
    "funding_end":"2022-02-06T13:14:10.045586+07:00",
    "requirements":null,

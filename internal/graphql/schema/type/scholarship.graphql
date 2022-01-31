@@ -11,6 +11,7 @@ type scholarship {
     deadline: String
     eligibilityDescription: String
     subsidyDescription: String
+    requirementDescriptions: [String]
     fundingStart: String
     fundingEnd: String
     requirements: [requirement]

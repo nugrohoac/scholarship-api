@@ -184,23 +184,24 @@ type InputUpdateUser struct {
 
 // Scholarship ...
 type Scholarship struct {
-	ID                     int64         `json:"id"`
-	SponsorID              int64         `json:"sponsor_id"`
-	Sponsor                User          `json:"sponsor"`
-	Name                   string        `json:"name"`
-	Amount                 int           `json:"amount"`
-	Status                 int           `json:"status"`
-	Image                  Image         `json:"image"`
-	Awardee                int           `json:"awardee"`
-	CurrentApplicant       int           `json:"current_applicant"`
-	Deadline               time.Time     `json:"deadline"`
-	EligibilityDescription string        `json:"eligibility_description"`
-	SubsidyDescription     string        `json:"subsidy_description"`
-	FundingStart           time.Time     `json:"funding_start"`
-	FundingEnd             time.Time     `json:"funding_end"`
-	Requirements           []Requirement `json:"requirements"`
-	CreatedAt              time.Time     `json:"created_at"`
-	UpdatedAt              time.Time     `json:"-"`
+	ID                      int64         `json:"id"`
+	SponsorID               int64         `json:"sponsor_id"`
+	Sponsor                 User          `json:"sponsor"`
+	Name                    string        `json:"name"`
+	Amount                  int           `json:"amount"`
+	Status                  int           `json:"status"`
+	Image                   Image         `json:"image"`
+	Awardee                 int           `json:"awardee"`
+	CurrentApplicant        int           `json:"current_applicant"`
+	Deadline                time.Time     `json:"deadline"`
+	EligibilityDescription  string        `json:"eligibility_description"`
+	SubsidyDescription      string        `json:"subsidy_description"`
+	RequirementDescriptions []string      `json:"requirement_descriptions"`
+	FundingStart            time.Time     `json:"funding_start"`
+	FundingEnd              time.Time     `json:"funding_end"`
+	Requirements            []Requirement `json:"requirements"`
+	CreatedAt               time.Time     `json:"created_at"`
+	UpdatedAt               time.Time     `json:"-"`
 }
 
 // ScholarshipFilter ...
@@ -238,17 +239,18 @@ type Requirement struct {
 
 // InputScholarship ...
 type InputScholarship struct {
-	SponsorID              int32
-	Name                   string
-	Amount                 int32
-	Image                  InputImage
-	Awardee                int32
-	Deadline               string
-	EligibilityDescription string
-	SubsidyDescription     string
-	FundingStart           string
-	FundingEnd             string
-	Requirements           []InputRequirement
+	SponsorID               int32
+	Name                    string
+	Amount                  int32
+	Image                   InputImage
+	Awardee                 int32
+	Deadline                string
+	EligibilityDescription  string
+	SubsidyDescription      string
+	RequirementDescriptions []string
+	FundingStart            string
+	FundingEnd              string
+	Requirements            []InputRequirement
 }
 
 // InputRequirement ...

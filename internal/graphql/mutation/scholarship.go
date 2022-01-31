@@ -56,6 +56,10 @@ func (s ScholarshipMutation) CreateScholarship(ctx context.Context, param sa.Inp
 		})
 	}
 
+	for _, reqDesc := range param.RequirementDescriptions {
+		scholarship.RequirementDescriptions = append(scholarship.RequirementDescriptions, reqDesc)
+	}
+
 	scholarship.Requirements = requirements
 
 	scholarship, err = s.scholarshipService.Create(ctx, scholarship)
