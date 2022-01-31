@@ -42,6 +42,16 @@ func (s ScholarshipQuery) FetchScholarship(ctx context.Context, param sa.InputSc
 	return &resolver.ScholarshipFeedResolver{ScholarshipFeed: scholarshipFeed}, nil
 }
 
+// GetScholarshipByID ...
+func (s ScholarshipQuery) GetScholarshipByID(ctx context.Context, param struct{ ID int32 }) (*resolver.ScholarshipResolver, error) {
+	scholarship, err := s.scholarshipService.GetByID(ctx, int64(param.ID))
+	if err != nil {
+		return nil, err
+	}
+
+	return &resolver.ScholarshipResolver{Scholarship: scholarship}, nil
+}
+
 // NewScholarshipQuery ...
 func NewScholarshipQuery(scholarshipService sa.ScholarshipService) ScholarshipQuery {
 	return ScholarshipQuery{scholarshipService: scholarshipService}

@@ -52,7 +52,23 @@ func (s scholarshipService) Fetch(ctx context.Context, filter sa.ScholarshipFilt
 		Scholarships: scholarships,
 	}
 
+	filter.Cursor = cursor
+	filter.Limit = 1
+	scholarships, _, err = s.scholarshipRepo.Fetch(ctx, filter)
+	if err != nil {
+		return sa.ScholarshipFeed{}, err
+	}
+
+	if len(scholarships) == 0 {
+		scholarshipFeed.Cursor = ""
+	}
+
 	return scholarshipFeed, nil
+}
+
+// GetByID ...
+func (s scholarshipService) GetByID(ctx context.Context, ID int64) (sa.Scholarship, error) {
+	return s.scholarshipRepo.GetByID(ctx, ID)
 }
 
 // NewScholarshipService ...

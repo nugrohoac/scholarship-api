@@ -120,7 +120,7 @@ func TestScholarshipServiceCreate(t *testing.T) {
 
 }
 
-func TestScholarshipServiceGetBySponsor(t *testing.T) {
+func TestScholarshipServiceFetch(t *testing.T) {
 	var (
 		scholarships = make([]sa.Scholarship, 0)
 		sponsor      sa.User
@@ -133,16 +133,33 @@ func TestScholarshipServiceGetBySponsor(t *testing.T) {
 	scholarships[1].SponsorID = 1
 
 	tests := map[string]struct {
-		paramFilter      sa.ScholarshipFilter
-		fetchScholarship testdata.FuncCaller
-		expectedResp     sa.ScholarshipFeed
-		expectedErr      error
+		paramFilter            sa.ScholarshipFilter
+		fetchScholarship       testdata.FuncCaller
+		fetchScholarshipCursor testdata.FuncCaller
+		expectedResp           sa.ScholarshipFeed
+		expectedErr            error
 	}{
 		"error fetch scholarship": {
 			paramFilter: sa.ScholarshipFilter{},
 			fetchScholarship: testdata.FuncCaller{
 				IsCalled: true,
 				Input:    []interface{}{mock.Anything, sa.ScholarshipFilter{}},
+				Output:   []interface{}{nil, "", errors.New("error")},
+			},
+			fetchScholarshipCursor: testdata.FuncCaller{},
+			expectedResp:           sa.ScholarshipFeed{},
+			expectedErr:            errors.New("error"),
+		},
+		"error fetch scholarship for cursor": {
+			paramFilter: sa.ScholarshipFilter{},
+			fetchScholarship: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, sa.ScholarshipFilter{}},
+				Output:   []interface{}{scholarships, cursor, nil},
+			},
+			fetchScholarshipCursor: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, sa.ScholarshipFilter{Cursor: cursor, Limit: 1}},
 				Output:   []interface{}{nil, "", errors.New("error")},
 			},
 			expectedResp: sa.ScholarshipFeed{},
@@ -154,6 +171,11 @@ func TestScholarshipServiceGetBySponsor(t *testing.T) {
 				IsCalled: true,
 				Input:    []interface{}{mock.Anything, sa.ScholarshipFilter{}},
 				Output:   []interface{}{scholarships, cursor, nil},
+			},
+			fetchScholarshipCursor: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, sa.ScholarshipFilter{Cursor: cursor, Limit: 1}},
+				Output:   []interface{}{[]sa.Scholarship{scholarships[0]}, cursor, nil},
 			},
 			expectedResp: sa.ScholarshipFeed{Cursor: cursor, Scholarships: scholarships},
 			expectedErr:  nil,
@@ -167,6 +189,12 @@ func TestScholarshipServiceGetBySponsor(t *testing.T) {
 			if test.fetchScholarship.IsCalled {
 				scholarshipRepoMock.On("Fetch", test.fetchScholarship.Input...).
 					Return(test.fetchScholarship.Output...).
+					Once()
+			}
+
+			if test.fetchScholarshipCursor.IsCalled {
+				scholarshipRepoMock.On("Fetch", test.fetchScholarshipCursor.Input...).
+					Return(test.fetchScholarshipCursor.Output...).
 					Once()
 			}
 

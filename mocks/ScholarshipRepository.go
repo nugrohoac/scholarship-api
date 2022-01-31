@@ -64,3 +64,24 @@ func (_m *ScholarshipRepository) Fetch(ctx context.Context, filter scholarship_a
 
 	return r0, r1, r2
 }
+
+// GetByID provides a mock function with given fields: ctx, ID
+func (_m *ScholarshipRepository) GetByID(ctx context.Context, ID int64) (scholarship_api.Scholarship, error) {
+	ret := _m.Called(ctx, ID)
+
+	var r0 scholarship_api.Scholarship
+	if rf, ok := ret.Get(0).(func(context.Context, int64) scholarship_api.Scholarship); ok {
+		r0 = rf(ctx, ID)
+	} else {
+		r0 = ret.Get(0).(scholarship_api.Scholarship)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, int64) error); ok {
+		r1 = rf(ctx, ID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}

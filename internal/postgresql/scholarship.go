@@ -234,6 +234,88 @@ func (s scholarshipRepo) Fetch(ctx context.Context, filter sa.ScholarshipFilter)
 	return scholarships, cursorStr, nil
 }
 
+// GetByID ...
+func (s scholarshipRepo) GetByID(ctx context.Context, ID int64) (sa.Scholarship, error) {
+	query, args, err := sq.Select("s.id",
+		"s.sponsor_id",
+		"s.name",
+		"s.amount",
+		"s.status",
+		"s.image",
+		"s.awardee",
+		"s.current_applicant",
+		"s.deadline",
+		"s.eligibility_description",
+		"s.subsidy_description",
+		"s.requirement_descriptions",
+		"s.funding_start",
+		"s.funding_end",
+		"r.name",
+		"r.type",
+		"r.value",
+	).From("scholarship s").
+		Join("requirement r on s.id = r.scholarship_id").
+		PlaceholderFormat(sq.Dollar).
+		Where(sq.Eq{"s.id": ID}).
+		ToSql()
+	if err != nil {
+		return sa.Scholarship{}, err
+	}
+
+	rows, err := s.db.QueryContext(ctx, query, args...)
+	if err != nil {
+		return sa.Scholarship{}, err
+	}
+
+	defer func() {
+		if errClose := rows.Close(); errClose != nil {
+			logrus.Error(errClose)
+		}
+	}()
+
+	var (
+		scholarship             sa.Scholarship
+		byteImage               []byte
+		requirementDescriptions string
+	)
+
+	for rows.Next() {
+		var requirement sa.Requirement
+
+		if err = rows.Scan(
+			&scholarship.ID,
+			&scholarship.SponsorID,
+			&scholarship.Name,
+			&scholarship.Amount,
+			&scholarship.Status,
+			&byteImage,
+			&scholarship.Awardee,
+			&scholarship.CurrentApplicant,
+			&scholarship.Deadline,
+			&scholarship.EligibilityDescription,
+			&scholarship.SubsidyDescription,
+			&requirementDescriptions,
+			&scholarship.FundingStart,
+			&scholarship.FundingEnd,
+			&requirement.Name,
+			&requirement.Type,
+			&requirement.Value,
+		); err != nil {
+			return sa.Scholarship{}, err
+		}
+
+		if byteImage != nil {
+			if err = json.Unmarshal(byteImage, &scholarship.Image); err != nil {
+				return sa.Scholarship{}, err
+			}
+		}
+		scholarship.RequirementDescriptions = strings.Split(requirementDescriptions, "#")
+		scholarship.Requirements = append(scholarship.Requirements, requirement)
+	}
+
+	return scholarship, nil
+}
+
 // NewScholarshipRepository ...
 func NewScholarshipRepository(db *sql.DB) sa.ScholarshipRepository {
 	return scholarshipRepo{db: db}

@@ -59,10 +59,12 @@ type EmailRepository interface {
 type ScholarshipRepository interface {
 	Create(ctx context.Context, scholarship Scholarship) (Scholarship, error)
 	Fetch(ctx context.Context, filter ScholarshipFilter) ([]Scholarship, string, error)
+	GetByID(ctx context.Context, ID int64) (Scholarship, error)
 }
 
 // ScholarshipService ...
 type ScholarshipService interface {
 	Create(ctx context.Context, scholarship Scholarship) (Scholarship, error)
 	Fetch(ctx context.Context, filter ScholarshipFilter) (ScholarshipFeed, error)
+	GetByID(ctx context.Context, ID int64) (Scholarship, error)
 }
