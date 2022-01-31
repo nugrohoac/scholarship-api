@@ -52,6 +52,17 @@ func (s scholarshipService) Fetch(ctx context.Context, filter sa.ScholarshipFilt
 		Scholarships: scholarships,
 	}
 
+	filter.Cursor = cursor
+	filter.Limit = 1
+	scholarships, _, err = s.scholarshipRepo.Fetch(ctx, filter)
+	if err != nil {
+		return sa.ScholarshipFeed{}, err
+	}
+
+	if len(scholarships) == 0 {
+		scholarshipFeed.Cursor = ""
+	}
+
 	return scholarshipFeed, nil
 }
 
