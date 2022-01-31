@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"strings"
 	"time"
 
@@ -167,10 +168,21 @@ func (s scholarshipRepo) Fetch(ctx context.Context, filter sa.ScholarshipFilter)
 		qSelect = qSelect.Where(sq.Eq{"status": filter.Status})
 	}
 
+	if filter.Name != "" {
+		//playerName := strings.ToLower(filter.PlayerName) + "%"
+		//qSelect = qSelect.Where(sq.Like{"LOWER(pl.name)": playerName})
+
+		likeName := "%" + strings.ToLower(filter.Name) + "%"
+		qSelect = qSelect.Where(sq.Like{"LOWER(name)": likeName})
+	}
+
 	query, args, err := qSelect.ToSql()
 	if err != nil {
 		return nil, "", err
 	}
+
+	fmt.Println(query)
+	fmt.Println(args)
 
 	rows, err := s.db.QueryContext(ctx, query, args...)
 	if err != nil {

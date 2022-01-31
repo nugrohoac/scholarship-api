@@ -34,6 +34,10 @@ func (s ScholarshipQuery) FetchScholarship(ctx context.Context, param sa.InputSc
 		}
 	}
 
+	if param.Name != nil {
+		filter.Name = *param.Name
+	}
+
 	scholarshipFeed, err := s.scholarshipService.Fetch(ctx, filter)
 	if err != nil {
 		return nil, err

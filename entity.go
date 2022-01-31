@@ -210,6 +210,7 @@ type ScholarshipFilter struct {
 	Cursor    string
 	SponsorID int64
 	Status    []int32
+	Name      string
 }
 
 // InputScholarshipFilter ...
@@ -218,6 +219,7 @@ type InputScholarshipFilter struct {
 	Cursor    *string
 	SponsorID *int32
 	Status    *[]*int32
+	Name      *string
 }
 
 // ScholarshipFeed ...
