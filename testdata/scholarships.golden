@@ -17,6 +17,11 @@
       "deadline":"2022-02-05T13:31:01.263366+07:00",
       "eligibility_description":"eligibility of best wan",
       "subsidy_description":"subsidi of best one",
+      "requirement_descriptions": [
+              "requirement_description1",
+              "requirement_description2",
+              "requirement_description3"
+     ],
       "funding_start":"2022-02-08T13:31:01.263366+07:00",
       "funding_end":"2022-02-18T13:31:01.263366+07:00",
       "requirements":null,
@@ -40,6 +45,11 @@
       "deadline":"2022-02-03T13:31:01.263366+07:00",
       "eligibility_description":"eligibility of best wan",
       "subsidy_description":"subsidi of best one",
+      "requirement_descriptions": [
+              "requirement_description1",
+              "requirement_description2",
+              "requirement_description3"
+      ],
       "funding_start":"2022-02-05T13:31:01.263366+07:00",
       "funding_end":"2022-02-21T13:31:01.263366+07:00",
       "requirements":null,

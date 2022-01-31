@@ -78,6 +78,18 @@ func (s ScholarshipResolver) SubsidyDescription() *string {
 	return &s.Scholarship.SubsidyDescription
 }
 
+// RequirementDescriptions .
+func (s ScholarshipResolver) RequirementDescriptions() *[]*string {
+	reqDesc := make([]*string, 0)
+
+	for _, req := range s.Scholarship.RequirementDescriptions {
+		req := req
+		reqDesc = append(reqDesc, &req)
+	}
+
+	return &reqDesc
+}
+
 // FundingStart ...
 func (s ScholarshipResolver) FundingStart() *string {
 	fs := s.Scholarship.FundingStart.Format(time.RFC3339)

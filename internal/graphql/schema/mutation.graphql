@@ -37,6 +37,7 @@ type Mutation {
         deadline: String!
         eligibilityDescription: String!
         subsidyDescription: String!
+        requirementDescriptions: [String!]!
         fundingStart: String!
         fundingEnd: String!
         requirements: [inputRequirement!]!

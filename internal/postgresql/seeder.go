@@ -3,6 +3,7 @@ package postgresql
 import (
 	"database/sql"
 	"encoding/json"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -146,6 +147,7 @@ func SeedScholarship(db *sql.DB, t *testing.T, scholarships []sa.Scholarship) {
 			"deadline",
 			"eligibility_description",
 			"subsidy_description",
+			"requirement_descriptions",
 			"funding_start",
 			"funding_end",
 			"created_at",
@@ -165,6 +167,7 @@ func SeedScholarship(db *sql.DB, t *testing.T, scholarships []sa.Scholarship) {
 			scholarship.Deadline,
 			scholarship.EligibilityDescription,
 			scholarship.SubsidyDescription,
+			strings.Join(scholarship.RequirementDescriptions, "#"),
 			scholarship.FundingStart,
 			scholarship.FundingEnd,
 			scholarship.CreatedAt,

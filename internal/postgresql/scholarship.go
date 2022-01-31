@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"strings"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -29,8 +30,9 @@ func (s scholarshipRepo) Create(ctx context.Context, scholarship sa.Scholarship)
 	}
 
 	var (
-		timeNow     = time.Now()
-		errRollback error
+		timeNow                 = time.Now()
+		errRollback             error
+		requirementDescriptions = strings.Join(scholarship.RequirementDescriptions, "#")
 	)
 
 	query, args, err := sq.Insert("scholarship").
@@ -43,6 +45,7 @@ func (s scholarshipRepo) Create(ctx context.Context, scholarship sa.Scholarship)
 			"deadline",
 			"eligibility_description",
 			"subsidy_description",
+			"requirement_descriptions",
 			"funding_start",
 			"funding_end",
 			"created_at").
@@ -55,6 +58,7 @@ func (s scholarshipRepo) Create(ctx context.Context, scholarship sa.Scholarship)
 			scholarship.Deadline,
 			scholarship.EligibilityDescription,
 			scholarship.SubsidyDescription,
+			requirementDescriptions,
 			scholarship.FundingStart,
 			scholarship.FundingEnd,
 			timeNow,
@@ -134,6 +138,7 @@ func (s scholarshipRepo) Fetch(ctx context.Context, filter sa.ScholarshipFilter)
 		"deadline",
 		"eligibility_description",
 		"subsidy_description",
+		"requirement_descriptions",
 		"funding_start",
 		"funding_end",
 		"created_at",
@@ -179,10 +184,11 @@ func (s scholarshipRepo) Fetch(ctx context.Context, filter sa.ScholarshipFilter)
 	}()
 
 	var (
-		scholarships = make([]sa.Scholarship, 0)
-		cursor       time.Time
-		cursorStr    string
-		byteImg      []byte
+		scholarships           = make([]sa.Scholarship, 0)
+		cursor                 time.Time
+		cursorStr              string
+		byteImg                []byte
+		requirementDescription string
 	)
 
 	for rows.Next() {
@@ -200,6 +206,7 @@ func (s scholarshipRepo) Fetch(ctx context.Context, filter sa.ScholarshipFilter)
 			&scholarship.Deadline,
 			&scholarship.EligibilityDescription,
 			&scholarship.SubsidyDescription,
+			&requirementDescription,
 			&scholarship.FundingStart,
 			&scholarship.FundingEnd,
 			&scholarship.CreatedAt,
@@ -212,6 +219,8 @@ func (s scholarshipRepo) Fetch(ctx context.Context, filter sa.ScholarshipFilter)
 				return nil, "", err
 			}
 		}
+
+		scholarship.RequirementDescriptions = strings.Split(requirementDescription, "#")
 
 		cursor = scholarship.CreatedAt
 		scholarships = append(scholarships, scholarship)
