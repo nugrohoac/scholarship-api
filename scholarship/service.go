@@ -55,6 +55,11 @@ func (s scholarshipService) Fetch(ctx context.Context, filter sa.ScholarshipFilt
 	return scholarshipFeed, nil
 }
 
+// GetByID ...
+func (s scholarshipService) GetByID(ctx context.Context, ID int64) (sa.Scholarship, error) {
+	return s.scholarshipRepo.GetByID(ctx, ID)
+}
+
 // NewScholarshipService ...
 func NewScholarshipService(scholarshipRepo sa.ScholarshipRepository) sa.ScholarshipService {
 	return scholarshipService{scholarshipRepo: scholarshipRepo}

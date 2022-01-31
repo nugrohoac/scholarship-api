@@ -30,4 +30,8 @@ type Query {
         limit: Int
         status: [Int]
     ): scholarshipFeed
+
+    GetScholarshipByID(
+        id: Int!
+    ): scholarship
 }
