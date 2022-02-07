@@ -25,6 +25,10 @@ func (s scholarshipService) Create(ctx context.Context, scholarship sa.Scholarsh
 		return sa.Scholarship{}, sa.ErrNotAllowed{Message: "sponsor un complete profile"}
 	}
 
+	if scholarship.FundingEnd.Before(scholarship.FundingStart) {
+		return sa.Scholarship{}, sa.ErrBadRequest{Message: "scholarship funding end before funding start"}
+	}
+
 	scholarship.Sponsor = sponsor
 
 	// default at created, look at readme.md to get more status

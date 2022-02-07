@@ -39,6 +39,11 @@ func TestScholarshipServiceCreate(t *testing.T) {
 	scholarshipNotMatch := scholarship
 	scholarshipNotMatch.SponsorID = 2
 
+	scholarshipInvalid := scholarship
+	fundingStart := scholarshipInvalid.FundingEnd
+	scholarshipInvalid.FundingEnd = scholarshipInvalid.FundingStart
+	scholarshipInvalid.FundingStart = fundingStart
+
 	tests := map[string]struct {
 		paramCtx          context.Context
 		paramScholarship  sa.Scholarship
@@ -66,6 +71,13 @@ func TestScholarshipServiceCreate(t *testing.T) {
 			createScholarship: testdata.FuncCaller{},
 			expectedResp:      sa.Scholarship{},
 			expectedErr:       sa.ErrNotAllowed{Message: "sponsor un complete profile"},
+		},
+		"funding end before funding start": {
+			paramCtx:          ctxValid,
+			paramScholarship:  scholarshipInvalid,
+			createScholarship: testdata.FuncCaller{},
+			expectedResp:      sa.Scholarship{},
+			expectedErr:       sa.ErrBadRequest{Message: "scholarship funding end before funding start"},
 		},
 		"failed create scholarship": {
 			paramCtx:         ctxValid,
