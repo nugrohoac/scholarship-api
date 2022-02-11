@@ -13,7 +13,7 @@
    },
    "awardee":10,
    "current_applicant":0,
-   "deadline":"2022-01-30T13:14:10.045586+07:00",
+   "application_end":"2022-01-30T13:14:10.045586+07:00",
    "eligibility_description":"eligibility description",
    "subsidy_description":"subsidy description",
    "requirement_descriptions": [

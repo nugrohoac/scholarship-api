@@ -30,11 +30,11 @@ func (s ScholarshipMutation) CreateScholarship(ctx context.Context, param sa.Inp
 		SubsidyDescription:     param.SubsidyDescription,
 	}
 
-	deadline, err := time.Parse(time.RFC3339, param.Deadline)
+	applicationEnd, err := time.Parse(time.RFC3339, param.ApplicationEnd)
 	if err != nil {
 		return nil, err
 	}
-	scholarship.Deadline = deadline
+	scholarship.ApplicationEnd = applicationEnd
 
 	fundingStart, err := time.Parse(time.RFC3339, param.FundingStart)
 	if err != nil {

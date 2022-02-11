@@ -14,7 +14,7 @@
       },
       "awardee":10,
       "current_applicant":0,
-      "deadline":"2022-02-05T13:31:01.263366+07:00",
+      "application_end":"2022-02-05T13:31:01.263366+07:00",
       "eligibility_description":"eligibility of best wan",
       "subsidy_description":"subsidi of best one",
       "requirement_descriptions": [
@@ -42,7 +42,7 @@
       },
       "awardee":20,
       "current_applicant":0,
-      "deadline":"2022-02-03T13:31:01.263366+07:00",
+      "application_end":"2022-02-03T13:31:01.263366+07:00",
       "eligibility_description":"eligibility of best wan",
       "subsidy_description":"subsidi of best one",
       "requirement_descriptions": [
