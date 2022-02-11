@@ -96,7 +96,7 @@ func initEnv() {
 		timezone = tz
 	}
 
-	dsn = fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s TimeZone=%s sslmode=%s search_path=%s",
+	dsn = fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s parseTime=true TimeZone=%s sslmode=%s search_path=%s",
 		viper.GetString("psql_host"),
 		viper.GetString("psql_port"),
 		viper.GetString("psql_user"),
