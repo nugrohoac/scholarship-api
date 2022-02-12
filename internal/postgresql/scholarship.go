@@ -123,6 +123,7 @@ func (s scholarshipRepo) Create(ctx context.Context, scholarship sa.Scholarship)
 		return sa.Scholarship{}, errCommit
 	}
 
+	scholarship.CreatedAt = timeNow
 	return scholarship, nil
 }
 
