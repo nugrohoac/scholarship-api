@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"strings"
 	"time"
 
@@ -43,6 +42,7 @@ func (s scholarshipRepo) Create(ctx context.Context, scholarship sa.Scholarship)
 			"status",
 			"image",
 			"awardee",
+			"application_start",
 			"application_end",
 			"eligibility_description",
 			"subsidy_description",
@@ -56,6 +56,7 @@ func (s scholarshipRepo) Create(ctx context.Context, scholarship sa.Scholarship)
 			scholarship.Status,
 			byteImage,
 			scholarship.Awardee,
+			scholarship.ApplicationStart,
 			scholarship.ApplicationEnd,
 			scholarship.EligibilityDescription,
 			scholarship.SubsidyDescription,
@@ -137,6 +138,7 @@ func (s scholarshipRepo) Fetch(ctx context.Context, filter sa.ScholarshipFilter)
 		"image",
 		"awardee",
 		"current_applicant",
+		"application_start",
 		"application_end",
 		"eligibility_description",
 		"subsidy_description",
@@ -182,9 +184,6 @@ func (s scholarshipRepo) Fetch(ctx context.Context, filter sa.ScholarshipFilter)
 		return nil, "", err
 	}
 
-	fmt.Println(query)
-	fmt.Println(args)
-
 	rows, err := s.db.QueryContext(ctx, query, args...)
 	if err != nil {
 		return nil, "", err
@@ -216,6 +215,7 @@ func (s scholarshipRepo) Fetch(ctx context.Context, filter sa.ScholarshipFilter)
 			&byteImg,
 			&scholarship.Awardee,
 			&scholarship.CurrentApplicant,
+			&scholarship.ApplicationStart,
 			&scholarship.ApplicationEnd,
 			&scholarship.EligibilityDescription,
 			&scholarship.SubsidyDescription,

@@ -33,6 +33,7 @@ func TestScholarshipMutationCreate(t *testing.T) {
 			Height: scholarship.Image.Height,
 		},
 		Awardee:                 int32(scholarship.Awardee),
+		ApplicationStart:        scholarship.ApplicationStart.Format(time.RFC3339Nano),
 		ApplicationEnd:          scholarship.ApplicationEnd.Format(time.RFC3339Nano),
 		EligibilityDescription:  scholarship.EligibilityDescription,
 		SubsidyDescription:      scholarship.SubsidyDescription,
