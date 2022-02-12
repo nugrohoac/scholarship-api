@@ -1,0 +1,1 @@
+ALTER TABLE "scholarship" DROP COLUMN announcement_date;

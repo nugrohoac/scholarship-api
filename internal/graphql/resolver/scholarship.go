@@ -62,16 +62,22 @@ func (s ScholarshipResolver) CurrentApplicant() *int32 {
 	return &ca
 }
 
+// ApplicationStart ...
+func (s ScholarshipResolver) ApplicationStart() *string {
+	applicationStart := s.Scholarship.ApplicationStart.Format(time.RFC3339)
+	return &applicationStart
+}
+
 // ApplicationEnd ...
 func (s ScholarshipResolver) ApplicationEnd() *string {
 	applicationEnd := s.Scholarship.ApplicationEnd.Format(time.RFC3339)
 	return &applicationEnd
 }
 
-// ApplicationStart ...
-func (s ScholarshipResolver) ApplicationStart() *string {
-	applicationStart := s.Scholarship.ApplicationStart.Format(time.RFC3339)
-	return &applicationStart
+// AnnouncementDate ...
+func (s ScholarshipResolver) AnnouncementDate() *string {
+	announcementDate := s.Scholarship.AnnouncementDate.Format(time.RFC3339)
+	return &announcementDate
 }
 
 // EligibilityDescription ...
