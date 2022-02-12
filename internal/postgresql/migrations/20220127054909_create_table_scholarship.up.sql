@@ -7,7 +7,7 @@ CREATE TABLE "scholarship" (
     "image" json DEFAULT NULL,
     "awardee" integer NOT NULL,
     "current_applicant" integer DEFAULT 0,
-    "application_end" timestamp(3) NOT NULL,
+    "deadline" timestamp(3) NOT NULL,
     "eligibility_description" text DEFAULT '',
     "subsidy_description" text DEFAULT '',
     "requirement_descriptions" text DEFAULT '',

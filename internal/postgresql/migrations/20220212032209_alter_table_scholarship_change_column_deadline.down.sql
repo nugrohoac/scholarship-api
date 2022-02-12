@@ -1,0 +1,1 @@
+ALTER TABLE "scholarship" RENAME COLUMN application_end to deadline;
