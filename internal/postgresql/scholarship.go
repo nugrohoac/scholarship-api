@@ -44,6 +44,7 @@ func (s scholarshipRepo) Create(ctx context.Context, scholarship sa.Scholarship)
 			"awardee",
 			"application_start",
 			"application_end",
+			"announcement_date",
 			"eligibility_description",
 			"subsidy_description",
 			"requirement_descriptions",
@@ -58,6 +59,7 @@ func (s scholarshipRepo) Create(ctx context.Context, scholarship sa.Scholarship)
 			scholarship.Awardee,
 			scholarship.ApplicationStart,
 			scholarship.ApplicationEnd,
+			scholarship.AnnouncementDate,
 			scholarship.EligibilityDescription,
 			scholarship.SubsidyDescription,
 			requirementDescriptions,
@@ -140,6 +142,7 @@ func (s scholarshipRepo) Fetch(ctx context.Context, filter sa.ScholarshipFilter)
 		"current_applicant",
 		"application_start",
 		"application_end",
+		"announcement_date",
 		"eligibility_description",
 		"subsidy_description",
 		"requirement_descriptions",
@@ -172,9 +175,6 @@ func (s scholarshipRepo) Fetch(ctx context.Context, filter sa.ScholarshipFilter)
 	}
 
 	if filter.Name != "" {
-		//playerName := strings.ToLower(filter.PlayerName) + "%"
-		//qSelect = qSelect.Where(sq.Like{"LOWER(pl.name)": playerName})
-
 		likeName := "%" + strings.ToLower(filter.Name) + "%"
 		qSelect = qSelect.Where(sq.Like{"LOWER(name)": likeName})
 	}
@@ -217,6 +217,7 @@ func (s scholarshipRepo) Fetch(ctx context.Context, filter sa.ScholarshipFilter)
 			&scholarship.CurrentApplicant,
 			&scholarship.ApplicationStart,
 			&scholarship.ApplicationEnd,
+			&scholarship.AnnouncementDate,
 			&scholarship.EligibilityDescription,
 			&scholarship.SubsidyDescription,
 			&requirementDescription,
@@ -257,7 +258,9 @@ func (s scholarshipRepo) GetByID(ctx context.Context, ID int64) (sa.Scholarship,
 		"s.image",
 		"s.awardee",
 		"s.current_applicant",
+		"s.application_start",
 		"s.application_end",
+		"s.announcement_date",
 		"s.eligibility_description",
 		"s.subsidy_description",
 		"s.requirement_descriptions",
@@ -304,7 +307,9 @@ func (s scholarshipRepo) GetByID(ctx context.Context, ID int64) (sa.Scholarship,
 			&byteImage,
 			&scholarship.Awardee,
 			&scholarship.CurrentApplicant,
+			&scholarship.ApplicationStart,
 			&scholarship.ApplicationEnd,
+			&scholarship.AnnouncementDate,
 			&scholarship.EligibilityDescription,
 			&scholarship.SubsidyDescription,
 			&requirementDescriptions,

@@ -54,6 +54,12 @@ func (s ScholarshipMutation) CreateScholarship(ctx context.Context, param sa.Inp
 	}
 	scholarship.FundingEnd = fundingEnd
 
+	announcementDate, err := time.Parse(time.RFC3339, param.AnnouncementDate)
+	if err != nil {
+		return nil, err
+	}
+	scholarship.AnnouncementDate = announcementDate
+
 	for _, req := range param.Requirements {
 		requirements = append(requirements, sa.Requirement{
 			Type:  req.Type,

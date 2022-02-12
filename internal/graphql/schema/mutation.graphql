@@ -36,6 +36,7 @@ type Mutation {
         awardee: Int!
         applicationStart: String!
         applicationEnd: String!
+        announcementDate: String!
         eligibilityDescription: String!
         subsidyDescription: String!
         requirementDescriptions: [String!]!
