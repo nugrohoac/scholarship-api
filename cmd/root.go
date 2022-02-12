@@ -25,7 +25,8 @@ import (
 
 var (
 	// Database
-	dsn string
+	dsn             string
+	deadlinePayment int
 
 	bankRepo        sa.BankRepository
 	countryRepo     sa.CountryRepository
@@ -122,6 +123,11 @@ func initEnv() {
 	}
 	tokeDuration = time.Duration(duration) * time.Second
 
+	deadlinePayment = viper.GetInt("deadline_payment")
+	if deadlinePayment == 0 {
+		log.Fatal("Please provide deadline payment.......!!!")
+	}
+
 	emailDomain = viper.GetString("email_domain")
 	emailApiKey = viper.GetString("email_api_key")
 	pathActivateUser = viper.GetString("email_path_activate_user")
@@ -147,7 +153,7 @@ func initApp() {
 	bankRepo = postgresql.NewBankRepository(db)
 	userRepo = postgresql.NewUserRepository(db)
 	countryRepo = postgresql.NewCountryRepository(db)
-	scholarshipRepo = postgresql.NewScholarshipRepository(db)
+	scholarshipRepo = postgresql.NewScholarshipRepository(db, deadlinePayment)
 
 	bankService = bank.NewBankService(bankRepo)
 	userService = user.NewUserService(userRepo, jwtHash, emailRepo)

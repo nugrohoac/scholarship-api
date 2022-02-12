@@ -6,7 +6,8 @@ import (
 )
 
 type scholarshipService struct {
-	scholarshipRepo sa.ScholarshipRepository
+	scholarshipRepo  sa.ScholarshipRepository
+	bankTransferRepo sa.BankTransferRepsitory
 }
 
 // Create ...

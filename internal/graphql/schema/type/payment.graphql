@@ -1,0 +1,8 @@
+type payment {
+    id: Int
+    scholarshipId: Int
+    deadline: String
+    transferDate: String
+    bankAccountName: String
+    image: image
+}

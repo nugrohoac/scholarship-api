@@ -14,7 +14,8 @@ import (
 )
 
 type scholarshipRepo struct {
-	db *sql.DB
+	db              *sql.DB
+	deadlinePayment int
 }
 
 // Create ...
@@ -82,6 +83,7 @@ func (s scholarshipRepo) Create(ctx context.Context, scholarship sa.Scholarship)
 		return sa.Scholarship{}, err
 	}
 
+	// Insert requirements start
 	if len(scholarship.Requirements) > 0 {
 		qInsertRequirement := sq.Insert("requirement").
 			Columns("scholarship_id",
@@ -117,6 +119,39 @@ func (s scholarshipRepo) Create(ctx context.Context, scholarship sa.Scholarship)
 			return sa.Scholarship{}, err
 		}
 	}
+	// Insert requirements end
+
+	// Create payment start
+	scholarship.Payment.Deadline = timeNow.Add(time.Duration(s.deadlinePayment) * time.Hour)
+	scholarship.Payment.CreatedAt = timeNow
+	scholarship.Payment.ScholarshipID = scholarship.ID
+
+	query, args, err = sq.Insert("payment").
+		Columns("scholarship_id",
+			"deadline",
+			"created_at",
+		).Values(
+		scholarship.ID,
+		scholarship.Payment.Deadline,
+		scholarship.Payment.CreatedAt,
+	).PlaceholderFormat(sq.Dollar).
+		ToSql()
+	if err != nil {
+		if errRollback = tx.Rollback(); errRollback != nil {
+			logrus.Error(errRollback)
+		}
+
+		return sa.Scholarship{}, err
+	}
+
+	if _, err = tx.ExecContext(ctx, query, args...); err != nil {
+		if errRollback = tx.Rollback(); errRollback != nil {
+			logrus.Error(errRollback)
+		}
+
+		return sa.Scholarship{}, err
+	}
+	// Create payment end
 
 	if errCommit := tx.Commit(); errCommit != nil {
 		if errRollback = tx.Rollback(); errRollback != nil {
@@ -335,6 +370,9 @@ func (s scholarshipRepo) GetByID(ctx context.Context, ID int64) (sa.Scholarship,
 }
 
 // NewScholarshipRepository ...
-func NewScholarshipRepository(db *sql.DB) sa.ScholarshipRepository {
-	return scholarshipRepo{db: db}
+func NewScholarshipRepository(db *sql.DB, deadlinePayment int) sa.ScholarshipRepository {
+	return scholarshipRepo{
+		db:              db,
+		deadlinePayment: deadlinePayment,
+	}
 }

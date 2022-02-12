@@ -149,6 +149,11 @@ func (s ScholarshipFeedResolver) Scholarships() *[]*ScholarshipResolver {
 	return &scholarshipResolvers
 }
 
+// Payment .
+func (s ScholarshipResolver) Payment() *PaymentResolver {
+	return &PaymentResolver{Payment: s.Scholarship.Payment}
+}
+
 // CreatedAt ...
 func (s ScholarshipResolver) CreatedAt() *string {
 	ca := s.Scholarship.CreatedAt.Format(time.RFC3339)

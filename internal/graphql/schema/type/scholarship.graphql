@@ -16,6 +16,7 @@ type scholarship {
     fundingStart: String
     fundingEnd: String
     requirements: [requirement]
+    payment: payment
     createdAt: String
 }
 

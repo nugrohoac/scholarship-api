@@ -68,3 +68,8 @@ type ScholarshipService interface {
 	Fetch(ctx context.Context, filter ScholarshipFilter) (ScholarshipFeed, error)
 	GetByID(ctx context.Context, ID int64) (Scholarship, error)
 }
+
+// BankTransferRepsitory ...
+type BankTransferRepsitory interface {
+	Get() BankTransfer
+}

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
+	"time"
 
 	"testing"
 
@@ -17,6 +18,16 @@ import (
 var cursor = "next-cursor"
 
 func TestScholarshipServiceCreate(t *testing.T) {
+
+	p := sa.Payment{
+		ID:              1,
+		ScholarshipID:   1,
+		Deadline:        time.Time{},
+		TransferDate:    time.Time{},
+		BankAccountName: "",
+		Image:           sa.Image{},
+	}
+
 	var (
 		scholarship sa.Scholarship
 		user        sa.User
