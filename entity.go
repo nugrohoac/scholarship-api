@@ -193,6 +193,7 @@ type Scholarship struct {
 	Image                   Image         `json:"image"`
 	Awardee                 int           `json:"awardee"`
 	CurrentApplicant        int           `json:"current_applicant"`
+	ApplicationStart        time.Time     `json:"application_start"`
 	ApplicationEnd          time.Time     `json:"application_end"`
 	EligibilityDescription  string        `json:"eligibility_description"`
 	SubsidyDescription      string        `json:"subsidy_description"`
@@ -246,6 +247,7 @@ type InputScholarship struct {
 	Amount                  int32
 	Image                   InputImage
 	Awardee                 int32
+	ApplicationStart        string
 	ApplicationEnd          string
 	EligibilityDescription  string
 	SubsidyDescription      string

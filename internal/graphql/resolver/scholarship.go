@@ -68,6 +68,12 @@ func (s ScholarshipResolver) ApplicationEnd() *string {
 	return &applicationEnd
 }
 
+// ApplicationStart ...
+func (s ScholarshipResolver) ApplicationStart() *string {
+	applicationStart := s.Scholarship.ApplicationStart.Format(time.RFC3339)
+	return &applicationStart
+}
+
 // EligibilityDescription ...
 func (s ScholarshipResolver) EligibilityDescription() *string {
 	return &s.Scholarship.EligibilityDescription

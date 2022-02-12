@@ -36,6 +36,12 @@ func (s ScholarshipMutation) CreateScholarship(ctx context.Context, param sa.Inp
 	}
 	scholarship.ApplicationEnd = applicationEnd
 
+	applicationStart, err := time.Parse(time.RFC3339, param.ApplicationStart)
+	if err != nil {
+		return nil, err
+	}
+	scholarship.ApplicationStart = applicationStart
+
 	fundingStart, err := time.Parse(time.RFC3339, param.FundingStart)
 	if err != nil {
 		return nil, err
