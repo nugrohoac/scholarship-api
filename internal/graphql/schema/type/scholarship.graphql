@@ -8,7 +8,7 @@ type scholarship {
     image: image
     awardee: Int
     currentApplicant: Int
-    deadline: String
+    applicationEnd: String
     eligibilityDescription: String
     subsidyDescription: String
     requirementDescriptions: [String]

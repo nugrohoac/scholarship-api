@@ -34,7 +34,7 @@ type Mutation {
         amount: Int!
         image: inputImage!
         awardee: Int!
-        deadline: String!
+        applicationEnd: String!
         eligibilityDescription: String!
         subsidyDescription: String!
         requirementDescriptions: [String!]!

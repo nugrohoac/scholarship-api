@@ -62,10 +62,10 @@ func (s ScholarshipResolver) CurrentApplicant() *int32 {
 	return &ca
 }
 
-// Deadline ...
-func (s ScholarshipResolver) Deadline() *string {
-	deadline := s.Scholarship.Deadline.Format(time.RFC3339)
-	return &deadline
+// ApplicationEnd ...
+func (s ScholarshipResolver) ApplicationEnd() *string {
+	applicationEnd := s.Scholarship.ApplicationEnd.Format(time.RFC3339)
+	return &applicationEnd
 }
 
 // EligibilityDescription ...
