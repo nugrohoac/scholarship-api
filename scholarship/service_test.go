@@ -3,9 +3,10 @@ package scholarship_test
 import (
 	"context"
 	"errors"
+	"testing"
+
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
-	"testing"
 
 	sa "github.com/Nusantara-Muda/scholarship-api"
 	"github.com/Nusantara-Muda/scholarship-api/mocks"
@@ -20,10 +21,12 @@ func TestScholarshipServiceCreate(t *testing.T) {
 	var (
 		scholarship sa.Scholarship
 		user        sa.User
+		payment     sa.Payment
 	)
 
 	testdata.GoldenJSONUnmarshal(t, "scholarship", &scholarship)
 	testdata.GoldenJSONUnmarshal(t, "user", &user)
+	testdata.GoldenJSONUnmarshal(t, "payment", &payment)
 
 	user.Status = 2
 
@@ -43,6 +46,11 @@ func TestScholarshipServiceCreate(t *testing.T) {
 	fundingStart := scholarshipInvalid.FundingEnd
 	scholarshipInvalid.FundingEnd = scholarshipInvalid.FundingStart
 	scholarshipInvalid.FundingStart = fundingStart
+
+	scholarshipResp := scholarship
+	scholarshipResp.Payment.ID = payment.ScholarshipID
+	scholarshipResp.Payment.ScholarshipID = scholarship.ID
+	scholarshipResp.Payment.Deadline = payment.Deadline
 
 	tests := map[string]struct {
 		paramCtx          context.Context
@@ -96,9 +104,9 @@ func TestScholarshipServiceCreate(t *testing.T) {
 			createScholarship: testdata.FuncCaller{
 				IsCalled: true,
 				Input:    []interface{}{ctxValid, scholarship},
-				Output:   []interface{}{scholarship, nil},
+				Output:   []interface{}{scholarshipResp, nil},
 			},
-			expectedResp: scholarship,
+			expectedResp: scholarshipResp,
 			expectedErr:  nil,
 		},
 	}
