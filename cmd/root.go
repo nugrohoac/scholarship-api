@@ -4,22 +4,24 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
-	"github.com/Nusantara-Muda/scholarship-api/internal/email"
-	"github.com/Nusantara-Muda/scholarship-api/scholarship"
-	"github.com/mailgun/mailgun-go/v4"
+
 	"log"
 	"time"
 
+	"github.com/mailgun/mailgun-go/v4"
 	"github.com/spf13/viper"
 
 	sa "github.com/Nusantara-Muda/scholarship-api"
 	"github.com/Nusantara-Muda/scholarship-api/bank"
 	"github.com/Nusantara-Muda/scholarship-api/country"
+	"github.com/Nusantara-Muda/scholarship-api/internal/bank_transfer"
+	"github.com/Nusantara-Muda/scholarship-api/internal/email"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/mutation"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/query"
 	"github.com/Nusantara-Muda/scholarship-api/internal/postgresql"
 	"github.com/Nusantara-Muda/scholarship-api/jwt_hash"
 	_middleware "github.com/Nusantara-Muda/scholarship-api/middleware"
+	"github.com/Nusantara-Muda/scholarship-api/scholarship"
 	"github.com/Nusantara-Muda/scholarship-api/user"
 )
 
@@ -27,12 +29,15 @@ var (
 	// Database
 	dsn             string
 	deadlinePayment int
+	bankTransfer    sa.BankTransfer
 
-	bankRepo        sa.BankRepository
-	countryRepo     sa.CountryRepository
-	userRepo        sa.UserRepository
-	emailRepo       sa.EmailRepository
-	scholarshipRepo sa.ScholarshipRepository
+	bankRepo         sa.BankRepository
+	countryRepo      sa.CountryRepository
+	userRepo         sa.UserRepository
+	emailRepo        sa.EmailRepository
+	scholarshipRepo  sa.ScholarshipRepository
+	bankTransferRepo sa.BankTransferRepository
+	paymentRepo      sa.PaymentRepository
 
 	bankService        sa.BankService
 	countryService     sa.CountryService
@@ -50,7 +55,6 @@ var (
 	BankQuery query.BankQuery
 	// CountryQuery ...
 	CountryQuery query.CountryQuery
-
 	// UserQuery ...
 	UserQuery query.UserQuery
 
@@ -134,6 +138,31 @@ func initEnv() {
 	pathForgotPassword = viper.GetString("email_path_forgot_password")
 	emailSender = viper.GetString("email_sender")
 
+	// bank transfer load from env
+	if bankTransfer.Name = viper.GetString("bank_transfer_name"); bankTransfer.Name == "" {
+		log.Fatal("Please provide bank transfer name.......!!!")
+	}
+
+	if bankTransfer.AccountName = viper.GetString("bank_transfer_account_name"); bankTransfer.AccountName == "" {
+		log.Fatal("Please provide bank transfer account name.......!!!")
+	}
+
+	if bankTransfer.AccountNo = viper.GetInt("bank_transfer_account_no"); bankTransfer.AccountNo == 0 {
+		log.Fatal("Please provide bank transfer account no.......!!!")
+	}
+
+	if bankTransfer.Image.URL = viper.GetString("bank_transfer_image_url"); bankTransfer.Image.URL == "" {
+		log.Fatal("Please provide bank transfer image url.......!!!")
+	}
+
+	if bankTransfer.Image.Width = viper.GetInt32("bank_transfer_image_width"); bankTransfer.Image.Width == 0 {
+		log.Fatal("Please provide bank transfer image width.......!!!")
+	}
+
+	if bankTransfer.Image.Height = viper.GetInt32("bank_transfer_image_height"); bankTransfer.Image.Height == 0 {
+		log.Fatal("Please provide bank transfer image height.......!!!")
+	}
+
 	viper.WatchConfig()
 }
 
@@ -154,11 +183,13 @@ func initApp() {
 	userRepo = postgresql.NewUserRepository(db)
 	countryRepo = postgresql.NewCountryRepository(db)
 	scholarshipRepo = postgresql.NewScholarshipRepository(db, deadlinePayment)
+	bankTransferRepo = bank_transfer.NewBankTransfer(bankTransfer)
+	paymentRepo = postgresql.NewPaymentRepository(db)
 
 	bankService = bank.NewBankService(bankRepo)
 	userService = user.NewUserService(userRepo, jwtHash, emailRepo)
 	countryService = country.NewCountryService(countryRepo)
-	scholarshipService = scholarship.NewScholarshipService(scholarshipRepo)
+	scholarshipService = scholarship.NewScholarshipService(scholarshipRepo, bankTransferRepo, paymentRepo)
 
 	UserMutation = mutation.NewUserMutation(userService)
 	ScholarshipMutation = mutation.NewScholarshipMutation(scholarshipService)

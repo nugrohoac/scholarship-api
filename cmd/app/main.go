@@ -43,7 +43,7 @@ func main() {
 	graphQlSchema := _graphql.MustParseSchema(schema.String(), rootResolver, opts...)
 	//e.Use(cmd.Middleware.Auth)
 	e.POST("/scholarship/graphql", sa.GraphQLHandler(&relay.Handler{Schema: graphQlSchema}), cmd.Middleware.Auth)
-	e.GET("/scholarship/graphiql", sa.GraphQLHandler(&relay.Handler{Schema: graphQlSchema}), cmd.Middleware.Auth)
+	e.GET("/scholarship/graphiql", sa.GraphQLHandler(&relay.Handler{Schema: graphQlSchema}))
 
 	e.File("/scholarship/graphiql", "web/scholarship/graphiql.html")
 

@@ -12,7 +12,7 @@ func (b bankTransferRepo) Get() sa.BankTransfer {
 }
 
 // NewBankTransfer ...
-func NewBankTransfer(bankTransfer sa.BankTransfer) sa.BankTransferRepsitory {
+func NewBankTransfer(bankTransfer sa.BankTransfer) sa.BankTransferRepository {
 	return bankTransferRepo{
 		bankTransfer: bankTransfer,
 	}

@@ -1,6 +1,7 @@
 type payment {
     id: Int
     scholarshipId: Int
+    bankTransfer: bankTransfer
     deadline: String
     transferDate: String
     bankAccountName: String

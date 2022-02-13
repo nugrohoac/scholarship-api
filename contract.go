@@ -69,7 +69,12 @@ type ScholarshipService interface {
 	GetByID(ctx context.Context, ID int64) (Scholarship, error)
 }
 
-// BankTransferRepsitory ...
-type BankTransferRepsitory interface {
+// BankTransferRepository ...
+type BankTransferRepository interface {
 	Get() BankTransfer
+}
+
+// PaymentRepository .
+type PaymentRepository interface {
+	Fetch(ctx context.Context, scholarshipIDs []int64) ([]Payment, error)
 }

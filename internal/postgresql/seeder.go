@@ -214,3 +214,36 @@ func SeedRequirements(db *sql.DB, t *testing.T, requirements []sa.Requirement) {
 	_, err = db.Exec(query, args...)
 	require.NoError(t, err)
 }
+
+// SeedPayments ...
+func SeedPayments(db *sql.DB, t *testing.T, payments []sa.Payment) {
+	qInsert := sq.Insert("payment").
+		Columns("id",
+			"scholarship_id",
+			"deadline",
+			"transfer_date",
+			"bank_account_name",
+			"image",
+			"created_at",
+		)
+
+	for _, payment := range payments {
+		byteImage, err := json.Marshal(payment.Image)
+		require.NoError(t, err)
+
+		qInsert = qInsert.Values(payment.ID,
+			payment.ScholarshipID,
+			payment.Deadline,
+			payment.TransferDate,
+			payment.BankAccountName,
+			byteImage,
+			payment.CreatedAt,
+		)
+	}
+
+	query, args, err := qInsert.PlaceholderFormat(sq.Dollar).ToSql()
+	require.NoError(t, err)
+
+	_, err = db.Exec(query, args...)
+	require.NoError(t, err)
+}

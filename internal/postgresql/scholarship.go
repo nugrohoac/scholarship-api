@@ -129,10 +129,12 @@ func (s scholarshipRepo) Create(ctx context.Context, scholarship sa.Scholarship)
 	query, args, err = sq.Insert("payment").
 		Columns("scholarship_id",
 			"deadline",
+			"transfer_date",
 			"created_at",
 		).Values(
 		scholarship.ID,
 		scholarship.Payment.Deadline,
+		scholarship.Payment.TransferDate,
 		scholarship.Payment.CreatedAt,
 	).PlaceholderFormat(sq.Dollar).
 		ToSql()
@@ -301,6 +303,7 @@ func (s scholarshipRepo) GetByID(ctx context.Context, ID int64) (sa.Scholarship,
 		"s.requirement_descriptions",
 		"s.funding_start",
 		"s.funding_end",
+		"s.created_at",
 		"r.name",
 		"r.type",
 		"r.value",
@@ -350,6 +353,7 @@ func (s scholarshipRepo) GetByID(ctx context.Context, ID int64) (sa.Scholarship,
 			&requirementDescriptions,
 			&scholarship.FundingStart,
 			&scholarship.FundingEnd,
+			&scholarship.CreatedAt,
 			&requirement.Name,
 			&requirement.Type,
 			&requirement.Value,

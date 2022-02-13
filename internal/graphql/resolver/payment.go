@@ -22,6 +22,11 @@ func (p PaymentResolver) ScholarshipID() *int32 {
 	return &scholarshipID
 }
 
+// BankTransfer .
+func (p PaymentResolver) BankTransfer() *BankTransferResolver {
+	return &BankTransferResolver{BankTransfer: p.Payment.BankTransfer}
+}
+
 // Deadline ...
 func (p PaymentResolver) Deadline() *string {
 	deadline := p.Payment.Deadline.Format(time.RFC3339)

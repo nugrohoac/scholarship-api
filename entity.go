@@ -277,11 +277,12 @@ type InputRequirement struct {
 
 // Payment of scholarship
 type Payment struct {
-	ID              int64     `json:"id"`
-	ScholarshipID   int64     `json:"scholarship_id"`
-	Deadline        time.Time `json:"deadline"`
-	TransferDate    time.Time `json:"transfer_date"`
-	BankAccountName string    `json:"bank_account_name"`
-	Image           Image     `json:"image"`
-	CreatedAt       time.Time `json:"-"`
+	ID              int64        `json:"id"`
+	ScholarshipID   int64        `json:"scholarship_id"`
+	BankTransfer    BankTransfer `json:"bank_transfer"`
+	Deadline        time.Time    `json:"deadline"`
+	TransferDate    time.Time    `json:"transfer_date"`
+	BankAccountName string       `json:"bank_account_name"`
+	Image           Image        `json:"image"`
+	CreatedAt       time.Time    `json:"created_at"`
 }

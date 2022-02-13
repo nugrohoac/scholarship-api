@@ -114,6 +114,8 @@ func TestScholarshipServiceCreate(t *testing.T) {
 	for testName, test := range tests {
 		t.Run(testName, func(t *testing.T) {
 			scholarshipRepoMock := new(mocks.ScholarshipRepository)
+			bankTransferRepoMock := new(mocks.BankTransferRepository)
+			paymentRepoMock := new(mocks.PaymentRepository)
 
 			if test.createScholarship.IsCalled {
 				scholarshipRepoMock.On("Create", test.createScholarship.Input...).
@@ -121,7 +123,7 @@ func TestScholarshipServiceCreate(t *testing.T) {
 					Once()
 			}
 
-			scholarshipService := _service.NewScholarshipService(scholarshipRepoMock)
+			scholarshipService := _service.NewScholarshipService(scholarshipRepoMock, bankTransferRepoMock, paymentRepoMock)
 			scholarshipResp, err := scholarshipService.Create(test.paramCtx, test.paramScholarship)
 			scholarshipRepoMock.AssertExpectations(t)
 
@@ -205,6 +207,8 @@ func TestScholarshipServiceFetch(t *testing.T) {
 	for testName, test := range tests {
 		t.Run(testName, func(t *testing.T) {
 			scholarshipRepoMock := new(mocks.ScholarshipRepository)
+			bankTransferRepoMock := new(mocks.BankTransferRepository)
+			paymentRepoMock := new(mocks.PaymentRepository)
 
 			if test.fetchScholarship.IsCalled {
 				scholarshipRepoMock.On("Fetch", test.fetchScholarship.Input...).
@@ -218,7 +222,7 @@ func TestScholarshipServiceFetch(t *testing.T) {
 					Once()
 			}
 
-			scholarshipService := _service.NewScholarshipService(scholarshipRepoMock)
+			scholarshipService := _service.NewScholarshipService(scholarshipRepoMock, bankTransferRepoMock, paymentRepoMock)
 			resp, err := scholarshipService.Fetch(context.Background(), test.paramFilter)
 			scholarshipRepoMock.AssertExpectations(t)
 
