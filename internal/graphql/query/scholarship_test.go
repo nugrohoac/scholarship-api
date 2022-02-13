@@ -89,3 +89,78 @@ func TestScholarshipQuery_GetScholarshipBySponsor(t *testing.T) {
 		})
 	}
 }
+
+func TestScholarshipQuery_GetScholarshipByID(t *testing.T) {
+	var (
+		scholarship  sa.Scholarship
+		payment      sa.Payment
+		bankTransfer sa.BankTransfer
+	)
+
+	testdata.GoldenJSONUnmarshal(t, "scholarship", &scholarship)
+	testdata.GoldenJSONUnmarshal(t, "payment", &payment)
+	testdata.GoldenJSONUnmarshal(t, "bank_transfer", &bankTransfer)
+
+	scholarship.Payment = payment
+	scholarship.Payment.BankTransfer = bankTransfer
+
+	response := resolver.ScholarshipResolver{Scholarship: scholarship}
+
+	tests := map[string]struct {
+		paramID            struct{ ID int32 }
+		getScholarshipByID testdata.FuncCaller
+		expectedResp       *resolver.ScholarshipResolver
+		expectedErr        error
+	}{
+		"error": {
+			paramID: struct {
+				ID int32
+			}{ID: int32(scholarship.ID)},
+			getScholarshipByID: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, scholarship.ID},
+				Output:   []interface{}{sa.Scholarship{}, errors.New("error")},
+			},
+			expectedResp: nil,
+			expectedErr:  errors.New("error"),
+		},
+		"success": {
+			paramID: struct {
+				ID int32
+			}{ID: int32(scholarship.ID)},
+			getScholarshipByID: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, scholarship.ID},
+				Output:   []interface{}{scholarship, nil},
+			},
+			expectedResp: &response,
+			expectedErr:  nil,
+		},
+	}
+
+	for testName, test := range tests {
+		t.Run(testName, func(t *testing.T) {
+			scholarshipServiceMock := new(mocks.ScholarshipService)
+
+			if test.getScholarshipByID.IsCalled {
+				scholarshipServiceMock.On("GetByID", test.getScholarshipByID.Input...).
+					Return(test.getScholarshipByID.Output...).
+					Once()
+			}
+
+			scholarshipQuery := query.NewScholarshipQuery(scholarshipServiceMock)
+			scholarshipResp, err := scholarshipQuery.GetScholarshipByID(context.Background(), test.paramID)
+			scholarshipServiceMock.AssertExpectations(t)
+
+			if err != nil {
+				require.Error(t, err)
+				require.Equal(t, test.expectedErr, err)
+
+				return
+			}
+
+			require.NoError(t, err)
+			require.Equal(t, test.expectedResp, scholarshipResp)
+		})
+	}
+}
