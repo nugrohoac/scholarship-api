@@ -81,3 +81,8 @@ type PaymentRepository interface {
 	Fetch(ctx context.Context, scholarshipIDs []int64) ([]Payment, error)
 	SubmitTransfer(ctx context.Context, payment Payment) (Payment, error)
 }
+
+// PaymentService .
+type PaymentService interface {
+	SubmitTransfer(ctx context.Context, payment Payment) (Payment, error)
+}
