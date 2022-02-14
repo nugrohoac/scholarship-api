@@ -46,11 +46,17 @@ func (p paymentSuite) TestPaymentFetch() {
 
 func (p paymentSuite) TestPaymentSubmitTransfer() {
 	var (
-		payment sa.Payment
-		t       = p.T()
+		scholarship sa.Scholarship
+		payment     sa.Payment
+		t           = p.T()
 	)
 
+	testdata.GoldenJSONUnmarshal(t, "scholarship", &scholarship)
 	testdata.GoldenJSONUnmarshal(t, "payment", &payment)
+
+	postgresql.SeedScholarship(p.DBConn, t, []sa.Scholarship{scholarship})
+
+	payment.ScholarshipID = scholarship.ID
 
 	oldPayment := payment
 	oldPayment.TransferDate = time.Time{}
@@ -71,4 +77,10 @@ func (p paymentSuite) TestPaymentSubmitTransfer() {
 	paymentRespTransferDate := paymentResp.TransferDate.Format("2006-01-02T15:04:05")
 	currentTransferDate := payments[0].TransferDate.Format("2006-01-02T15:04:05")
 	require.Equal(t, paymentRespTransferDate, currentTransferDate)
+
+	var status int
+	row := p.DBConn.QueryRow("SELECT status FROM scholarship WHERE id=$1", payment.ScholarshipID)
+	err = row.Scan(&status)
+	require.NoError(t, err)
+	require.Equal(t, 1, status)
 }

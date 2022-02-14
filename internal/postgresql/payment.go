@@ -80,6 +80,15 @@ func (p paymentRepo) Fetch(ctx context.Context, scholarshipIDs []int64) ([]sa.Pa
 
 // SubmitTransfer .
 func (p paymentRepo) SubmitTransfer(ctx context.Context, payment sa.Payment) (sa.Payment, error) {
+	var (
+		errRollback, errCommit error
+	)
+
+	tx, err := p.db.BeginTx(ctx, nil)
+	if err != nil {
+		return sa.Payment{}, err
+	}
+
 	byteImage, err := json.Marshal(payment.Image)
 	if err != nil {
 		return sa.Payment{}, err
@@ -97,8 +106,40 @@ func (p paymentRepo) SubmitTransfer(ctx context.Context, payment sa.Payment) (sa
 		return sa.Payment{}, err
 	}
 
-	if _, err = p.db.ExecContext(ctx, query, args...); err != nil {
+	if _, err = tx.ExecContext(ctx, query, args...); err != nil {
+		if errRollback = tx.Rollback(); errRollback != nil {
+			logrus.Error(errRollback)
+		}
+
 		return sa.Payment{}, err
+	}
+
+	query, args, err = sq.Update("scholarship").
+		SetMap(sq.Eq{"status": 1}).
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+	if err != nil {
+		if errRollback = tx.Rollback(); errRollback != nil {
+			logrus.Error(errRollback)
+		}
+
+		return sa.Payment{}, err
+	}
+
+	if _, err = tx.ExecContext(ctx, query, args...); err != nil {
+		if errRollback = tx.Rollback(); errRollback != nil {
+			logrus.Error(errRollback)
+		}
+
+		return sa.Payment{}, err
+	}
+
+	if errCommit = tx.Commit(); errCommit != nil {
+		if errRollback = tx.Rollback(); errRollback != nil {
+			logrus.Error(errRollback)
+		}
+
+		return sa.Payment{}, errCommit
 	}
 
 	return payment, nil
