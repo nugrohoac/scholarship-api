@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/stretchr/testify/require"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/suite"
 
@@ -24,7 +25,7 @@ func TestPaymentRepository(t *testing.T) {
 	suite.Run(t, new(paymentSuite))
 }
 
-func (p paymentSuite) TestPaymentRepo_Fetch() {
+func (p paymentSuite) TestPaymentFetch() {
 	t := p.T()
 	var payments []sa.Payment
 	testdata.GoldenJSONUnmarshal(t, "payments", &payments)
@@ -41,4 +42,33 @@ func (p paymentSuite) TestPaymentRepo_Fetch() {
 	require.NoError(t, err)
 	require.Equal(t, 1, len(paymentsResp))
 	require.Equal(t, payments[0].ID, paymentsResp[0].ID)
+}
+
+func (p paymentSuite) TestPaymentSubmitTransfer() {
+	var (
+		payment sa.Payment
+		t       = p.T()
+	)
+
+	testdata.GoldenJSONUnmarshal(t, "payment", &payment)
+
+	oldPayment := payment
+	oldPayment.TransferDate = time.Time{}
+	oldPayment.BankAccountName = ""
+	oldPayment.Image = sa.Image{}
+	postgresql.SeedPayments(p.DBConn, t, []sa.Payment{oldPayment})
+
+	paymentRepo := postgresql.NewPaymentRepository(p.DBConn)
+	paymentResp, err := paymentRepo.SubmitTransfer(context.Background(), payment)
+	require.NoError(t, err)
+
+	payments, err := paymentRepo.Fetch(context.Background(), []int64{payment.ID})
+	require.NoError(t, err)
+	require.Len(t, payments, 1)
+	require.Equal(t, paymentResp.BankAccountName, payments[0].BankAccountName)
+	require.Equal(t, paymentResp.Image, payments[0].Image)
+
+	paymentRespTransferDate := paymentResp.TransferDate.Format("2006-01-02T15:04:05")
+	currentTransferDate := payments[0].TransferDate.Format("2006-01-02T15:04:05")
+	require.Equal(t, paymentRespTransferDate, currentTransferDate)
 }

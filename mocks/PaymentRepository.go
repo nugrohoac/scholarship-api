@@ -36,3 +36,24 @@ func (_m *PaymentRepository) Fetch(ctx context.Context, scholarshipIDs []int64) 
 
 	return r0, r1
 }
+
+// SubmitTransfer provides a mock function with given fields: ctx, payment
+func (_m *PaymentRepository) SubmitTransfer(ctx context.Context, payment scholarship_api.Payment) (scholarship_api.Payment, error) {
+	ret := _m.Called(ctx, payment)
+
+	var r0 scholarship_api.Payment
+	if rf, ok := ret.Get(0).(func(context.Context, scholarship_api.Payment) scholarship_api.Payment); ok {
+		r0 = rf(ctx, payment)
+	} else {
+		r0 = ret.Get(0).(scholarship_api.Payment)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, scholarship_api.Payment) error); ok {
+		r1 = rf(ctx, payment)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}

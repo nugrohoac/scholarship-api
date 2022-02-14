@@ -136,7 +136,8 @@ func (s scholarshipRepo) Create(ctx context.Context, scholarship sa.Scholarship)
 		scholarship.Payment.Deadline,
 		scholarship.Payment.TransferDate,
 		scholarship.Payment.CreatedAt,
-	).PlaceholderFormat(sq.Dollar).
+	).Suffix("RETURNING \"id\"").
+		PlaceholderFormat(sq.Dollar).
 		ToSql()
 	if err != nil {
 		if errRollback = tx.Rollback(); errRollback != nil {
@@ -146,7 +147,8 @@ func (s scholarshipRepo) Create(ctx context.Context, scholarship sa.Scholarship)
 		return sa.Scholarship{}, err
 	}
 
-	if _, err = tx.ExecContext(ctx, query, args...); err != nil {
+	row = tx.QueryRowContext(ctx, query, args...)
+	if err = row.Scan(&scholarship.Payment.ID); err != nil {
 		if errRollback = tx.Rollback(); errRollback != nil {
 			logrus.Error(errRollback)
 		}

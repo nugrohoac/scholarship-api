@@ -78,6 +78,32 @@ func (p paymentRepo) Fetch(ctx context.Context, scholarshipIDs []int64) ([]sa.Pa
 	return payments, nil
 }
 
+// SubmitTransfer .
+func (p paymentRepo) SubmitTransfer(ctx context.Context, payment sa.Payment) (sa.Payment, error) {
+	byteImage, err := json.Marshal(payment.Image)
+	if err != nil {
+		return sa.Payment{}, err
+	}
+
+	query, args, err := sq.Update("payment").
+		SetMap(sq.Eq{
+			"bank_account_name": payment.BankAccountName,
+			"transfer_date":     payment.TransferDate,
+			"image":             byteImage,
+		}).Where(sq.Eq{"scholarship_id": payment.ScholarshipID}).
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+	if err != nil {
+		return sa.Payment{}, err
+	}
+
+	if _, err = p.db.ExecContext(ctx, query, args...); err != nil {
+		return sa.Payment{}, err
+	}
+
+	return payment, nil
+}
+
 // NewPaymentRepository ...
 func NewPaymentRepository(db *sql.DB) sa.PaymentRepository {
 	return paymentRepo{db: db}
