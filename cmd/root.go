@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
+	"github.com/Nusantara-Muda/scholarship-api/payment"
 
 	"log"
 	"time"
@@ -43,6 +44,7 @@ var (
 	countryService     sa.CountryService
 	userService        sa.UserService
 	scholarshipService sa.ScholarshipService
+	paymentService     sa.PaymentService
 
 	// email
 	emailDomain        string
@@ -62,6 +64,8 @@ var (
 	UserMutation mutation.UserMutation
 	// ScholarshipMutation ...
 	ScholarshipMutation mutation.ScholarshipMutation
+	//PaymentMutation .
+	PaymentMutation mutation.PaymentMutation
 	// ScholarshipQuery ...
 	ScholarshipQuery query.ScholarshipQuery
 
@@ -190,9 +194,11 @@ func initApp() {
 	userService = user.NewUserService(userRepo, jwtHash, emailRepo)
 	countryService = country.NewCountryService(countryRepo)
 	scholarshipService = scholarship.NewScholarshipService(scholarshipRepo, bankTransferRepo, paymentRepo)
+	paymentService = payment.NewPaymentService(paymentRepo)
 
 	UserMutation = mutation.NewUserMutation(userService)
 	ScholarshipMutation = mutation.NewScholarshipMutation(scholarshipService)
+	PaymentMutation = mutation.NewPaymentMutation(paymentService)
 
 	BankQuery = query.NewBankQuery(bankService)
 	CountryQuery = query.NewCountryQuery(countryService)

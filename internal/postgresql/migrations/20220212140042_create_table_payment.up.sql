@@ -5,5 +5,6 @@ CREATE TABLE payment (
     "transfer_date" timestamp(3) default null,
     "bank_account_name" varchar(100) NOT NULL default '',
     "image" json DEFAULT NULL,
-    "created_at" timestamp(3) DEFAULT CURRENT_TIMESTAMP(3)
+    "created_at" timestamp(3) DEFAULT CURRENT_TIMESTAMP(3),
+    "updated_at" timestamp(3) NULL
 );

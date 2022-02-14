@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"time"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/sirupsen/logrus"
@@ -82,6 +83,7 @@ func (p paymentRepo) Fetch(ctx context.Context, scholarshipIDs []int64) ([]sa.Pa
 func (p paymentRepo) SubmitTransfer(ctx context.Context, payment sa.Payment) (sa.Payment, error) {
 	var (
 		errRollback, errCommit error
+		timeNow                = time.Now()
 	)
 
 	tx, err := p.db.BeginTx(ctx, nil)
@@ -99,6 +101,7 @@ func (p paymentRepo) SubmitTransfer(ctx context.Context, payment sa.Payment) (sa
 			"bank_account_name": payment.BankAccountName,
 			"transfer_date":     payment.TransferDate,
 			"image":             byteImage,
+			"updated_at":        timeNow,
 		}).Where(sq.Eq{"scholarship_id": payment.ScholarshipID}).
 		PlaceholderFormat(sq.Dollar).
 		ToSql()
@@ -115,7 +118,10 @@ func (p paymentRepo) SubmitTransfer(ctx context.Context, payment sa.Payment) (sa
 	}
 
 	query, args, err = sq.Update("scholarship").
-		SetMap(sq.Eq{"status": 1}).
+		SetMap(sq.Eq{
+			"status":     1,
+			"updated_at": timeNow,
+		}).Where(sq.Eq{"id": payment.ScholarshipID}).
 		PlaceholderFormat(sq.Dollar).
 		ToSql()
 	if err != nil {

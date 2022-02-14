@@ -286,3 +286,11 @@ type Payment struct {
 	Image           Image        `json:"image"`
 	CreatedAt       time.Time    `json:"created_at"`
 }
+
+// InputSubmitTransfer ...
+type InputSubmitTransfer struct {
+	ScholarshipID   int32
+	TransferDate    string
+	BankAccountName string
+	Image           InputImage
+}
