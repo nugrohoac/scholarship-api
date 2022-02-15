@@ -194,7 +194,7 @@ func initApp() {
 	userService = user.NewUserService(userRepo, jwtHash, emailRepo)
 	countryService = country.NewCountryService(countryRepo)
 	scholarshipService = scholarship.NewScholarshipService(scholarshipRepo, bankTransferRepo, paymentRepo)
-	paymentService = payment.NewPaymentService(paymentRepo)
+	paymentService = payment.NewPaymentService(paymentRepo, scholarshipRepo)
 
 	UserMutation = mutation.NewUserMutation(userService)
 	ScholarshipMutation = mutation.NewScholarshipMutation(scholarshipService)

@@ -7,11 +7,30 @@ import (
 )
 
 type paymentService struct {
-	paymentRepo sa.PaymentRepository
+	paymentRepo     sa.PaymentRepository
+	scholarshipRepo sa.ScholarshipRepository
 }
 
 // SubmitTransfer ....
 func (p paymentService) SubmitTransfer(ctx context.Context, payment sa.Payment) (sa.Payment, error) {
+	user, err := sa.GetUserOnContext(ctx)
+	if err != nil {
+		return sa.Payment{}, err
+	}
+
+	scholarship, err := p.scholarshipRepo.GetByID(ctx, payment.ScholarshipID)
+	if err != nil {
+		return sa.Payment{}, err
+	}
+
+	if user.ID != scholarship.SponsorID {
+		return sa.Payment{}, sa.ErrUnAuthorize{Message: "user is not owner of scholarship"}
+	}
+
+	if scholarship.Status != 0 {
+		return sa.Payment{}, sa.ErrBadRequest{Message: "scholarship was paid"}
+	}
+
 	payments, err := p.paymentRepo.Fetch(ctx, []int64{payment.ScholarshipID})
 	if err != nil {
 		return sa.Payment{}, err
@@ -30,6 +49,9 @@ func (p paymentService) SubmitTransfer(ctx context.Context, payment sa.Payment) 
 }
 
 // NewPaymentService ....
-func NewPaymentService(paymentRepo sa.PaymentRepository) sa.PaymentService {
-	return paymentService{paymentRepo: paymentRepo}
+func NewPaymentService(paymentRepo sa.PaymentRepository, scholarshipRepo sa.ScholarshipRepository) sa.PaymentService {
+	return paymentService{
+		paymentRepo:     paymentRepo,
+		scholarshipRepo: scholarshipRepo,
+	}
 }
