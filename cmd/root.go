@@ -4,9 +4,8 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
-	"github.com/Nusantara-Muda/scholarship-api/payment"
-
 	"log"
+	"strings"
 	"time"
 
 	"github.com/mailgun/mailgun-go/v4"
@@ -15,13 +14,16 @@ import (
 	sa "github.com/Nusantara-Muda/scholarship-api"
 	"github.com/Nusantara-Muda/scholarship-api/bank"
 	"github.com/Nusantara-Muda/scholarship-api/country"
-	"github.com/Nusantara-Muda/scholarship-api/internal/bank_transfer"
+	_degree "github.com/Nusantara-Muda/scholarship-api/degree"
+	"github.com/Nusantara-Muda/scholarship-api/internal/configuration/bank_transfer"
+	"github.com/Nusantara-Muda/scholarship-api/internal/configuration/degree"
 	"github.com/Nusantara-Muda/scholarship-api/internal/email"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/mutation"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/query"
 	"github.com/Nusantara-Muda/scholarship-api/internal/postgresql"
 	"github.com/Nusantara-Muda/scholarship-api/jwt_hash"
 	_middleware "github.com/Nusantara-Muda/scholarship-api/middleware"
+	"github.com/Nusantara-Muda/scholarship-api/payment"
 	"github.com/Nusantara-Muda/scholarship-api/scholarship"
 	"github.com/Nusantara-Muda/scholarship-api/user"
 )
@@ -31,6 +33,7 @@ var (
 	dsn             string
 	deadlinePayment int
 	bankTransfer    sa.BankTransfer
+	degrees         []string
 
 	bankRepo         sa.BankRepository
 	countryRepo      sa.CountryRepository
@@ -39,12 +42,14 @@ var (
 	scholarshipRepo  sa.ScholarshipRepository
 	bankTransferRepo sa.BankTransferRepository
 	paymentRepo      sa.PaymentRepository
+	degreeRepo       sa.DegreeRepository
 
 	bankService        sa.BankService
 	countryService     sa.CountryService
 	userService        sa.UserService
 	scholarshipService sa.ScholarshipService
 	paymentService     sa.PaymentService
+	degreeService      sa.DegreeService
 
 	// email
 	emailDomain        string
@@ -68,6 +73,8 @@ var (
 	PaymentMutation mutation.PaymentMutation
 	// ScholarshipQuery ...
 	ScholarshipQuery query.ScholarshipQuery
+	// DegreeQuery ...
+	DegreeQuery query.DegreeQuery
 
 	// PortApp apps
 	PortApp = 7070
@@ -167,6 +174,12 @@ func initEnv() {
 		log.Fatal("Please provide bank transfer image height.......!!!")
 	}
 
+	degreeFromEnv := viper.GetString("degree")
+	if degreeFromEnv == "" {
+		log.Fatal("Please provide degree.......!!!")
+	}
+	degrees = strings.Split(degreeFromEnv, ",")
+
 	viper.WatchConfig()
 }
 
@@ -189,12 +202,14 @@ func initApp() {
 	scholarshipRepo = postgresql.NewScholarshipRepository(db, deadlinePayment)
 	bankTransferRepo = bank_transfer.NewBankTransfer(bankTransfer)
 	paymentRepo = postgresql.NewPaymentRepository(db)
+	degreeRepo = degree.NewDegreeRepository(degrees)
 
 	bankService = bank.NewBankService(bankRepo)
 	userService = user.NewUserService(userRepo, jwtHash, emailRepo)
 	countryService = country.NewCountryService(countryRepo)
 	scholarshipService = scholarship.NewScholarshipService(scholarshipRepo, bankTransferRepo, paymentRepo)
 	paymentService = payment.NewPaymentService(paymentRepo, scholarshipRepo)
+	degreeService = _degree.NewDegreeService(degreeRepo)
 
 	UserMutation = mutation.NewUserMutation(userService)
 	ScholarshipMutation = mutation.NewScholarshipMutation(scholarshipService)
@@ -204,4 +219,5 @@ func initApp() {
 	CountryQuery = query.NewCountryQuery(countryService)
 	UserQuery = query.NewUserQuery(userService)
 	ScholarshipQuery = query.NewScholarshipQuery(scholarshipService)
+	DegreeQuery = query.NewDegreeQuery(degreeService)
 }

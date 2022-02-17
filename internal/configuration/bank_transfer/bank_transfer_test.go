@@ -3,7 +3,7 @@ package bank_transfer_test
 import (
 	"testing"
 
-	"github.com/Nusantara-Muda/scholarship-api/internal/bank_transfer"
+	"github.com/Nusantara-Muda/scholarship-api/internal/configuration/bank_transfer"
 	"github.com/Nusantara-Muda/scholarship-api/testdata"
 	"github.com/stretchr/testify/require"
 
