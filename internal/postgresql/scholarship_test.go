@@ -33,13 +33,18 @@ func (s scholarshipSuite) TestScholarshipRepoCreate() {
 
 	scholarship.Requirements = requirements
 
-	scholarshipRepo := postgresql.NewScholarshipRepository(s.DBConn)
+	scholarshipRepo := postgresql.NewScholarshipRepository(s.DBConn, 72)
 	scholarshipResp, err := scholarshipRepo.Create(context.Background(), scholarship)
 	require.NoError(s.T(), err)
 	require.Equal(s.T(), scholarship.Name, scholarshipResp.Name)
 
 	row := s.DBConn.QueryRow("SELECT COUNT(id) from scholarship WHERE id=$1", scholarshipResp.ID)
 	var count int
+	err = row.Scan(&count)
+	require.NoError(s.T(), err)
+	require.Equal(s.T(), 1, count)
+
+	row = s.DBConn.QueryRow("SELECT COUNT(id) from payment WHERE scholarship_id=$1", scholarshipResp.ID)
 	err = row.Scan(&count)
 	require.NoError(s.T(), err)
 	require.Equal(s.T(), 1, count)
@@ -51,7 +56,7 @@ func (s scholarshipSuite) TestScholarshipRepoFetch() {
 	testdata.GoldenJSONUnmarshal(t, "scholarships", &scholarships)
 	postgresql.SeedScholarship(s.DBConn, t, scholarships)
 
-	scholarshipRepository := postgresql.NewScholarshipRepository(s.DBConn)
+	scholarshipRepository := postgresql.NewScholarshipRepository(s.DBConn, 72)
 
 	// without filter
 	response, cursor, err := scholarshipRepository.Fetch(context.Background(), sa.ScholarshipFilter{})
@@ -98,7 +103,7 @@ func (s scholarshipSuite) TestScholarshipRepoGetByID() {
 	postgresql.SeedScholarship(s.DBConn, s.T(), []sa.Scholarship{scholarship})
 	postgresql.SeedRequirements(s.DBConn, s.T(), requirements)
 
-	scholarshipRepo := postgresql.NewScholarshipRepository(s.DBConn)
+	scholarshipRepo := postgresql.NewScholarshipRepository(s.DBConn, 72)
 	response, err := scholarshipRepo.GetByID(context.Background(), scholarship.ID)
 	require.NoError(s.T(), err)
 	require.Equal(s.T(), 2, len(response.Requirements))

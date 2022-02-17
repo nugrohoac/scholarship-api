@@ -25,6 +25,14 @@ type Bank struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
+// BankTransfer  is used to hold information transfer of payment
+type BankTransfer struct {
+	Name        string
+	AccountName string
+	AccountNo   int
+	Image       Image
+}
+
 // InputBankFilter ...
 type InputBankFilter struct {
 	Limit  *int32
@@ -202,6 +210,7 @@ type Scholarship struct {
 	FundingStart            time.Time     `json:"funding_start"`
 	FundingEnd              time.Time     `json:"funding_end"`
 	Requirements            []Requirement `json:"requirements"`
+	Payment                 Payment       `json:"payment"`
 	CreatedAt               time.Time     `json:"created_at"`
 	UpdatedAt               time.Time     `json:"-"`
 }
@@ -264,4 +273,24 @@ type InputRequirement struct {
 	Type  string
 	Name  string
 	Value string
+}
+
+// Payment of scholarship
+type Payment struct {
+	ID              int64        `json:"id"`
+	ScholarshipID   int64        `json:"scholarship_id"`
+	BankTransfer    BankTransfer `json:"bank_transfer"`
+	Deadline        time.Time    `json:"deadline"`
+	TransferDate    time.Time    `json:"transfer_date"`
+	BankAccountName string       `json:"bank_account_name"`
+	Image           Image        `json:"image"`
+	CreatedAt       time.Time    `json:"created_at"`
+}
+
+// InputSubmitTransfer ...
+type InputSubmitTransfer struct {
+	ScholarshipID   int32
+	TransferDate    string
+	BankAccountName string
+	Image           InputImage
 }

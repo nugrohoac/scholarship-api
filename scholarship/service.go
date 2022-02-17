@@ -6,7 +6,9 @@ import (
 )
 
 type scholarshipService struct {
-	scholarshipRepo sa.ScholarshipRepository
+	scholarshipRepo  sa.ScholarshipRepository
+	bankTransferRepo sa.BankTransferRepository
+	paymentRepo      sa.PaymentRepository
 }
 
 // Create ...
@@ -39,7 +41,7 @@ func (s scholarshipService) Create(ctx context.Context, scholarship sa.Scholarsh
 		return sa.Scholarship{}, nil
 	}
 
-	// crate invoice here, next sprint ( sprint 3 )
+	scholarship.Payment.BankTransfer = s.bankTransferRepo.Get()
 
 	return scholarship, nil
 }
@@ -72,10 +74,37 @@ func (s scholarshipService) Fetch(ctx context.Context, filter sa.ScholarshipFilt
 
 // GetByID ...
 func (s scholarshipService) GetByID(ctx context.Context, ID int64) (sa.Scholarship, error) {
-	return s.scholarshipRepo.GetByID(ctx, ID)
+	scholarship, err := s.scholarshipRepo.GetByID(ctx, ID)
+	if err != nil {
+		return sa.Scholarship{}, err
+	}
+
+	if scholarship.Status == 0 {
+		payments, err := s.paymentRepo.Fetch(ctx, []int64{ID})
+		if err != nil {
+			return sa.Scholarship{}, err
+		}
+
+		if len(payments) == 0 {
+			payments = append(payments, sa.Payment{})
+		}
+
+		scholarship.Payment = payments[0]
+		scholarship.Payment.BankTransfer = s.bankTransferRepo.Get()
+	}
+
+	return scholarship, nil
 }
 
 // NewScholarshipService ...
-func NewScholarshipService(scholarshipRepo sa.ScholarshipRepository) sa.ScholarshipService {
-	return scholarshipService{scholarshipRepo: scholarshipRepo}
+func NewScholarshipService(
+	scholarshipRepo sa.ScholarshipRepository,
+	bankTransferRepository sa.BankTransferRepository,
+	paymentRepo sa.PaymentRepository,
+) sa.ScholarshipService {
+	return scholarshipService{
+		scholarshipRepo:  scholarshipRepo,
+		bankTransferRepo: bankTransferRepository,
+		paymentRepo:      paymentRepo,
+	}
 }

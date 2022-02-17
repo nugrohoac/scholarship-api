@@ -44,4 +44,11 @@ type Mutation {
         fundingEnd: String!
         requirements: [inputRequirement!]!
     ): scholarship
+
+    SubmitTransferPayment(
+        scholarshipId: Int!
+        transferDate: String!
+        bankAccountName: String!
+        image: inputImage!
+    ):payment
 }

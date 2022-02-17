@@ -18,10 +18,12 @@ func TestScholarshipMutationCreate(t *testing.T) {
 	var (
 		scholarship  sa.Scholarship
 		requirements = make([]sa.Requirement, 0)
+		payment      sa.Payment
 	)
 
 	testdata.GoldenJSONUnmarshal(t, "scholarship", &scholarship)
 	testdata.GoldenJSONUnmarshal(t, "requirements", &requirements)
+	testdata.GoldenJSONUnmarshal(t, "payment", &payment)
 
 	inputScholarship := sa.InputScholarship{
 		SponsorID: int32(scholarship.SponsorID),
@@ -59,7 +61,12 @@ func TestScholarshipMutationCreate(t *testing.T) {
 	scholarship.ID = 0
 	scholarship.CreatedAt = time.Time{}
 	scholarship.UpdatedAt = time.Time{}
-	scholarshipResolver := resolver.ScholarshipResolver{Scholarship: scholarship}
+
+	scholarshipResp := scholarship
+	scholarshipResp.Payment.ID = payment.ID
+	scholarshipResp.Payment.Deadline = payment.Deadline
+	scholarshipResp.Payment.ScholarshipID = scholarship.ID
+	scholarshipResolver := resolver.ScholarshipResolver{Scholarship: scholarshipResp}
 
 	tests := map[string]struct {
 		paramScholarship  sa.InputScholarship
@@ -72,7 +79,7 @@ func TestScholarshipMutationCreate(t *testing.T) {
 			createScholarship: testdata.FuncCaller{
 				IsCalled: true,
 				Input:    []interface{}{mock.Anything, scholarship},
-				Output:   []interface{}{scholarship, nil},
+				Output:   []interface{}{scholarshipResp, nil},
 			},
 			expectedResp: &scholarshipResolver,
 			expectedErr:  nil,

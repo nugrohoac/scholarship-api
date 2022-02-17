@@ -1,6 +1,8 @@
 package scholarship_api
 
-import "context"
+import (
+	"context"
+)
 
 // BankRepository .
 type BankRepository interface {
@@ -67,4 +69,20 @@ type ScholarshipService interface {
 	Create(ctx context.Context, scholarship Scholarship) (Scholarship, error)
 	Fetch(ctx context.Context, filter ScholarshipFilter) (ScholarshipFeed, error)
 	GetByID(ctx context.Context, ID int64) (Scholarship, error)
+}
+
+// BankTransferRepository ...
+type BankTransferRepository interface {
+	Get() BankTransfer
+}
+
+// PaymentRepository .
+type PaymentRepository interface {
+	Fetch(ctx context.Context, scholarshipIDs []int64) ([]Payment, error)
+	SubmitTransfer(ctx context.Context, payment Payment) (Payment, error)
+}
+
+// PaymentService .
+type PaymentService interface {
+	SubmitTransfer(ctx context.Context, payment Payment) (Payment, error)
 }
