@@ -86,3 +86,13 @@ type PaymentRepository interface {
 type PaymentService interface {
 	SubmitTransfer(ctx context.Context, payment Payment) (Payment, error)
 }
+
+// DegreeRepository .
+type DegreeRepository interface {
+	Get() []string
+}
+
+// DegreeService .
+type DegreeService interface {
+	Get() []*string
+}

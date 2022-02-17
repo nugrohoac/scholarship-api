@@ -35,4 +35,6 @@ type Query {
     GetScholarshipByID(
         id: Int!
     ): scholarship
+
+    GetDegree: [String]
 }
