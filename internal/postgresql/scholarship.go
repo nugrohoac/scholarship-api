@@ -31,9 +31,8 @@ func (s scholarshipRepo) Create(ctx context.Context, scholarship sa.Scholarship)
 	}
 
 	var (
-		timeNow                 = time.Now()
-		errRollback             error
-		requirementDescriptions = strings.Join(scholarship.RequirementDescriptions, "#")
+		timeNow     = time.Now()
+		errRollback error
 	)
 
 	query, args, err := sq.Insert("scholarship").
@@ -48,7 +47,6 @@ func (s scholarshipRepo) Create(ctx context.Context, scholarship sa.Scholarship)
 			"announcement_date",
 			"eligibility_description",
 			"subsidy_description",
-			"requirement_descriptions",
 			"funding_start",
 			"funding_end",
 			"created_at").
@@ -63,7 +61,6 @@ func (s scholarshipRepo) Create(ctx context.Context, scholarship sa.Scholarship)
 			scholarship.AnnouncementDate,
 			scholarship.EligibilityDescription,
 			scholarship.SubsidyDescription,
-			requirementDescriptions,
 			scholarship.FundingStart,
 			scholarship.FundingEnd,
 			timeNow,
@@ -120,6 +117,35 @@ func (s scholarshipRepo) Create(ctx context.Context, scholarship sa.Scholarship)
 		}
 	}
 	// Insert requirements end
+
+	// insert requirement description start
+	if len(scholarship.RequirementDescriptions) > 0 {
+		qInsertRequirementDescription := sq.Insert("requirement_description").
+			Columns("scholarship_id", "description")
+
+		for _, reqDescription := range scholarship.RequirementDescriptions {
+			qInsertRequirementDescription = qInsertRequirementDescription.
+				Values(scholarship.ID, reqDescription)
+		}
+
+		query, args, err = qInsertRequirementDescription.PlaceholderFormat(sq.Dollar).ToSql()
+		if err != nil {
+			if errRollback = tx.Rollback(); errRollback != nil {
+				logrus.Error(errRollback)
+			}
+
+			return sa.Scholarship{}, err
+		}
+
+		if _, err = tx.ExecContext(ctx, query, args...); err != nil {
+			if errRollback = tx.Rollback(); errRollback != nil {
+				logrus.Error(errRollback)
+			}
+
+			return sa.Scholarship{}, err
+		}
+	}
+	// insert requirements description end
 
 	// Create payment start
 	scholarship.Payment.Deadline = timeNow.Add(time.Duration(s.deadlinePayment) * time.Hour)
@@ -184,7 +210,6 @@ func (s scholarshipRepo) Fetch(ctx context.Context, filter sa.ScholarshipFilter)
 		"announcement_date",
 		"eligibility_description",
 		"subsidy_description",
-		"requirement_descriptions",
 		"funding_start",
 		"funding_end",
 		"created_at",
@@ -235,11 +260,10 @@ func (s scholarshipRepo) Fetch(ctx context.Context, filter sa.ScholarshipFilter)
 	}()
 
 	var (
-		scholarships           = make([]sa.Scholarship, 0)
-		cursor                 time.Time
-		cursorStr              string
-		byteImg                []byte
-		requirementDescription string
+		scholarships = make([]sa.Scholarship, 0)
+		cursor       time.Time
+		cursorStr    string
+		byteImg      []byte
 	)
 
 	for rows.Next() {
@@ -259,7 +283,6 @@ func (s scholarshipRepo) Fetch(ctx context.Context, filter sa.ScholarshipFilter)
 			&scholarship.AnnouncementDate,
 			&scholarship.EligibilityDescription,
 			&scholarship.SubsidyDescription,
-			&requirementDescription,
 			&scholarship.FundingStart,
 			&scholarship.FundingEnd,
 			&scholarship.CreatedAt,
@@ -272,8 +295,6 @@ func (s scholarshipRepo) Fetch(ctx context.Context, filter sa.ScholarshipFilter)
 				return nil, "", err
 			}
 		}
-
-		scholarship.RequirementDescriptions = strings.Split(requirementDescription, "#")
 
 		cursor = scholarship.CreatedAt
 		scholarships = append(scholarships, scholarship)
@@ -302,7 +323,6 @@ func (s scholarshipRepo) GetByID(ctx context.Context, ID int64) (sa.Scholarship,
 		"s.announcement_date",
 		"s.eligibility_description",
 		"s.subsidy_description",
-		"s.requirement_descriptions",
 		"s.funding_start",
 		"s.funding_end",
 		"s.created_at",
@@ -330,9 +350,8 @@ func (s scholarshipRepo) GetByID(ctx context.Context, ID int64) (sa.Scholarship,
 	}()
 
 	var (
-		scholarship             sa.Scholarship
-		byteImage               []byte
-		requirementDescriptions string
+		scholarship sa.Scholarship
+		byteImage   []byte
 	)
 
 	for rows.Next() {
@@ -352,7 +371,6 @@ func (s scholarshipRepo) GetByID(ctx context.Context, ID int64) (sa.Scholarship,
 			&scholarship.AnnouncementDate,
 			&scholarship.EligibilityDescription,
 			&scholarship.SubsidyDescription,
-			&requirementDescriptions,
 			&scholarship.FundingStart,
 			&scholarship.FundingEnd,
 			&scholarship.CreatedAt,
@@ -368,7 +386,6 @@ func (s scholarshipRepo) GetByID(ctx context.Context, ID int64) (sa.Scholarship,
 				return sa.Scholarship{}, err
 			}
 		}
-		scholarship.RequirementDescriptions = strings.Split(requirementDescriptions, "#")
 		scholarship.Requirements = append(scholarship.Requirements, requirement)
 	}
 

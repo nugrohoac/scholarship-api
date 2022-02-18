@@ -64,6 +64,11 @@ type ScholarshipRepository interface {
 	GetByID(ctx context.Context, ID int64) (Scholarship, error)
 }
 
+// RequirementDescriptionRepository .
+type RequirementDescriptionRepository interface {
+	Fetch(ctx context.Context, scholarshipIDs []int64) (map[int64][]string, error)
+}
+
 // ScholarshipService ...
 type ScholarshipService interface {
 	Create(ctx context.Context, scholarship Scholarship) (Scholarship, error)
