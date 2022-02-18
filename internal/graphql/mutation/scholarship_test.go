@@ -29,7 +29,7 @@ func TestScholarshipMutationCreate(t *testing.T) {
 		SponsorID: int32(scholarship.SponsorID),
 		Name:      scholarship.Name,
 		Amount:    int32(scholarship.Amount),
-		Image: sa.InputImage{
+		Image: &sa.InputImage{
 			URL:    scholarship.Image.URL,
 			Width:  scholarship.Image.Width,
 			Height: scholarship.Image.Height,

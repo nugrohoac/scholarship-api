@@ -255,7 +255,7 @@ type InputScholarship struct {
 	SponsorID               int32
 	Name                    string
 	Amount                  int32
-	Image                   InputImage
+	Image                   *InputImage
 	Awardee                 int32
 	ApplicationStart        string
 	ApplicationEnd          string
@@ -283,6 +283,7 @@ type Payment struct {
 	Deadline        time.Time    `json:"deadline"`
 	TransferDate    time.Time    `json:"transfer_date"`
 	BankAccountName string       `json:"bank_account_name"`
+	BankAccountNo   string       `json:"bank_account_no"` // string karena di bank permata syariah dimulai dengan 00
 	Image           Image        `json:"image"`
 	CreatedAt       time.Time    `json:"created_at"`
 }
@@ -292,5 +293,6 @@ type InputSubmitTransfer struct {
 	ScholarshipID   int32
 	TransferDate    string
 	BankAccountName string
+	BankAccountNo   string
 	Image           InputImage
 }

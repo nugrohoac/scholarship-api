@@ -223,6 +223,7 @@ func SeedPayments(db *sql.DB, t *testing.T, payments []sa.Payment) {
 			"deadline",
 			"transfer_date",
 			"bank_account_name",
+			"bank_account_no",
 			"image",
 			"created_at",
 		)
@@ -236,6 +237,7 @@ func SeedPayments(db *sql.DB, t *testing.T, payments []sa.Payment) {
 			payment.Deadline,
 			payment.TransferDate,
 			payment.BankAccountName,
+			payment.BankAccountNo,
 			byteImage,
 			payment.CreatedAt,
 		)

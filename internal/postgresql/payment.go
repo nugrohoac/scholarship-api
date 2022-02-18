@@ -99,6 +99,7 @@ func (p paymentRepo) SubmitTransfer(ctx context.Context, payment sa.Payment) (sa
 	query, args, err := sq.Update("payment").
 		SetMap(sq.Eq{
 			"bank_account_name": payment.BankAccountName,
+			"bank_account_no":   payment.BankAccountNo,
 			"transfer_date":     payment.TransferDate,
 			"image":             byteImage,
 			"updated_at":        timeNow,

@@ -298,18 +298,6 @@ func TestScholarshipServiceGetByID(t *testing.T) {
 			expectedResp:    sa.Scholarship{},
 			expectedErr:     errors.New("error"),
 		},
-		"success get scholarship paid": {
-			paramID: scholarshipPaid.ID,
-			getScholarship: testdata.FuncCaller{
-				IsCalled: true,
-				Input:    []interface{}{mock.Anything, scholarshipPaid.ID},
-				Output:   []interface{}{scholarshipPaid, nil},
-			},
-			fetchPayments:   testdata.FuncCaller{},
-			getBankTransfer: testdata.FuncCaller{},
-			expectedResp:    scholarshipPaid,
-			expectedErr:     nil,
-		},
 		"error fetch payment": {
 			paramID: scholarship.ID,
 			getScholarship: testdata.FuncCaller{
