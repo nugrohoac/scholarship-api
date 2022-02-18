@@ -255,7 +255,7 @@ type InputScholarship struct {
 	SponsorID               int32
 	Name                    string
 	Amount                  int32
-	Image                   InputImage
+	Image                   *InputImage
 	Awardee                 int32
 	ApplicationStart        string
 	ApplicationEnd          string

@@ -17,17 +17,20 @@ func (s ScholarshipMutation) CreateScholarship(ctx context.Context, param sa.Inp
 	requirements := make([]sa.Requirement, 0)
 
 	scholarship := sa.Scholarship{
-		SponsorID: int64(param.SponsorID),
-		Name:      param.Name,
-		Amount:    int(param.Amount),
-		Image: sa.Image{
-			URL:    param.Image.URL,
-			Width:  param.Image.Width,
-			Height: param.Image.Height,
-		},
+		SponsorID:              int64(param.SponsorID),
+		Name:                   param.Name,
+		Amount:                 int(param.Amount),
 		Awardee:                int(param.Awardee),
 		EligibilityDescription: param.EligibilityDescription,
 		SubsidyDescription:     param.SubsidyDescription,
+	}
+
+	if param.Image != nil {
+		scholarship.Image = sa.Image{
+			URL:    param.Image.URL,
+			Width:  param.Image.Width,
+			Height: param.Image.Height,
+		}
 	}
 
 	applicationEnd, err := time.Parse(time.RFC3339, param.ApplicationEnd)

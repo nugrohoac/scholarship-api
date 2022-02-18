@@ -32,7 +32,7 @@ type Mutation {
         sponsorId: Int!
         name: String!
         amount: Int!
-        image: inputImage!
+        image: inputImage
         awardee: Int!
         applicationStart: String!
         applicationEnd: String!
