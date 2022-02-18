@@ -44,6 +44,11 @@ func (p PaymentResolver) BankAccountName() *string {
 	return &p.Payment.BankAccountName
 }
 
+// BankAccountNo ...
+func (p PaymentResolver) BankAccountNo() *string {
+	return &p.Payment.BankAccountNo
+}
+
 // Image ...
 func (p PaymentResolver) Image() *ImageResolver {
 	return &ImageResolver{Image: p.Payment.Image}

@@ -4,6 +4,7 @@
     "deadline":"2022-01-30T13:14:10.045586+07:00",
     "transfer_date":"2022-01-29T06:33:53.226778+07:00",
     "bank_account_name":"budi santoso",
+    "bank_account_no":"1238876",
     "image":{
         "url":"https://payment.jpg",
         "width":200,
