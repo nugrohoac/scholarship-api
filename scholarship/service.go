@@ -79,19 +79,17 @@ func (s scholarshipService) GetByID(ctx context.Context, ID int64) (sa.Scholarsh
 		return sa.Scholarship{}, err
 	}
 
-	if scholarship.Status == 0 {
-		payments, err := s.paymentRepo.Fetch(ctx, []int64{ID})
-		if err != nil {
-			return sa.Scholarship{}, err
-		}
-
-		if len(payments) == 0 {
-			payments = append(payments, sa.Payment{})
-		}
-
-		scholarship.Payment = payments[0]
-		scholarship.Payment.BankTransfer = s.bankTransferRepo.Get()
+	payments, err := s.paymentRepo.Fetch(ctx, []int64{ID})
+	if err != nil {
+		return sa.Scholarship{}, err
 	}
+
+	if len(payments) == 0 {
+		payments = append(payments, sa.Payment{})
+	}
+
+	scholarship.Payment = payments[0]
+	scholarship.Payment.BankTransfer = s.bankTransferRepo.Get()
 
 	return scholarship, nil
 }
