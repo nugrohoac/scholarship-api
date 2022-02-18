@@ -35,14 +35,15 @@ var (
 	bankTransfer    sa.BankTransfer
 	degrees         []string
 
-	bankRepo         sa.BankRepository
-	countryRepo      sa.CountryRepository
-	userRepo         sa.UserRepository
-	emailRepo        sa.EmailRepository
-	scholarshipRepo  sa.ScholarshipRepository
-	bankTransferRepo sa.BankTransferRepository
-	paymentRepo      sa.PaymentRepository
-	degreeRepo       sa.DegreeRepository
+	bankRepo            sa.BankRepository
+	countryRepo         sa.CountryRepository
+	userRepo            sa.UserRepository
+	emailRepo           sa.EmailRepository
+	scholarshipRepo     sa.ScholarshipRepository
+	bankTransferRepo    sa.BankTransferRepository
+	paymentRepo         sa.PaymentRepository
+	degreeRepo          sa.DegreeRepository
+	requirementDescRepo sa.RequirementDescriptionRepository
 
 	bankService        sa.BankService
 	countryService     sa.CountryService
@@ -203,11 +204,12 @@ func initApp() {
 	bankTransferRepo = bank_transfer.NewBankTransfer(bankTransfer)
 	paymentRepo = postgresql.NewPaymentRepository(db)
 	degreeRepo = degree.NewDegreeRepository(degrees)
+	requirementDescRepo = postgresql.NewRequirementDescriptionRepository(db)
 
 	bankService = bank.NewBankService(bankRepo)
 	userService = user.NewUserService(userRepo, jwtHash, emailRepo)
 	countryService = country.NewCountryService(countryRepo)
-	scholarshipService = scholarship.NewScholarshipService(scholarshipRepo, bankTransferRepo, paymentRepo)
+	scholarshipService = scholarship.NewScholarshipService(scholarshipRepo, bankTransferRepo, paymentRepo, requirementDescRepo)
 	paymentService = payment.NewPaymentService(paymentRepo, scholarshipRepo)
 	degreeService = _degree.NewDegreeService(degreeRepo)
 

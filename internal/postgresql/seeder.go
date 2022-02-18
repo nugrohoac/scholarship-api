@@ -3,7 +3,6 @@ package postgresql
 import (
 	"database/sql"
 	"encoding/json"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -149,11 +148,13 @@ func SeedScholarship(db *sql.DB, t *testing.T, scholarships []sa.Scholarship) {
 			"announcement_date",
 			"eligibility_description",
 			"subsidy_description",
-			"requirement_descriptions",
 			"funding_start",
 			"funding_end",
 			"created_at",
 		)
+
+	qInsertReqDesc := sq.Insert("requirement_description").
+		Columns("scholarship_id", "description")
 
 	for _, scholarship := range scholarships {
 		byteImage, err := json.Marshal(scholarship.Image)
@@ -171,18 +172,24 @@ func SeedScholarship(db *sql.DB, t *testing.T, scholarships []sa.Scholarship) {
 			scholarship.AnnouncementDate,
 			scholarship.EligibilityDescription,
 			scholarship.SubsidyDescription,
-			strings.Join(scholarship.RequirementDescriptions, "#"),
 			scholarship.FundingStart,
 			scholarship.FundingEnd,
 			scholarship.CreatedAt,
 		)
+
+		for _, desc := range scholarship.RequirementDescriptions {
+			qInsertReqDesc = qInsertReqDesc.Values(scholarship.ID, desc)
+		}
 	}
 
 	query, args, err := qInsert.PlaceholderFormat(sq.Dollar).ToSql()
-	if err != nil {
-		require.Error(t, err)
-	}
+	require.NoError(t, err)
 
+	_, err = db.Exec(query, args...)
+	require.NoError(t, err)
+
+	query, args, err = qInsertReqDesc.PlaceholderFormat(sq.Dollar).ToSql()
+	require.NoError(t, err)
 	_, err = db.Exec(query, args...)
 	require.NoError(t, err)
 }

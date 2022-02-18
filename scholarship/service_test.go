@@ -125,6 +125,7 @@ func TestScholarshipServiceCreate(t *testing.T) {
 			scholarshipRepoMock := new(mocks.ScholarshipRepository)
 			bankTransferRepoMock := new(mocks.BankTransferRepository)
 			paymentRepoMock := new(mocks.PaymentRepository)
+			requirementDescRepoMock := new(mocks.RequirementDescriptionRepository)
 
 			if test.createScholarship.IsCalled {
 				scholarshipRepoMock.On("Create", test.createScholarship.Input...).
@@ -138,7 +139,7 @@ func TestScholarshipServiceCreate(t *testing.T) {
 					Once()
 			}
 
-			scholarshipService := _service.NewScholarshipService(scholarshipRepoMock, bankTransferRepoMock, paymentRepoMock)
+			scholarshipService := _service.NewScholarshipService(scholarshipRepoMock, bankTransferRepoMock, paymentRepoMock, requirementDescRepoMock)
 			scholarshipResp, err := scholarshipService.Create(test.paramCtx, test.paramScholarship)
 			scholarshipRepoMock.AssertExpectations(t)
 			bankTransferRepoMock.AssertExpectations(t)
@@ -170,9 +171,16 @@ func TestScholarshipServiceFetch(t *testing.T) {
 	scholarships[0].SponsorID = 1
 	scholarships[1].SponsorID = 1
 
+	requirementDesc := map[int64][]string{}
+	requirementDesc[scholarships[0].ID] = scholarships[0].RequirementDescriptions
+	requirementDesc[scholarships[1].ID] = scholarships[1].RequirementDescriptions
+
+	scholarshipIDs := []int64{scholarships[0].ID, scholarships[1].ID}
+
 	tests := map[string]struct {
 		paramFilter            sa.ScholarshipFilter
 		fetchScholarship       testdata.FuncCaller
+		fetchRequirementDesc   testdata.FuncCaller
 		fetchScholarshipCursor testdata.FuncCaller
 		expectedResp           sa.ScholarshipFeed
 		expectedErr            error
@@ -184,6 +192,23 @@ func TestScholarshipServiceFetch(t *testing.T) {
 				Input:    []interface{}{mock.Anything, sa.ScholarshipFilter{}},
 				Output:   []interface{}{nil, "", errors.New("error")},
 			},
+			fetchRequirementDesc:   testdata.FuncCaller{},
+			fetchScholarshipCursor: testdata.FuncCaller{},
+			expectedResp:           sa.ScholarshipFeed{},
+			expectedErr:            errors.New("error"),
+		},
+		"error etch requirement description": {
+			paramFilter: sa.ScholarshipFilter{},
+			fetchScholarship: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, sa.ScholarshipFilter{}},
+				Output:   []interface{}{nil, "", errors.New("error")},
+			},
+			fetchRequirementDesc: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, scholarshipIDs},
+				Output:   []interface{}{nil, errors.New("error")},
+			},
 			fetchScholarshipCursor: testdata.FuncCaller{},
 			expectedResp:           sa.ScholarshipFeed{},
 			expectedErr:            errors.New("error"),
@@ -194,6 +219,11 @@ func TestScholarshipServiceFetch(t *testing.T) {
 				IsCalled: true,
 				Input:    []interface{}{mock.Anything, sa.ScholarshipFilter{}},
 				Output:   []interface{}{scholarships, cursor, nil},
+			},
+			fetchRequirementDesc: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, scholarshipIDs},
+				Output:   []interface{}{requirementDesc, nil},
 			},
 			fetchScholarshipCursor: testdata.FuncCaller{
 				IsCalled: true,
@@ -210,6 +240,11 @@ func TestScholarshipServiceFetch(t *testing.T) {
 				Input:    []interface{}{mock.Anything, sa.ScholarshipFilter{}},
 				Output:   []interface{}{scholarships, cursor, nil},
 			},
+			fetchRequirementDesc: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, scholarshipIDs},
+				Output:   []interface{}{requirementDesc, nil},
+			},
 			fetchScholarshipCursor: testdata.FuncCaller{
 				IsCalled: true,
 				Input:    []interface{}{mock.Anything, sa.ScholarshipFilter{Cursor: cursor, Limit: 1}},
@@ -225,10 +260,17 @@ func TestScholarshipServiceFetch(t *testing.T) {
 			scholarshipRepoMock := new(mocks.ScholarshipRepository)
 			bankTransferRepoMock := new(mocks.BankTransferRepository)
 			paymentRepoMock := new(mocks.PaymentRepository)
+			requirementDescRepoMock := new(mocks.RequirementDescriptionRepository)
 
 			if test.fetchScholarship.IsCalled {
 				scholarshipRepoMock.On("Fetch", test.fetchScholarship.Input...).
 					Return(test.fetchScholarship.Output...).
+					Once()
+			}
+
+			if test.fetchRequirementDesc.IsCalled {
+				requirementDescRepoMock.On("Fetch", test.fetchRequirementDesc.Input...).
+					Return(test.fetchRequirementDesc.Output...).
 					Once()
 			}
 
@@ -238,7 +280,7 @@ func TestScholarshipServiceFetch(t *testing.T) {
 					Once()
 			}
 
-			scholarshipService := _service.NewScholarshipService(scholarshipRepoMock, bankTransferRepoMock, paymentRepoMock)
+			scholarshipService := _service.NewScholarshipService(scholarshipRepoMock, bankTransferRepoMock, paymentRepoMock, requirementDescRepoMock)
 			resp, err := scholarshipService.Fetch(context.Background(), test.paramFilter)
 			scholarshipRepoMock.AssertExpectations(t)
 
@@ -278,13 +320,17 @@ func TestScholarshipServiceGetByID(t *testing.T) {
 	scholarshipResponse.Payment = payment
 	scholarshipResponse.Payment.BankTransfer = bankTransfer
 
+	requirementDesc := map[int64][]string{}
+	requirementDesc[scholarship.ID] = scholarship.RequirementDescriptions
+
 	tests := map[string]struct {
-		paramID         int64
-		getScholarship  testdata.FuncCaller
-		fetchPayments   testdata.FuncCaller
-		getBankTransfer testdata.FuncCaller
-		expectedResp    sa.Scholarship
-		expectedErr     error
+		paramID              int64
+		getScholarship       testdata.FuncCaller
+		fetchRequirementDesc testdata.FuncCaller
+		fetchPayments        testdata.FuncCaller
+		getBankTransfer      testdata.FuncCaller
+		expectedResp         sa.Scholarship
+		expectedErr          error
 	}{
 		"error get scholarship": {
 			paramID: scholarship.ID,
@@ -298,12 +344,34 @@ func TestScholarshipServiceGetByID(t *testing.T) {
 			expectedResp:    sa.Scholarship{},
 			expectedErr:     errors.New("error"),
 		},
+		"error fetch requirement description": {
+			paramID: scholarship.ID,
+			getScholarship: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, scholarshipUnPaid.ID},
+				Output:   []interface{}{scholarshipUnPaid, nil},
+			},
+			fetchRequirementDesc: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, []int64{scholarship.ID}},
+				Output:   []interface{}{nil, errors.New("error")},
+			},
+			fetchPayments:   testdata.FuncCaller{},
+			getBankTransfer: testdata.FuncCaller{},
+			expectedResp:    sa.Scholarship{},
+			expectedErr:     errors.New("error"),
+		},
 		"error fetch payment": {
 			paramID: scholarship.ID,
 			getScholarship: testdata.FuncCaller{
 				IsCalled: true,
 				Input:    []interface{}{mock.Anything, scholarshipUnPaid.ID},
 				Output:   []interface{}{scholarshipUnPaid, nil},
+			},
+			fetchRequirementDesc: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, []int64{scholarship.ID}},
+				Output:   []interface{}{requirementDesc, nil},
 			},
 			fetchPayments: testdata.FuncCaller{
 				IsCalled: true,
@@ -320,6 +388,11 @@ func TestScholarshipServiceGetByID(t *testing.T) {
 				IsCalled: true,
 				Input:    []interface{}{mock.Anything, scholarshipUnPaid.ID},
 				Output:   []interface{}{scholarshipUnPaid, nil},
+			},
+			fetchRequirementDesc: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, []int64{scholarship.ID}},
+				Output:   []interface{}{requirementDesc, nil},
 			},
 			fetchPayments: testdata.FuncCaller{
 				IsCalled: true,
@@ -341,10 +414,17 @@ func TestScholarshipServiceGetByID(t *testing.T) {
 			scholarshipRepoMock := new(mocks.ScholarshipRepository)
 			paymentRepoMock := new(mocks.PaymentRepository)
 			bankTransferRepoMock := new(mocks.BankTransferRepository)
+			requirementDescRepoMock := new(mocks.RequirementDescriptionRepository)
 
 			if test.getScholarship.IsCalled {
 				scholarshipRepoMock.On("GetByID", test.getScholarship.Input...).
 					Return(test.getScholarship.Output...).
+					Once()
+			}
+
+			if test.fetchRequirementDesc.IsCalled {
+				requirementDescRepoMock.On("Fetch", test.fetchRequirementDesc.Input...).
+					Return(test.fetchRequirementDesc.Output...).
 					Once()
 			}
 
@@ -360,11 +440,12 @@ func TestScholarshipServiceGetByID(t *testing.T) {
 					Once()
 			}
 
-			scholarshipService := _service.NewScholarshipService(scholarshipRepoMock, bankTransferRepoMock, paymentRepoMock)
+			scholarshipService := _service.NewScholarshipService(scholarshipRepoMock, bankTransferRepoMock, paymentRepoMock, requirementDescRepoMock)
 			scholarshipResp, err := scholarshipService.GetByID(context.Background(), test.paramID)
 			scholarshipRepoMock.AssertExpectations(t)
 			bankTransferRepoMock.AssertExpectations(t)
 			paymentRepoMock.AssertExpectations(t)
+			requirementDescRepoMock.AssertExpectations(t)
 
 			if err != nil {
 				require.Error(t, err)

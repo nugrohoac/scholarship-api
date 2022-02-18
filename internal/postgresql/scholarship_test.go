@@ -107,5 +107,4 @@ func (s scholarshipSuite) TestScholarshipRepoGetByID() {
 	response, err := scholarshipRepo.GetByID(context.Background(), scholarship.ID)
 	require.NoError(s.T(), err)
 	require.Equal(s.T(), 2, len(response.Requirements))
-	require.Equal(s.T(), 3, len(response.RequirementDescriptions))
 }

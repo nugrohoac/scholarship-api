@@ -6,9 +6,10 @@ import (
 )
 
 type scholarshipService struct {
-	scholarshipRepo  sa.ScholarshipRepository
-	bankTransferRepo sa.BankTransferRepository
-	paymentRepo      sa.PaymentRepository
+	scholarshipRepo     sa.ScholarshipRepository
+	bankTransferRepo    sa.BankTransferRepository
+	paymentRepo         sa.PaymentRepository
+	requirementDescRepo sa.RequirementDescriptionRepository
 }
 
 // Create ...
@@ -53,6 +54,26 @@ func (s scholarshipService) Fetch(ctx context.Context, filter sa.ScholarshipFilt
 		return sa.ScholarshipFeed{}, err
 	}
 
+	scholarshipIDs := make([]int64, 0)
+	mapScholarshipIndex := map[int64]int{}
+	for index, scholarship := range scholarships {
+		scholarshipIDs = append(scholarshipIDs, scholarship.ID)
+
+		mapScholarshipIndex[scholarship.ID] = index
+	}
+
+	if len(scholarshipIDs) > 0 {
+		requirementDesc, err := s.requirementDescRepo.Fetch(ctx, scholarshipIDs)
+		if err != nil {
+			return sa.ScholarshipFeed{}, err
+		}
+
+		for _, scholarship := range scholarships {
+			index := mapScholarshipIndex[scholarship.ID]
+			scholarships[index].RequirementDescriptions = requirementDesc[scholarship.ID]
+		}
+	}
+
 	scholarshipFeed := sa.ScholarshipFeed{
 		Cursor:       cursor,
 		Scholarships: scholarships,
@@ -79,6 +100,13 @@ func (s scholarshipService) GetByID(ctx context.Context, ID int64) (sa.Scholarsh
 		return sa.Scholarship{}, err
 	}
 
+	requirementDesc, err := s.requirementDescRepo.Fetch(ctx, []int64{ID})
+	if err != nil {
+		return sa.Scholarship{}, err
+	}
+
+	scholarship.RequirementDescriptions = requirementDesc[ID]
+
 	payments, err := s.paymentRepo.Fetch(ctx, []int64{ID})
 	if err != nil {
 		return sa.Scholarship{}, err
@@ -99,10 +127,12 @@ func NewScholarshipService(
 	scholarshipRepo sa.ScholarshipRepository,
 	bankTransferRepository sa.BankTransferRepository,
 	paymentRepo sa.PaymentRepository,
+	requirementDescRepo sa.RequirementDescriptionRepository,
 ) sa.ScholarshipService {
 	return scholarshipService{
-		scholarshipRepo:  scholarshipRepo,
-		bankTransferRepo: bankTransferRepository,
-		paymentRepo:      paymentRepo,
+		scholarshipRepo:     scholarshipRepo,
+		bankTransferRepo:    bankTransferRepository,
+		paymentRepo:         paymentRepo,
+		requirementDescRepo: requirementDescRepo,
 	}
 }
