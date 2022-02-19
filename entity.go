@@ -296,3 +296,30 @@ type InputSubmitTransfer struct {
 	BankAccountNo   string
 	Image           InputImage
 }
+
+// Major .
+type Major struct {
+	ID        int64     `json:"id"`
+	Name      string    `json:"name"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
+// MajorFeed .
+type MajorFeed struct {
+	Cursor string  `json:"cursor"`
+	Majors []Major `json:"majors"`
+}
+
+// MajorFilter ...
+type MajorFilter struct {
+	Limit  uint64
+	Cursor string
+	Name   string
+}
+
+// InputMajorFilter .
+type InputMajorFilter struct {
+	Limit  *int32
+	Cursor *string
+	Name   *string
+}

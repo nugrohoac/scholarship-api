@@ -37,6 +37,7 @@ func main() {
 		cmd.UserQuery,
 		cmd.ScholarshipQuery,
 		cmd.DegreeQuery,
+		cmd.MajorQuery,
 		cmd.UserMutation,
 		cmd.ScholarshipMutation,
 		cmd.PaymentMutation,
