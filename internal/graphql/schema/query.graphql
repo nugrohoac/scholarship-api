@@ -37,4 +37,10 @@ type Query {
     ): scholarship
 
     GetDegree: [String]
+
+    GetMajor(
+        limit: Int
+        cursor: String
+        name: String
+    ): majorFeed
 }

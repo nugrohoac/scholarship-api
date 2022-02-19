@@ -256,3 +256,18 @@ func SeedPayments(db *sql.DB, t *testing.T, payments []sa.Payment) {
 	_, err = db.Exec(query, args...)
 	require.NoError(t, err)
 }
+
+// SeedMajors ...
+func SeedMajors(db *sql.DB, t *testing.T, majors []sa.Major) {
+	qInsert := sq.Insert("major").Columns("id", "name", "created_at")
+
+	for _, major := range majors {
+		qInsert = qInsert.Values(major.ID, major.Name, major.CreatedAt)
+	}
+
+	query, args, err := qInsert.PlaceholderFormat(sq.Dollar).ToSql()
+	require.NoError(t, err)
+
+	_, err = db.Exec(query, args...)
+	require.NoError(t, err)
+}

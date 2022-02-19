@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
+	"github.com/Nusantara-Muda/scholarship-api/major"
 	"log"
 	"strings"
 	"time"
@@ -44,6 +45,7 @@ var (
 	paymentRepo         sa.PaymentRepository
 	degreeRepo          sa.DegreeRepository
 	requirementDescRepo sa.RequirementDescriptionRepository
+	majorRepo           sa.MajorRepository
 
 	bankService        sa.BankService
 	countryService     sa.CountryService
@@ -51,6 +53,7 @@ var (
 	scholarshipService sa.ScholarshipService
 	paymentService     sa.PaymentService
 	degreeService      sa.DegreeService
+	majorService       sa.MajorService
 
 	// email
 	emailDomain        string
@@ -65,6 +68,8 @@ var (
 	CountryQuery query.CountryQuery
 	// UserQuery ...
 	UserQuery query.UserQuery
+	// MajorQuery .
+	MajorQuery query.MajorQuery
 
 	// UserMutation ...
 	UserMutation mutation.UserMutation
@@ -205,6 +210,7 @@ func initApp() {
 	paymentRepo = postgresql.NewPaymentRepository(db)
 	degreeRepo = degree.NewDegreeRepository(degrees)
 	requirementDescRepo = postgresql.NewRequirementDescriptionRepository(db)
+	majorRepo = postgresql.NewMajorRepository(db)
 
 	bankService = bank.NewBankService(bankRepo)
 	userService = user.NewUserService(userRepo, jwtHash, emailRepo)
@@ -212,6 +218,7 @@ func initApp() {
 	scholarshipService = scholarship.NewScholarshipService(scholarshipRepo, bankTransferRepo, paymentRepo, requirementDescRepo)
 	paymentService = payment.NewPaymentService(paymentRepo, scholarshipRepo)
 	degreeService = _degree.NewDegreeService(degreeRepo)
+	majorService = major.NewMajorService(majorRepo)
 
 	UserMutation = mutation.NewUserMutation(userService)
 	ScholarshipMutation = mutation.NewScholarshipMutation(scholarshipService)
@@ -222,4 +229,5 @@ func initApp() {
 	UserQuery = query.NewUserQuery(userService)
 	ScholarshipQuery = query.NewScholarshipQuery(scholarshipService)
 	DegreeQuery = query.NewDegreeQuery(degreeService)
+	MajorQuery = query.NewMajorQuery(majorService)
 }

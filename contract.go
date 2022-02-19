@@ -101,3 +101,13 @@ type DegreeRepository interface {
 type DegreeService interface {
 	Get() []*string
 }
+
+// MajorRepository ...
+type MajorRepository interface {
+	Fetch(ctx context.Context, filter MajorFilter) ([]Major, string, error)
+}
+
+// MajorService ...
+type MajorService interface {
+	Fetch(ctx context.Context, filter MajorFilter) (MajorFeed, error)
+}

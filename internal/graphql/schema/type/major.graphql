@@ -1,0 +1,9 @@
+type major {
+    id: Int
+    name: String
+}
+
+type majorFeed {
+    cursor: String
+    majors: [major]
+}
