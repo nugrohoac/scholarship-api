@@ -19,6 +19,7 @@ func (p PaymentMutation) SubmitTransferPayment(ctx context.Context, param sa.Inp
 		ScholarshipID:   int64(param.ScholarshipID),
 		TransferDate:    time.Time{},
 		BankAccountName: param.BankAccountName,
+		BankAccountNo:   param.BankAccountNo,
 		Image: sa.Image{
 			URL:    param.Image.URL,
 			Width:  param.Image.Width,
