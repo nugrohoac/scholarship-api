@@ -23,6 +23,7 @@ func (p paymentRepo) Fetch(ctx context.Context, scholarshipIDs []int64) ([]sa.Pa
 		"deadline",
 		"transfer_date",
 		"bank_account_name",
+		"bank_account_no",
 		"image",
 		"created_at",
 	).From("payment").
@@ -61,6 +62,7 @@ func (p paymentRepo) Fetch(ctx context.Context, scholarshipIDs []int64) ([]sa.Pa
 			&payment.Deadline,
 			&payment.TransferDate,
 			&payment.BankAccountName,
+			&payment.BankAccountNo,
 			&bytesImage,
 			&payment.CreatedAt,
 		); err != nil {
