@@ -111,3 +111,13 @@ type MajorRepository interface {
 type MajorService interface {
 	Fetch(ctx context.Context, filter MajorFilter) (MajorFeed, error)
 }
+
+// SchoolRepository .
+type SchoolRepository interface {
+	Create(ctx context.Context, school School) (School, error)
+}
+
+// SchoolService .
+type SchoolService interface {
+	Create(ctx context.Context, school School) (School, error)
+}

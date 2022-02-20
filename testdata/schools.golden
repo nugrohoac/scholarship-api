@@ -1,0 +1,50 @@
+[
+   {
+      "id":1,
+      "name":"sma n 8 jakarta",
+      "type":"senior-high-school",
+      "address":"jl jakarta 8",
+      "status":1,
+      "created_at":"2022-02-20T17:59:25.822474+07:00"
+   },
+   {
+      "id":2,
+      "name":"sma n 9 jakarta",
+      "type":"senior-high-school",
+      "address":"jl jakarta 9",
+      "status":1,
+      "created_at":"2022-02-20T17:59:28.822474+07:00"
+   },
+   {
+      "id":3,
+      "name":"sma n 10 jakarta",
+      "type":"senior-high-school",
+      "address":"jl jakarta 10",
+      "status":1,
+      "created_at":"2022-02-20T17:59:31.822474+07:00"
+   },
+   {
+      "id":4,
+      "name":"universitas gajah mada",
+      "type":"college",
+      "address":"jl yogyakarta",
+      "status":1,
+      "created_at":"2022-02-20T17:59:34.822474+07:00"
+   },
+   {
+      "id":5,
+      "name":"universitas indonesia",
+      "type":"college",
+      "address":"jl depok",
+      "status":1,
+      "created_at":"2022-02-20T17:59:37.822474+07:00"
+   },
+   {
+      "id":6,
+      "name":"institut teknologi bandung",
+      "type":"college",
+      "address":"jl bandung",
+      "status":1,
+      "created_at":"2022-02-20T17:59:40.822474+07:00"
+   }
+]
