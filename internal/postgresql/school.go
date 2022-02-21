@@ -24,11 +24,13 @@ func (s schoolRepo) Create(ctx context.Context, school sa.School) (sa.School, er
 			"address",
 			"status",
 			"created_at",
+			"created_by",
 		).Values(school.Name,
 		school.Type,
 		school.Address,
 		school.Status,
 		school.CreatedAt,
+		school.CreatedBy,
 	).PlaceholderFormat(sq.Dollar).
 		Suffix("RETURNING \"id\"").
 		ToSql()

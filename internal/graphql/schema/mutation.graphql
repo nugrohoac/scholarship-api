@@ -52,4 +52,10 @@ type Mutation {
         bankAccountNo: String!
         image: inputImage!
     ):payment
+
+    CreateSchool(
+        name: String!
+        type: String!
+        address: String!
+    ): school
 }

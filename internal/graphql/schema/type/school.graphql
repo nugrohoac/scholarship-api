@@ -1,0 +1,7 @@
+type school {
+    id: Int
+    name: String
+    type: String
+    address: String
+    status: Int
+}

@@ -332,5 +332,13 @@ type School struct {
 	Address   string    `json:"address"`
 	Status    int       `json:"status"`
 	CreatedAt time.Time `json:"created_at"`
+	CreatedBy string    `json:"created_by"`
 	UpdatedAt time.Time `json:"-"`
+}
+
+// InputSchool ...
+type InputSchool struct {
+	Name    string
+	Type    string
+	Address string
 }
