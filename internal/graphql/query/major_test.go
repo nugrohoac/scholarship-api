@@ -66,7 +66,7 @@ func TestMajorQuery_GetMajor(t *testing.T) {
 			}
 
 			majorQuery := query.NewMajorQuery(majorServiceMock)
-			_response, err := majorQuery.GetMajor(context.Background(), test.paramFilter)
+			_response, err := majorQuery.FetchMajor(context.Background(), test.paramFilter)
 			majorServiceMock.AssertExpectations(t)
 
 			if err != nil {

@@ -7,8 +7,8 @@ type DegreeQuery struct {
 	degreeService sa.DegreeService
 }
 
-// GetDegree ...
-func (d DegreeQuery) GetDegree() (*[]*string, error) {
+// FetchDegree ...
+func (d DegreeQuery) FetchDegree() (*[]*string, error) {
 	degrees := d.degreeService.Get()
 	return &degrees, nil
 }

@@ -271,3 +271,5 @@ func SeedMajors(db *sql.DB, t *testing.T, majors []sa.Major) {
 	_, err = db.Exec(query, args...)
 	require.NoError(t, err)
 }
+
+//func

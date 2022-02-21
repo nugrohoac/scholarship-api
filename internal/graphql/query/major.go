@@ -12,8 +12,8 @@ type MajorQuery struct {
 	majorService sa.MajorService
 }
 
-// GetMajor .
-func (m MajorQuery) GetMajor(ctx context.Context, param sa.InputMajorFilter) (*resolver.MajorFeedResolver, error) {
+// FetchMajor .
+func (m MajorQuery) FetchMajor(ctx context.Context, param sa.InputMajorFilter) (*resolver.MajorFeedResolver, error) {
 	filter := sa.MajorFilter{}
 	if param.Limit != nil {
 		filter.Limit = uint64(*param.Limit)
