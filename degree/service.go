@@ -1,22 +1,17 @@
 package degree
 
-import sa "github.com/Nusantara-Muda/scholarship-api"
+import (
+	"context"
+	sa "github.com/Nusantara-Muda/scholarship-api"
+)
 
 type degreeService struct {
 	degreeRepository sa.DegreeRepository
 }
 
-// Get ...
-func (d degreeService) Get() []*string {
-	response := d.degreeRepository.Get()
-
-	degrees := make([]*string, 0)
-	for _, r := range response {
-		r := r
-		degrees = append(degrees, &r)
-	}
-
-	return degrees
+// Fetch ...
+func (d degreeService) Fetch(ctx context.Context) ([]sa.Degree, error) {
+	return d.degreeRepository.Fetch(ctx)
 }
 
 // NewDegreeService ...

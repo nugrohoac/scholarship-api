@@ -94,12 +94,12 @@ type PaymentService interface {
 
 // DegreeRepository .
 type DegreeRepository interface {
-	Get() []string
+	Fetch(ctx context.Context) ([]Degree, error)
 }
 
 // DegreeService .
 type DegreeService interface {
-	Get() []*string
+	Fetch(ctx context.Context) ([]Degree, error)
 }
 
 // MajorRepository ...

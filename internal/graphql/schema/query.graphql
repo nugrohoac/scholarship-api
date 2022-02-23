@@ -36,7 +36,7 @@ type Query {
         id: Int!
     ): scholarship
 
-    FetchDegree: [String]
+    FetchDegree: [degree]
 
     FetchMajor(
         limit: Int

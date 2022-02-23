@@ -7,7 +7,6 @@ import (
 	"github.com/Nusantara-Muda/scholarship-api/major"
 	"github.com/Nusantara-Muda/scholarship-api/school"
 	"log"
-	"strings"
 	"time"
 
 	"github.com/mailgun/mailgun-go/v4"
@@ -18,7 +17,6 @@ import (
 	"github.com/Nusantara-Muda/scholarship-api/country"
 	_degree "github.com/Nusantara-Muda/scholarship-api/degree"
 	"github.com/Nusantara-Muda/scholarship-api/internal/configuration/bank_transfer"
-	"github.com/Nusantara-Muda/scholarship-api/internal/configuration/degree"
 	"github.com/Nusantara-Muda/scholarship-api/internal/email"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/mutation"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/query"
@@ -35,7 +33,6 @@ var (
 	dsn             string
 	deadlinePayment int
 	bankTransfer    sa.BankTransfer
-	degrees         []string
 
 	bankRepo            sa.BankRepository
 	countryRepo         sa.CountryRepository
@@ -187,12 +184,6 @@ func initEnv() {
 		log.Fatal("Please provide bank transfer image height.......!!!")
 	}
 
-	degreeFromEnv := viper.GetString("degree")
-	if degreeFromEnv == "" {
-		log.Fatal("Please provide degree.......!!!")
-	}
-	degrees = strings.Split(degreeFromEnv, ",")
-
 	viper.WatchConfig()
 }
 
@@ -215,7 +206,7 @@ func initApp() {
 	scholarshipRepo = postgresql.NewScholarshipRepository(db, deadlinePayment)
 	bankTransferRepo = bank_transfer.NewBankTransfer(bankTransfer)
 	paymentRepo = postgresql.NewPaymentRepository(db)
-	degreeRepo = degree.NewDegreeRepository(degrees)
+	degreeRepo = postgresql.NewDegreeRepository(db)
 	requirementDescRepo = postgresql.NewRequirementDescriptionRepository(db)
 	majorRepo = postgresql.NewMajorRepository(db)
 	schoolRepo = postgresql.NewSchoolRepository(db)
