@@ -152,6 +152,7 @@ func (u userRepo) Login(ctx context.Context, email string) (sa.User, error) {
 		"email",
 		"status",
 		"password",
+		"photo",
 	).From("\"user\"").
 		Where(sq.Eq{"email": email}).
 		OrderBy("created_at desc").
@@ -161,15 +162,25 @@ func (u userRepo) Login(ctx context.Context, email string) (sa.User, error) {
 	}
 
 	row := u.db.QueryRowContext(ctx, query, args...)
-	var user sa.User
+	var (
+		user       sa.User
+		bytesPhoto []byte
+	)
 	if err = row.Scan(&user.ID,
 		&user.Name,
 		&user.Type,
 		&user.Email,
 		&user.Status,
 		&user.Password,
+		&bytesPhoto,
 	); err != nil {
 		return sa.User{}, err
+	}
+
+	if bytesPhoto != nil {
+		if err = json.Unmarshal(bytesPhoto, &user.Photo); err != nil {
+			return sa.User{}, err
+		}
 	}
 
 	return user, nil
