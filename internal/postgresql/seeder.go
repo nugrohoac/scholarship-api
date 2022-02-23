@@ -301,3 +301,26 @@ func SeedSchools(db *sql.DB, t *testing.T, schools []sa.School) {
 	_, err = db.Exec(query, args...)
 	require.NoError(t, err)
 }
+
+// SeedDegrees .
+func SeedDegrees(db *sql.DB, t *testing.T, degrees []sa.Degree) {
+	qInsert := sq.Insert("degree").
+		Columns("id",
+			"name",
+			"created_at",
+		)
+
+	for _, degree := range degrees {
+		qInsert = qInsert.Values(
+			degree.ID,
+			degree.Name,
+			degree.CreatedAt,
+		)
+	}
+
+	query, args, err := qInsert.PlaceholderFormat(sq.Dollar).ToSql()
+	require.NoError(t, err)
+
+	_, err = db.Exec(query, args...)
+	require.NoError(t, err)
+}

@@ -362,3 +362,10 @@ type InputSchool struct {
 	Type    string
 	Address string
 }
+
+// Degree .
+type Degree struct {
+	ID        int32     `json:"id"`
+	Name      string    `json:"name"`
+	CreatedAt time.Time `json:"created_at"`
+}
