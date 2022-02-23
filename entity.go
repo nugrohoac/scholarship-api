@@ -336,6 +336,12 @@ type School struct {
 	UpdatedAt time.Time `json:"-"`
 }
 
+// SchoolFeed ...
+type SchoolFeed struct {
+	Cursor  string
+	Schools []School
+}
+
 // SchoolFilter .
 type SchoolFilter struct {
 	Limit  uint64

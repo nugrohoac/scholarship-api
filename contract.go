@@ -121,4 +121,5 @@ type SchoolRepository interface {
 // SchoolService .
 type SchoolService interface {
 	Create(ctx context.Context, school School) (School, error)
+	Fetch(ctx context.Context, filter SchoolFilter) (SchoolFeed, error)
 }
