@@ -115,6 +115,7 @@ type MajorService interface {
 // SchoolRepository .
 type SchoolRepository interface {
 	Create(ctx context.Context, school School) (School, error)
+	Fetch(ctx context.Context, filter SchoolFilter) ([]School, string, error)
 }
 
 // SchoolService .

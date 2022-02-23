@@ -38,3 +38,38 @@ func (s schoolSuite) TestSchoolRepo_Create() {
 	require.Equal(t, school.Address, schoolResp.Address)
 	require.Equal(t, school.Status, schoolResp.Status)
 }
+
+func (s schoolSuite) TestSchoolRepo_Fetch() {
+	t := s.T()
+	var schools []sa.School
+	testdata.GoldenJSONUnmarshal(t, "schools", &schools)
+
+	postgresql.SeedSchools(s.DBConn, t, schools)
+	schoolRepo := postgresql.NewSchoolRepository(s.DBConn)
+
+	// without filter
+	schoolsResp, cursor, err := schoolRepo.Fetch(context.Background(), sa.SchoolFilter{})
+	require.NoError(t, err)
+	require.Equal(t, "MjAyMi0wMi0yMFQxNzo1OToyNS44MjJa", cursor)
+	require.Len(t, schoolsResp, 6)
+
+	// filter limit 2
+	schoolsResp, cursor, err = schoolRepo.Fetch(context.Background(), sa.SchoolFilter{Limit: 2})
+	require.NoError(t, err)
+	require.Equal(t, "MjAyMi0wMi0yMFQxNzo1OTozNy44MjJa", cursor)
+	require.Len(t, schoolsResp, 2)
+
+	// limit and cursor
+	schoolsResp, cursor, err = schoolRepo.Fetch(context.Background(), sa.SchoolFilter{Limit: 3, Cursor: cursor})
+	require.NoError(t, err)
+	require.Equal(t, "MjAyMi0wMi0yMFQxNzo1OToyOC44MjJa", cursor)
+	require.Len(t, schoolsResp, 3)
+	require.Equal(t, "universitas gajah mada", schoolsResp[0].Name)
+
+	// filter name
+	schoolsResp, cursor, err = schoolRepo.Fetch(context.Background(), sa.SchoolFilter{Name: "indonesia"})
+	require.NoError(t, err)
+	require.Equal(t, "MjAyMi0wMi0yMFQxNzo1OTozNy44MjJa", cursor)
+	require.Len(t, schoolsResp, 1)
+	require.Equal(t, "universitas indonesia", schoolsResp[0].Name)
+}

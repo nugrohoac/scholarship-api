@@ -272,4 +272,32 @@ func SeedMajors(db *sql.DB, t *testing.T, majors []sa.Major) {
 	require.NoError(t, err)
 }
 
-//func
+// SeedSchools .
+func SeedSchools(db *sql.DB, t *testing.T, schools []sa.School) {
+	qInsert := sq.Insert("school").
+		Columns("id",
+			"name",
+			"type",
+			"address",
+			"status",
+			"created_at",
+			"created_by",
+		)
+
+	for _, school := range schools {
+		qInsert = qInsert.Values(school.ID,
+			school.Name,
+			school.Type,
+			school.Address,
+			school.Status,
+			school.CreatedAt,
+			school.CreatedBy,
+		)
+	}
+
+	query, args, err := qInsert.PlaceholderFormat(sq.Dollar).ToSql()
+	require.NoError(t, err)
+
+	_, err = db.Exec(query, args...)
+	require.NoError(t, err)
+}
