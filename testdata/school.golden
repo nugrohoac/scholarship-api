@@ -1,0 +1,9 @@
+{
+  "id":1,
+  "name":"sma n 8 jakarta",
+  "type":"senior-high-school",
+  "address":"jl jakarta 8",
+  "status":1,
+  "created_at":"2022-02-20T17:59:25.822474+07:00",
+  "created_by":"jhon@wick.com"
+}

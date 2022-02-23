@@ -36,11 +36,17 @@ type Query {
         id: Int!
     ): scholarship
 
-    GetDegree: [String]
+    FetchDegree: [String]
 
-    GetMajor(
+    FetchMajor(
         limit: Int
         cursor: String
         name: String
     ): majorFeed
+
+    FetchSchool(
+        limit: Int
+        cursor: String
+        name: String
+    ): schoolFeed
 }

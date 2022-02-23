@@ -323,3 +323,42 @@ type InputMajorFilter struct {
 	Cursor *string
 	Name   *string
 }
+
+// School .
+type School struct {
+	ID        int64     `json:"id"`
+	Name      string    `json:"name"`
+	Type      string    `json:"type"`
+	Address   string    `json:"address"`
+	Status    int       `json:"status"`
+	CreatedAt time.Time `json:"created_at"`
+	CreatedBy string    `json:"created_by"`
+	UpdatedAt time.Time `json:"-"`
+}
+
+// SchoolFeed ...
+type SchoolFeed struct {
+	Cursor  string
+	Schools []School
+}
+
+// SchoolFilter .
+type SchoolFilter struct {
+	Limit  uint64
+	Cursor string
+	Name   string
+}
+
+// InputSchoolFilter .
+type InputSchoolFilter struct {
+	Limit  *int32
+	Cursor *string
+	Name   *string
+}
+
+// InputSchool ...
+type InputSchool struct {
+	Name    string
+	Type    string
+	Address string
+}

@@ -100,6 +100,10 @@ func (s scholarshipService) GetByID(ctx context.Context, ID int64) (sa.Scholarsh
 		return sa.Scholarship{}, err
 	}
 
+	if scholarship.ID == 0 {
+		return sa.Scholarship{}, sa.ErrNotFound{Message: "scholarship is not found"}
+	}
+
 	requirementDesc, err := s.requirementDescRepo.Fetch(ctx, []int64{ID})
 	if err != nil {
 		return sa.Scholarship{}, err

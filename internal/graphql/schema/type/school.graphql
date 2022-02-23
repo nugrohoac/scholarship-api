@@ -1,0 +1,12 @@
+type school {
+    id: Int
+    name: String
+    type: String
+    address: String
+    status: Int
+}
+
+type schoolFeed {
+    cursor: String
+    schools: [school]
+}

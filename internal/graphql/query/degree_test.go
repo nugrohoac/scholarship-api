@@ -20,7 +20,7 @@ func TestDegreeQuery_GetDegree(t *testing.T) {
 		degreeServiceMock.On("Get").Return(responsePtr).Once()
 
 		degreeQuery := query.NewDegreeQuery(degreeServiceMock)
-		response, err := degreeQuery.GetDegree()
+		response, err := degreeQuery.FetchDegree()
 		require.NoError(t, err)
 		require.Equal(t, &responsePtr, response)
 	})

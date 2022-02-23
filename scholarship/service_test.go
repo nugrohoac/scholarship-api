@@ -344,6 +344,19 @@ func TestScholarshipServiceGetByID(t *testing.T) {
 			expectedResp:    sa.Scholarship{},
 			expectedErr:     errors.New("error"),
 		},
+		"scholarship not found": {
+			paramID: scholarship.ID,
+			getScholarship: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, scholarshipUnPaid.ID},
+				Output:   []interface{}{sa.Scholarship{}, nil},
+			},
+			fetchRequirementDesc: testdata.FuncCaller{},
+			fetchPayments:        testdata.FuncCaller{},
+			getBankTransfer:      testdata.FuncCaller{},
+			expectedResp:         sa.Scholarship{},
+			expectedErr:          sa.ErrNotFound{Message: "scholarship is not found"},
+		},
 		"error fetch requirement description": {
 			paramID: scholarship.ID,
 			getScholarship: testdata.FuncCaller{

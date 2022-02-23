@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/Nusantara-Muda/scholarship-api/major"
+	"github.com/Nusantara-Muda/scholarship-api/school"
 	"log"
 	"strings"
 	"time"
@@ -46,6 +47,7 @@ var (
 	degreeRepo          sa.DegreeRepository
 	requirementDescRepo sa.RequirementDescriptionRepository
 	majorRepo           sa.MajorRepository
+	schoolRepo          sa.SchoolRepository
 
 	bankService        sa.BankService
 	countryService     sa.CountryService
@@ -54,6 +56,7 @@ var (
 	paymentService     sa.PaymentService
 	degreeService      sa.DegreeService
 	majorService       sa.MajorService
+	schoolService      sa.SchoolService
 
 	// email
 	emailDomain        string
@@ -70,6 +73,8 @@ var (
 	UserQuery query.UserQuery
 	// MajorQuery .
 	MajorQuery query.MajorQuery
+	// SchoolQuery .
+	SchoolQuery query.SchoolQuery
 
 	// UserMutation ...
 	UserMutation mutation.UserMutation
@@ -77,6 +82,8 @@ var (
 	ScholarshipMutation mutation.ScholarshipMutation
 	//PaymentMutation .
 	PaymentMutation mutation.PaymentMutation
+	// SchoolMutation .
+	SchoolMutation mutation.SchoolMutation
 	// ScholarshipQuery ...
 	ScholarshipQuery query.ScholarshipQuery
 	// DegreeQuery ...
@@ -211,6 +218,7 @@ func initApp() {
 	degreeRepo = degree.NewDegreeRepository(degrees)
 	requirementDescRepo = postgresql.NewRequirementDescriptionRepository(db)
 	majorRepo = postgresql.NewMajorRepository(db)
+	schoolRepo = postgresql.NewSchoolRepository(db)
 
 	bankService = bank.NewBankService(bankRepo)
 	userService = user.NewUserService(userRepo, jwtHash, emailRepo)
@@ -219,10 +227,12 @@ func initApp() {
 	paymentService = payment.NewPaymentService(paymentRepo, scholarshipRepo)
 	degreeService = _degree.NewDegreeService(degreeRepo)
 	majorService = major.NewMajorService(majorRepo)
+	schoolService = school.NewSchoolService(schoolRepo)
 
 	UserMutation = mutation.NewUserMutation(userService)
 	ScholarshipMutation = mutation.NewScholarshipMutation(scholarshipService)
 	PaymentMutation = mutation.NewPaymentMutation(paymentService)
+	SchoolMutation = mutation.NewSchoolMutation(schoolService)
 
 	BankQuery = query.NewBankQuery(bankService)
 	CountryQuery = query.NewCountryQuery(countryService)
@@ -230,4 +240,5 @@ func initApp() {
 	ScholarshipQuery = query.NewScholarshipQuery(scholarshipService)
 	DegreeQuery = query.NewDegreeQuery(degreeService)
 	MajorQuery = query.NewMajorQuery(majorService)
+	SchoolQuery = query.NewSchoolQuery(schoolService)
 }
