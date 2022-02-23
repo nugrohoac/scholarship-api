@@ -33,3 +33,25 @@ func (s SchoolResolver) Status() *int32 {
 	status := int32(s.School.Status)
 	return &status
 }
+
+// SchoolFeedResolver .
+type SchoolFeedResolver struct {
+	SchoolFeed sa.SchoolFeed
+}
+
+// Cursor .
+func (s SchoolFeedResolver) Cursor() *string {
+	return &s.SchoolFeed.Cursor
+}
+
+// Schools .
+func (s SchoolFeedResolver) Schools() *[]*SchoolResolver {
+	schools := make([]*SchoolResolver, 0)
+
+	for _, school := range s.SchoolFeed.Schools {
+		school := school
+		schools = append(schools, &SchoolResolver{School: school})
+	}
+
+	return &schools
+}

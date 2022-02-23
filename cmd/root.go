@@ -73,6 +73,8 @@ var (
 	UserQuery query.UserQuery
 	// MajorQuery .
 	MajorQuery query.MajorQuery
+	// SchoolQuery .
+	SchoolQuery query.SchoolQuery
 
 	// UserMutation ...
 	UserMutation mutation.UserMutation
@@ -238,4 +240,5 @@ func initApp() {
 	ScholarshipQuery = query.NewScholarshipQuery(scholarshipService)
 	DegreeQuery = query.NewDegreeQuery(degreeService)
 	MajorQuery = query.NewMajorQuery(majorService)
+	SchoolQuery = query.NewSchoolQuery(schoolService)
 }

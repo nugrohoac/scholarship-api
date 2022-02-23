@@ -5,3 +5,8 @@ type school {
     address: String
     status: Int
 }
+
+type schoolFeed {
+    cursor: String
+    schools: [school]
+}
