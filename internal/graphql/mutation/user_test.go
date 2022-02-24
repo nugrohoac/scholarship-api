@@ -135,7 +135,7 @@ func TestUserMutationUpdateUser(t *testing.T) {
 	inputUser := sa.InputUpdateUser{
 		ID:   int32(users[0].ID),
 		Name: users[0].Name,
-		Photo: sa.InputImage{
+		Photo: &sa.InputImage{
 			URL:    users[0].Photo.URL,
 			Width:  users[0].Photo.Width,
 			Height: users[0].Photo.Height,
