@@ -9,7 +9,7 @@ type Mutation {
     UpdateUser(
         id: Int!
         name: String!
-        photo: inputImage!
+        photo: inputImage
         companyName: String
         countryId: Int!
         address: String!

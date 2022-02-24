@@ -62,6 +62,14 @@ func (u UserMutation) UpdateUser(ctx context.Context, param sa.InputUpdateUser) 
 		BankAccountName: param.BankAccountName,
 	}
 
+	if param.Photo != nil {
+		user.Photo = sa.Image{
+			URL:    param.Photo.URL,
+			Width:  param.Photo.Width,
+			Height: param.Photo.Height,
+		}
+	}
+
 	userUpdated, err := u.userService.UpdateByID(ctx, user.ID, user)
 	if err != nil {
 		return nil, err

@@ -179,7 +179,7 @@ type InputCardIdentity struct {
 type InputUpdateUser struct {
 	ID              int32
 	Name            string
-	Photo           InputImage
+	Photo           *InputImage
 	CompanyName     *string
 	CountryID       int32
 	Address         string
