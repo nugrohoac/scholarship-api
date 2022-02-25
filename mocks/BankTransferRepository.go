@@ -3,6 +3,8 @@
 package mocks
 
 import (
+	context "context"
+
 	scholarship_api "github.com/Nusantara-Muda/scholarship-api"
 	mock "github.com/stretchr/testify/mock"
 )
@@ -12,16 +14,23 @@ type BankTransferRepository struct {
 	mock.Mock
 }
 
-// Get provides a mock function with given fields:
-func (_m *BankTransferRepository) Get() scholarship_api.BankTransfer {
-	ret := _m.Called()
+// Get provides a mock function with given fields: ctx
+func (_m *BankTransferRepository) Get(ctx context.Context) (scholarship_api.BankTransfer, error) {
+	ret := _m.Called(ctx)
 
 	var r0 scholarship_api.BankTransfer
-	if rf, ok := ret.Get(0).(func() scholarship_api.BankTransfer); ok {
-		r0 = rf()
+	if rf, ok := ret.Get(0).(func(context.Context) scholarship_api.BankTransfer); ok {
+		r0 = rf(ctx)
 	} else {
 		r0 = ret.Get(0).(scholarship_api.BankTransfer)
 	}
 
-	return r0
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = rf(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }

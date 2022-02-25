@@ -27,10 +27,12 @@ type Bank struct {
 
 // BankTransfer  is used to hold information transfer of payment
 type BankTransfer struct {
+	ID          int32
 	Name        string
 	AccountName string
 	AccountNo   int
 	Image       Image
+	CreatedAt   time.Time `json:"created_at"`
 }
 
 // InputBankFilter ...

@@ -78,7 +78,7 @@ type ScholarshipService interface {
 
 // BankTransferRepository ...
 type BankTransferRepository interface {
-	Get() BankTransfer
+	Get(ctx context.Context) (BankTransfer, error)
 }
 
 // PaymentRepository .
