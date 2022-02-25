@@ -28,6 +28,10 @@ func (s SchoolQuery) FetchSchool(ctx context.Context, param sa.InputSchoolFilter
 		filter.Cursor = *param.Cursor
 	}
 
+	if param.Type != nil {
+		filter.Type = *param.Type
+	}
+
 	schoolFeed, err := s.schoolService.Fetch(ctx, filter)
 	if err != nil {
 		return nil, err

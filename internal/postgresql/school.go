@@ -63,6 +63,10 @@ func (s schoolRepo) Fetch(ctx context.Context, filter sa.SchoolFilter) ([]sa.Sch
 		qSelect = qSelect.Limit(filter.Limit)
 	}
 
+	if filter.Type != "" {
+		qSelect = qSelect.Where(sq.Eq{"type": filter.Type})
+	}
+
 	if filter.Cursor != "" {
 		cursor, err := decodeCursor(filter.Cursor)
 		if err != nil {
