@@ -75,14 +75,19 @@ $ go run cmd/app/main.go -config-path=your-custom-env
 ```
 
 ## User status
-* 0 status un verification
-* 1 status verify but un complete profile
-* 2 status verify and complete profile
-
+- 0 = not yet activated by email
+- 1 = activated by email but incomplete profile
+- 2 = complete profile (both student and sponsor)
+- 3 = complete setup education (student)
 
 ## Scholarship status
-* -1 = reject
-* 0 = waiting for payment
-* 1 = payment but not start
-* 2 = on going
-* 3 = done
+- 0 = waiting for payment
+- 1 = waiting for approve
+- 2 = approve
+- 3 = registration
+- 4 = review
+- 5 = announcement
+- 6 = funding
+- 7 = finish
+- 8 = reject
+
