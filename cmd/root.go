@@ -16,7 +16,6 @@ import (
 	"github.com/Nusantara-Muda/scholarship-api/bank"
 	"github.com/Nusantara-Muda/scholarship-api/country"
 	_degree "github.com/Nusantara-Muda/scholarship-api/degree"
-	"github.com/Nusantara-Muda/scholarship-api/internal/configuration/bank_transfer"
 	"github.com/Nusantara-Muda/scholarship-api/internal/email"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/mutation"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/query"
@@ -32,7 +31,6 @@ var (
 	// Database
 	dsn             string
 	deadlinePayment int
-	bankTransfer    sa.BankTransfer
 
 	bankRepo            sa.BankRepository
 	countryRepo         sa.CountryRepository
@@ -159,31 +157,6 @@ func initEnv() {
 	pathForgotPassword = viper.GetString("email_path_forgot_password")
 	emailSender = viper.GetString("email_sender")
 
-	// bank transfer load from env
-	if bankTransfer.Name = viper.GetString("bank_transfer_name"); bankTransfer.Name == "" {
-		log.Fatal("Please provide bank transfer name.......!!!")
-	}
-
-	if bankTransfer.AccountName = viper.GetString("bank_transfer_account_name"); bankTransfer.AccountName == "" {
-		log.Fatal("Please provide bank transfer account name.......!!!")
-	}
-
-	if bankTransfer.AccountNo = viper.GetInt("bank_transfer_account_no"); bankTransfer.AccountNo == 0 {
-		log.Fatal("Please provide bank transfer account no.......!!!")
-	}
-
-	if bankTransfer.Image.URL = viper.GetString("bank_transfer_image_url"); bankTransfer.Image.URL == "" {
-		log.Fatal("Please provide bank transfer image url.......!!!")
-	}
-
-	if bankTransfer.Image.Width = viper.GetInt32("bank_transfer_image_width"); bankTransfer.Image.Width == 0 {
-		log.Fatal("Please provide bank transfer image width.......!!!")
-	}
-
-	if bankTransfer.Image.Height = viper.GetInt32("bank_transfer_image_height"); bankTransfer.Image.Height == 0 {
-		log.Fatal("Please provide bank transfer image height.......!!!")
-	}
-
 	viper.WatchConfig()
 }
 
@@ -204,7 +177,7 @@ func initApp() {
 	userRepo = postgresql.NewUserRepository(db)
 	countryRepo = postgresql.NewCountryRepository(db)
 	scholarshipRepo = postgresql.NewScholarshipRepository(db, deadlinePayment)
-	bankTransferRepo = bank_transfer.NewBankTransfer(bankTransfer)
+	bankTransferRepo = postgresql.NewBankTransferRepository(db)
 	paymentRepo = postgresql.NewPaymentRepository(db)
 	degreeRepo = postgresql.NewDegreeRepository(db)
 	requirementDescRepo = postgresql.NewRequirementDescriptionRepository(db)

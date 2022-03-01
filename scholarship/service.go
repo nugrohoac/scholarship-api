@@ -42,7 +42,10 @@ func (s scholarshipService) Create(ctx context.Context, scholarship sa.Scholarsh
 		return sa.Scholarship{}, nil
 	}
 
-	scholarship.Payment.BankTransfer = s.bankTransferRepo.Get()
+	scholarship.Payment.BankTransfer, err = s.bankTransferRepo.Get(ctx)
+	if err != nil {
+		return sa.Scholarship{}, err
+	}
 
 	return scholarship, nil
 }
@@ -121,7 +124,10 @@ func (s scholarshipService) GetByID(ctx context.Context, ID int64) (sa.Scholarsh
 	}
 
 	scholarship.Payment = payments[0]
-	scholarship.Payment.BankTransfer = s.bankTransferRepo.Get()
+	scholarship.Payment.BankTransfer, err = s.bankTransferRepo.Get(ctx)
+	if err != nil {
+		return sa.Scholarship{}, err
+	}
 
 	return scholarship, nil
 }

@@ -102,6 +102,22 @@ func TestScholarshipServiceCreate(t *testing.T) {
 			expectedResp: sa.Scholarship{},
 			expectedErr:  errors.New("error"),
 		},
+		"failed get bank transfer": {
+			paramCtx:         ctxValid,
+			paramScholarship: scholarship,
+			createScholarship: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{ctxValid, scholarship},
+				Output:   []interface{}{scholarshipResp, nil},
+			},
+			getBankTransfer: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything},
+				Output:   []interface{}{sa.BankTransfer{}, errors.New("error")},
+			},
+			expectedResp: sa.Scholarship{},
+			expectedErr:  errors.New("error"),
+		},
 		"success": {
 			paramCtx:         ctxValid,
 			paramScholarship: scholarship,
@@ -112,8 +128,8 @@ func TestScholarshipServiceCreate(t *testing.T) {
 			},
 			getBankTransfer: testdata.FuncCaller{
 				IsCalled: true,
-				Input:    nil,
-				Output:   []interface{}{bankTransfer},
+				Input:    []interface{}{mock.Anything},
+				Output:   []interface{}{bankTransfer, nil},
 			},
 			expectedResp: scholarshipResp,
 			expectedErr:  nil,
@@ -395,6 +411,31 @@ func TestScholarshipServiceGetByID(t *testing.T) {
 			expectedResp:    sa.Scholarship{},
 			expectedErr:     errors.New("error"),
 		},
+		"error get bank transfer": {
+			paramID: scholarship.ID,
+			getScholarship: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, scholarshipUnPaid.ID},
+				Output:   []interface{}{scholarshipUnPaid, nil},
+			},
+			fetchRequirementDesc: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, []int64{scholarship.ID}},
+				Output:   []interface{}{requirementDesc, nil},
+			},
+			fetchPayments: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, []int64{scholarshipUnPaid.ID}},
+				Output:   []interface{}{[]sa.Payment{payment}, nil},
+			},
+			getBankTransfer: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything},
+				Output:   []interface{}{sa.BankTransfer{}, errors.New("error")},
+			},
+			expectedResp: sa.Scholarship{},
+			expectedErr:  errors.New("error"),
+		},
 		"success": {
 			paramID: scholarship.ID,
 			getScholarship: testdata.FuncCaller{
@@ -414,8 +455,8 @@ func TestScholarshipServiceGetByID(t *testing.T) {
 			},
 			getBankTransfer: testdata.FuncCaller{
 				IsCalled: true,
-				Input:    []interface{}{},
-				Output:   []interface{}{bankTransfer},
+				Input:    []interface{}{mock.Anything},
+				Output:   []interface{}{bankTransfer, nil},
 			},
 			expectedResp: scholarshipResponse,
 			expectedErr:  nil,

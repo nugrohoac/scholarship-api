@@ -48,5 +48,6 @@ type Query {
         limit: Int
         cursor: String
         name: String
+        type: String
     ): schoolFeed
 }

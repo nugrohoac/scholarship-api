@@ -324,3 +324,34 @@ func SeedDegrees(db *sql.DB, t *testing.T, degrees []sa.Degree) {
 	_, err = db.Exec(query, args...)
 	require.NoError(t, err)
 }
+
+// SeedBankTransfer ....
+func SeedBankTransfer(db *sql.DB, t *testing.T, bankTransfers ...sa.BankTransfer) {
+	qInsert := sq.Insert("bank_transfer").
+		Columns("id",
+			"name",
+			"account_name",
+			"account_no",
+			"image",
+			"created_at",
+		)
+
+	for _, bt := range bankTransfers {
+		byteImage, err := json.Marshal(bt.Image)
+		require.NoError(t, err)
+
+		qInsert = qInsert.Values(bt.ID,
+			bt.Name,
+			bt.AccountName,
+			bt.AccountNo,
+			byteImage,
+			bt.CreatedAt,
+		)
+	}
+
+	query, args, err := qInsert.PlaceholderFormat(sq.Dollar).ToSql()
+	require.NoError(t, err)
+
+	_, err = db.Exec(query, args...)
+	require.NoError(t, err)
+}
