@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"testing"
+	"time"
 )
 
 type userSuite struct {
@@ -152,3 +153,83 @@ func (u userSuite) TestUserUpdatePassword() {
 	require.Equal(t, newPassword, password)
 }
 
+func (u userSuite) TestUserSetupEducation() {
+	var (
+		user    sa.User
+		schools []sa.School
+		degrees []sa.Degree
+		t       = u.T()
+	)
+
+	enrollmentDate, err := time.Parse(time.RFC3339, "2022-01-11T17:33:58.403414+07:00")
+	require.NoError(t, err)
+
+	graduationDate, err := time.Parse(time.RFC3339, "2026-01-11T17:33:58.403414+07:00")
+	require.NoError(t, err)
+
+	testdata.GoldenJSONUnmarshal(t, "user", &user)
+	testdata.GoldenJSONUnmarshal(t, "schools", &schools)
+	testdata.GoldenJSONUnmarshal(t, "degrees", &degrees)
+
+	postgresql.SeedUsers(u.DBConn, t, []sa.User{user})
+	user.CareerGoal = "my career goal"
+	user.StudyCountryGoal = sa.Country{ID: 10}
+	user.StudyDestination = "japan, oksaka university"
+	user.GapYearReason = "gap year reason"
+
+	user.UserSchools = []sa.UserSchool{
+		{
+			UserID:         user.ID,
+			School:         sa.School{ID: 8},
+			GraduationDate: enrollmentDate,
+		},
+		{
+			UserID:         user.ID,
+			School:         sa.School{ID: 7},
+			Degree:         sa.Degree{ID: 3},
+			Major:          sa.Major{ID: 5},
+			EnrollmentDate: enrollmentDate,
+			GraduationDate: graduationDate,
+			Gpa:            3.125,
+		},
+	}
+
+	user.UserDocuments = []sa.UserDocument{
+		{
+			UserID: user.ID,
+			Document: sa.Image{
+				URL:     "https://image1.com",
+				Width:   100,
+				Height:  100,
+				Mime:    "pdf",
+				Caption: "",
+			},
+		},
+		{
+			UserID: user.ID,
+			Document: sa.Image{
+				URL:     "https://image2.com",
+				Width:   100,
+				Height:  100,
+				Mime:    "jpeg",
+				Caption: "",
+			},
+		},
+	}
+	user.Status = 3
+
+	userRepo := postgresql.NewUserRepository(u.DBConn)
+	userResp, err := userRepo.SetupEducation(context.Background(), user)
+	require.NoError(t, err)
+
+	var count int
+	row := u.DBConn.QueryRow("SELECT COUNT(id) FROM user_school WHERE user_id = $1", userResp.ID)
+	err = row.Scan(&count)
+	require.NoError(t, err)
+	require.Equal(t, 2, count)
+
+	row = u.DBConn.QueryRow("SELECT COUNT(id) FROM user_document WHERE user_id = $1", userResp.ID)
+	err = row.Scan(&count)
+	require.NoError(t, err)
+	require.Equal(t, 2, count)
+}

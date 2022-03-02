@@ -6,5 +6,6 @@ CREATE TABLE "user_school" (
      "major_id" bigint not null,
      "enrollment_date" timestamp(3) NULL,
      "graduation_date" timestamp(3) NOT NULL,
+     "gpa" numeric(4,3) not null default 0,
      "created_at" timestamp(3) DEFAULT CURRENT_TIMESTAMP(3)
 );

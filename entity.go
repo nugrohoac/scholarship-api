@@ -380,17 +380,11 @@ type Degree struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
-// Document .
-type Document struct {
-	URL  string `json:"url"`
-	Mime string `json:"mime"`
-}
-
 // UserDocument .
 type UserDocument struct {
-	ID       int64    `json:"id"`
-	UserID   int64    `json:"user_id"`
-	Document Document `json:"document"`
+	ID       int64 `json:"id"`
+	UserID   int64 `json:"user_id"`
+	Document Image `json:"document"`
 }
 
 // UserSchool .
@@ -402,5 +396,5 @@ type UserSchool struct {
 	Major          Major     `json:"major"`
 	EnrollmentDate time.Time `json:"enrollment_date"`
 	GraduationDate time.Time `json:"graduation_date"`
-	Gpa            int       `json:"gpa"`
+	Gpa            float32   `json:"gpa"`
 }

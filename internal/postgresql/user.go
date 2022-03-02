@@ -324,6 +324,128 @@ func (u userRepo) ResetPassword(ctx context.Context, email, password string) err
 	return nil
 }
 
+// SetupEducation .
+func (u userRepo) SetupEducation(ctx context.Context, user sa.User) (sa.User, error) {
+	tx, err := u.db.BeginTx(ctx, nil)
+	if err != nil {
+		return sa.User{}, err
+	}
+
+	var (
+		timeNow     = time.Now()
+		errRollback error
+		byteDoc     []byte
+	)
+
+	// update user start
+	// update status user to 3, status is set from service
+	query, args, err := sq.Update("\"user\"").
+		SetMap(sq.Eq{"status": user.Status,
+			"career_goal":        user.CareerGoal,
+			"study_country_goal": user.StudyCountryGoal.ID,
+			"study_destination":  user.StudyDestination,
+			"gap_year_reason":    user.GapYearReason,
+			"updated_at":         timeNow,
+		}).PlaceholderFormat(sq.Dollar).
+		Where(sq.Eq{"id": user.ID}).
+		ToSql()
+	if err != nil {
+		return sa.User{}, err
+	}
+
+	if _, err = tx.ExecContext(ctx, query, args...); err != nil {
+		fmt.Println(err)
+		return sa.User{}, err
+	}
+	// update user end
+
+	// insert into user school
+	qInsertUserSchool := sq.Insert("user_school").
+		Columns("user_id",
+			"school_id",
+			"degree_id",
+			"major_id",
+			"enrollment_date",
+			"graduation_date",
+			"gpa",
+			"created_at",
+		)
+
+	for _, us := range user.UserSchools {
+		qInsertUserSchool = qInsertUserSchool.Values(user.ID,
+			us.School.ID,
+			us.Degree.ID,
+			us.Major.ID,
+			us.EnrollmentDate,
+			us.GraduationDate,
+			us.Gpa,
+			timeNow,
+		)
+	}
+
+	query, args, err = qInsertUserSchool.PlaceholderFormat(sq.Dollar).ToSql()
+	if err != nil {
+		if errRollback = tx.Rollback(); errRollback != nil {
+			fmt.Println("Err rollback setup education insert user school : ", errRollback)
+		}
+
+		return sa.User{}, err
+	}
+
+	if _, err = tx.ExecContext(ctx, query, args...); err != nil {
+		if errRollback = tx.Rollback(); errRollback != nil {
+			fmt.Println("Err rollback setup education exec insert user school : ", errRollback)
+		}
+
+		return sa.User{}, err
+	}
+	// insert user school end
+
+	// insert user document start
+	qInsertUserDocument := sq.Insert("user_document").Columns("user_id", "document", "created_at")
+
+	for _, ud := range user.UserDocuments {
+		byteDoc, err = json.Marshal(ud.Document)
+		if err != nil {
+			if errRollback = tx.Rollback(); errRollback != nil {
+				fmt.Println("Err rollback setup education marshal document : ", errRollback)
+			}
+
+			return sa.User{}, err
+		}
+
+		qInsertUserDocument = qInsertUserDocument.Values(user.ID, byteDoc, timeNow)
+	}
+
+	query, args, err = qInsertUserDocument.PlaceholderFormat(sq.Dollar).ToSql()
+	if err != nil {
+		if errRollback = tx.Rollback(); errRollback != nil {
+			fmt.Println("Err rollback setup education generate sql user document : ", errRollback)
+		}
+
+		return sa.User{}, err
+	}
+
+	if _, err = tx.ExecContext(ctx, query, args...); err != nil {
+		if errRollback = tx.Rollback(); errRollback != nil {
+			fmt.Println("Err rollback setup education exec user document : ", errRollback)
+		}
+
+		return sa.User{}, err
+	}
+	// insert user document done
+
+	if err = tx.Commit(); err != nil {
+		if errRollback = tx.Rollback(); errRollback != nil {
+			fmt.Println("Err commit setup education : ", errRollback)
+		}
+
+		return sa.User{}, err
+	}
+
+	return user, nil
+}
+
 // NewUserRepository .
 func NewUserRepository(db *sql.DB) sa.UserRepository {
 	return userRepo{db: db}
