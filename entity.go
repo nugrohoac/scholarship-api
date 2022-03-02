@@ -75,26 +75,32 @@ type InputImage struct {
 
 // User ....
 type User struct {
-	ID              int64          `json:"id"`
-	Name            string         `json:"name"`
-	Type            string         `json:"type"`
-	Email           string         `json:"email"`
-	PhoneNo         string         `json:"phone_no"`
-	Photo           Image          `json:"photo"`
-	CompanyName     string         `json:"company_name"`
-	Password        string         `json:"-"`
-	Status          int            `json:"status"`
-	CountryID       int32          `json:"country_id"`
-	PostalCode      string         `json:"postal_code"`
-	Address         string         `json:"address"`
-	Gender          string         `json:"gender"`
-	Ethnic          string         `json:"ethnic"`
-	CardIdentities  []CardIdentity `json:"card_identities"`
-	BankID          int32          `json:"bank_id"`
-	BankAccountNo   string         `json:"bank_account_no"`
-	BankAccountName string         `json:"bank_account_name"`
-	CreatedAt       time.Time      `json:"created_at"`
-	UpdatedAt       time.Time      `json:"-"`
+	ID               int64          `json:"id"`
+	Name             string         `json:"name"`
+	Type             string         `json:"type"`
+	Email            string         `json:"email"`
+	PhoneNo          string         `json:"phone_no"`
+	Photo            Image          `json:"photo"`
+	CompanyName      string         `json:"company_name"`
+	Password         string         `json:"-"`
+	Status           int            `json:"status"`
+	CountryID        int32          `json:"country_id"`
+	PostalCode       string         `json:"postal_code"`
+	Address          string         `json:"address"`
+	Gender           string         `json:"gender"`
+	Ethnic           string         `json:"ethnic"`
+	CardIdentities   []CardIdentity `json:"card_identities"`
+	BankID           int32          `json:"bank_id"`
+	BankAccountNo    string         `json:"bank_account_no"`
+	BankAccountName  string         `json:"bank_account_name"`
+	GapYearReason    string         `json:"gap_year_reason"`
+	CareerGoal       string         `json:"career_goal"`
+	StudyCountryGoal Country        `json:"study_country_goal"`
+	StudyDestination string         `json:"study_destination"`
+	UserDocuments    []UserDocument `json:"user_documents"`
+	UserSchools      []UserSchool   `json:"user_schools"`
+	CreatedAt        time.Time      `json:"created_at"`
+	UpdatedAt        time.Time      `json:"-"`
 }
 
 // UserFilter ...
@@ -372,4 +378,29 @@ type Degree struct {
 	ID        int32     `json:"id"`
 	Name      string    `json:"name"`
 	CreatedAt time.Time `json:"created_at"`
+}
+
+// Document .
+type Document struct {
+	URL  string `json:"url"`
+	Mime string `json:"mime"`
+}
+
+// UserDocument .
+type UserDocument struct {
+	ID       int64    `json:"id"`
+	UserID   int64    `json:"user_id"`
+	Document Document `json:"document"`
+}
+
+// UserSchool .
+type UserSchool struct {
+	ID             int64     `json:"id"`
+	UserID         int64     `json:"user_id"`
+	School         School    `json:"school"`
+	Degree         Degree    `json:"degree"`
+	Major          Major     `json:"major"`
+	EnrollmentDate time.Time `json:"enrollment_date"`
+	GraduationDate time.Time `json:"graduation_date"`
+	Gpa            int       `json:"gpa"`
 }

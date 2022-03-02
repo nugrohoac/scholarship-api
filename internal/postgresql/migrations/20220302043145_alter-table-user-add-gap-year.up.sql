@@ -1,0 +1,1 @@
+ALTER TABLE "user" ADD COLUMN gap_year_reason text not null default '';
