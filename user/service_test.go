@@ -933,6 +933,7 @@ func TestUserServiceSetupEducation(t *testing.T) {
 
 	ctxValid := sa.SetUserOnContext(context.Background(), user)
 
+	user.Type = sa.Student
 	user.CareerGoal = "my career goal"
 	user.StudyCountryGoal = sa.Country{ID: 10}
 	user.StudyDestination = "japan, oksaka university"
@@ -981,6 +982,9 @@ func TestUserServiceSetupEducation(t *testing.T) {
 	userResponse := user
 	userResponse.Status = 3
 
+	userSponsor := user
+	userSponsor.Type = sa.Sponsor
+
 	tests := map[string]struct {
 		paramCtx       context.Context
 		paramUser      sa.User
@@ -1001,6 +1005,13 @@ func TestUserServiceSetupEducation(t *testing.T) {
 			setupEducation: testdata.FuncCaller{},
 			expectedResp:   sa.User{},
 			expectedErr:    sa.ErrUnAuthorize{Message: "user is not match"},
+		},
+		"user type is sponsor": {
+			paramCtx:       ctxValid,
+			paramUser:      userSponsor,
+			setupEducation: testdata.FuncCaller{},
+			expectedResp:   sa.User{},
+			expectedErr:    sa.ErrNotAllowed{Message: "user type is not student"},
 		},
 		"error setup education": {
 			paramCtx:  ctxValid,

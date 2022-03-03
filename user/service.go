@@ -216,6 +216,10 @@ func (u userService) SetupEducation(ctx context.Context, user sa.User) (sa.User,
 		return sa.User{}, sa.ErrUnAuthorize{Message: "user is not match"}
 	}
 
+	if user.Type != sa.Student {
+		return sa.User{}, sa.ErrNotAllowed{Message: "user type is not student"}
+	}
+
 	// look at readme.md to get more status
 	user.Status = 3
 

@@ -9,12 +9,12 @@ import (
 const (
 	// Sponsor ...
 	Sponsor = "sponsor"
-	// KTP // Student ...
-	//Student = "student"
+	// Student ...
+	Student = "student"
 	// KTP ...
-	KTP = "ktp"
+	//KTP = "ktp"
 	// NPWP ...
-	NPWP = "npwp"
+	//NPWP = "npwp"
 )
 
 // Bank ...
@@ -397,4 +397,33 @@ type UserSchool struct {
 	EnrollmentDate time.Time `json:"enrollment_date"`
 	GraduationDate time.Time `json:"graduation_date"`
 	Gpa            float32   `json:"gpa"`
+}
+
+// InputSetupEducation .
+type InputSetupEducation struct {
+	UserID           int32
+	GapYearReason    *string
+	CareerGoal       string
+	StudyCountryGoal struct {
+		ID int32
+	}
+	StudyDestination string
+	UserSchools      []InputUserSchool
+	UserDocuments    []InputImage
+}
+
+// InputUserSchool .
+type InputUserSchool struct {
+	School struct {
+		ID int32
+	}
+	Degree *struct {
+		ID int32
+	}
+	Major *struct {
+		ID int32
+	}
+	EnrollmentDate *string
+	GraduationDate string
+	Gpa            *float32
 }

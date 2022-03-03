@@ -32,3 +32,28 @@ enum gender {
     male
     female
 }
+
+input inputUserCountryGoal {
+    id: Int!
+}
+
+input inputUserSchool {
+    school: inputSchoolUserSchool!
+    degree: inputDegreeUserSchool
+    major: inputMajorUserSchool
+    enrollmentDate: String
+    graduationDate: String!
+    gpa: Float
+}
+
+input inputSchoolUserSchool {
+    id: Int!
+}
+
+input inputMajorUserSchool {
+    id: Int!
+}
+
+input inputDegreeUserSchool {
+    id: Int!
+}
