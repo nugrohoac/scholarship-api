@@ -396,7 +396,7 @@ type UserSchool struct {
 	Major          Major     `json:"major"`
 	EnrollmentDate time.Time `json:"enrollment_date"`
 	GraduationDate time.Time `json:"graduation_date"`
-	Gpa            float32   `json:"gpa"`
+	Gpa            float64   `json:"gpa"`
 }
 
 // InputSetupEducation .
@@ -425,5 +425,5 @@ type InputUserSchool struct {
 	}
 	EnrollmentDate *string
 	GraduationDate string
-	Gpa            *float32
+	Gpa            *float64
 }

@@ -931,9 +931,8 @@ func TestUserServiceSetupEducation(t *testing.T) {
 	graduationDate, err := time.Parse(time.RFC3339, "2026-01-11T17:33:58.403414+07:00")
 	require.NoError(t, err)
 
-	ctxValid := sa.SetUserOnContext(context.Background(), user)
-
 	user.Type = sa.Student
+	user.Status = 2
 	user.CareerGoal = "my career goal"
 	user.StudyCountryGoal = sa.Country{ID: 10}
 	user.StudyDestination = "japan, oksaka university"
@@ -982,8 +981,15 @@ func TestUserServiceSetupEducation(t *testing.T) {
 	userResponse := user
 	userResponse.Status = 3
 
+	ctxValid := sa.SetUserOnContext(context.Background(), user)
+
 	userSponsor := user
 	userSponsor.Type = sa.Sponsor
+	ctxSponsor := sa.SetUserOnContext(context.Background(), userSponsor)
+
+	userUnCompleteProfile := user
+	userUnCompleteProfile.Status = 1
+	ctxUnCompleteProfile := sa.SetUserOnContext(context.Background(), userUnCompleteProfile)
 
 	tests := map[string]struct {
 		paramCtx       context.Context
@@ -1006,9 +1012,16 @@ func TestUserServiceSetupEducation(t *testing.T) {
 			expectedResp:   sa.User{},
 			expectedErr:    sa.ErrUnAuthorize{Message: "user is not match"},
 		},
+		"user un complete profile": {
+			paramCtx:       ctxUnCompleteProfile,
+			paramUser:      sa.User{ID: user.ID, Status: 1, Type: sa.Student},
+			setupEducation: testdata.FuncCaller{},
+			expectedResp:   sa.User{},
+			expectedErr:    sa.ErrNotAllowed{Message: "user status is not complete profile"},
+		},
 		"user type is sponsor": {
-			paramCtx:       ctxValid,
-			paramUser:      userSponsor,
+			paramCtx:       ctxSponsor,
+			paramUser:      sa.User{ID: user.ID, Type: sa.Sponsor},
 			setupEducation: testdata.FuncCaller{},
 			expectedResp:   sa.User{},
 			expectedErr:    sa.ErrNotAllowed{Message: "user type is not student"},
