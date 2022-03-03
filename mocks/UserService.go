@@ -119,6 +119,27 @@ func (_m *UserService) ResetPassword(ctx context.Context, password string) (scho
 	return r0, r1
 }
 
+// SetupEducation provides a mock function with given fields: ctx, user
+func (_m *UserService) SetupEducation(ctx context.Context, user scholarship_api.User) (scholarship_api.User, error) {
+	ret := _m.Called(ctx, user)
+
+	var r0 scholarship_api.User
+	if rf, ok := ret.Get(0).(func(context.Context, scholarship_api.User) scholarship_api.User); ok {
+		r0 = rf(ctx, user)
+	} else {
+		r0 = ret.Get(0).(scholarship_api.User)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, scholarship_api.User) error); ok {
+		r1 = rf(ctx, user)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Store provides a mock function with given fields: ctx, user
 func (_m *UserService) Store(ctx context.Context, user scholarship_api.User) (scholarship_api.User, error) {
 	ret := _m.Called(ctx, user)

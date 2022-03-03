@@ -5,6 +5,7 @@ import (
 	"errors"
 	"golang.org/x/crypto/bcrypt"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -917,6 +918,142 @@ func TestUserServiceForgotPassword(t *testing.T) {
 
 			require.NoError(t, err)
 			require.Equal(t, test.expectedResp, message)
+		})
+	}
+}
+
+func TestUserServiceSetupEducation(t *testing.T) {
+	var user sa.User
+
+	enrollmentDate, err := time.Parse(time.RFC3339, "2022-01-11T17:33:58.403414+07:00")
+	require.NoError(t, err)
+
+	graduationDate, err := time.Parse(time.RFC3339, "2026-01-11T17:33:58.403414+07:00")
+	require.NoError(t, err)
+
+	ctxValid := sa.SetUserOnContext(context.Background(), user)
+
+	user.CareerGoal = "my career goal"
+	user.StudyCountryGoal = sa.Country{ID: 10}
+	user.StudyDestination = "japan, oksaka university"
+	user.GapYearReason = "gap year reason"
+
+	user.UserSchools = []sa.UserSchool{
+		{
+			UserID:         user.ID,
+			School:         sa.School{ID: 8},
+			GraduationDate: enrollmentDate,
+		},
+		{
+			UserID:         user.ID,
+			School:         sa.School{ID: 7},
+			Degree:         sa.Degree{ID: 3},
+			Major:          sa.Major{ID: 5},
+			EnrollmentDate: enrollmentDate,
+			GraduationDate: graduationDate,
+			Gpa:            3.125,
+		},
+	}
+
+	user.UserDocuments = []sa.UserDocument{
+		{
+			UserID: user.ID,
+			Document: sa.Image{
+				URL:     "https://image1.com",
+				Width:   100,
+				Height:  100,
+				Mime:    "pdf",
+				Caption: "",
+			},
+		},
+		{
+			UserID: user.ID,
+			Document: sa.Image{
+				URL:     "https://image2.com",
+				Width:   100,
+				Height:  100,
+				Mime:    "jpeg",
+				Caption: "",
+			},
+		},
+	}
+
+	userResponse := user
+	userResponse.Status = 3
+
+	tests := map[string]struct {
+		paramCtx       context.Context
+		paramUser      sa.User
+		setupEducation testdata.FuncCaller
+		expectedResp   sa.User
+		expectedErr    error
+	}{
+		"context doesn't contain user": {
+			paramCtx:       context.Background(),
+			paramUser:      sa.User{},
+			setupEducation: testdata.FuncCaller{},
+			expectedResp:   sa.User{},
+			expectedErr:    sa.ErrBadRequest{Message: "context doesn't contain user"},
+		},
+		"user id is not match": {
+			paramCtx:       ctxValid,
+			paramUser:      sa.User{ID: 99},
+			setupEducation: testdata.FuncCaller{},
+			expectedResp:   sa.User{},
+			expectedErr:    sa.ErrUnAuthorize{Message: "user is not match"},
+		},
+		"error setup education": {
+			paramCtx:  ctxValid,
+			paramUser: user,
+			setupEducation: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, userResponse},
+				Output:   []interface{}{sa.User{}, errors.New("error")},
+			},
+			expectedResp: sa.User{},
+			expectedErr:  errors.New("error"),
+		},
+		"success": {
+			paramCtx:  ctxValid,
+			paramUser: user,
+			setupEducation: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, userResponse},
+				Output:   []interface{}{userResponse, nil},
+			},
+			expectedResp: userResponse,
+			expectedErr:  nil,
+		},
+	}
+
+	for testName, test := range tests {
+		t.Run(testName, func(t *testing.T) {
+			userRepoMock := new(mocks.UserRepository)
+			jwtHashMock := new(mocks.JwtHash)
+			emailRepoMock := new(mocks.EmailRepository)
+
+			if test.setupEducation.IsCalled {
+				userRepoMock.On("SetupEducation", test.setupEducation.Input...).
+					Return(test.setupEducation.Output...).
+					Once()
+			}
+
+			userService := _user.NewUserService(userRepoMock, jwtHashMock, emailRepoMock)
+			response, err := userService.SetupEducation(test.paramCtx, test.paramUser)
+
+			userRepoMock.AssertExpectations(t)
+			jwtHashMock.AssertExpectations(t)
+			emailRepoMock.AssertExpectations(t)
+
+			if err != nil {
+				require.Error(t, err)
+				require.Equal(t, test.expectedErr, err)
+
+				return
+			}
+
+			require.NoError(t, err)
+			require.Equal(t, test.expectedResp, response)
 		})
 	}
 }

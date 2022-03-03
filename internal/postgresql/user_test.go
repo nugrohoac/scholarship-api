@@ -155,10 +155,8 @@ func (u userSuite) TestUserUpdatePassword() {
 
 func (u userSuite) TestUserSetupEducation() {
 	var (
-		user    sa.User
-		schools []sa.School
-		degrees []sa.Degree
-		t       = u.T()
+		user sa.User
+		t    = u.T()
 	)
 
 	enrollmentDate, err := time.Parse(time.RFC3339, "2022-01-11T17:33:58.403414+07:00")
@@ -168,8 +166,6 @@ func (u userSuite) TestUserSetupEducation() {
 	require.NoError(t, err)
 
 	testdata.GoldenJSONUnmarshal(t, "user", &user)
-	testdata.GoldenJSONUnmarshal(t, "schools", &schools)
-	testdata.GoldenJSONUnmarshal(t, "degrees", &degrees)
 
 	postgresql.SeedUsers(u.DBConn, t, []sa.User{user})
 	user.CareerGoal = "my career goal"

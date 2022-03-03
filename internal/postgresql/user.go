@@ -399,41 +399,44 @@ func (u userRepo) SetupEducation(ctx context.Context, user sa.User) (sa.User, er
 
 		return sa.User{}, err
 	}
+
 	// insert user school end
 
 	// insert user document start
-	qInsertUserDocument := sq.Insert("user_document").Columns("user_id", "document", "created_at")
+	if len(user.UserDocuments) > 0 {
+		qInsertUserDocument := sq.Insert("user_document").Columns("user_id", "document", "created_at")
 
-	for _, ud := range user.UserDocuments {
-		byteDoc, err = json.Marshal(ud.Document)
+		for _, ud := range user.UserDocuments {
+			byteDoc, err = json.Marshal(ud.Document)
+			if err != nil {
+				if errRollback = tx.Rollback(); errRollback != nil {
+					fmt.Println("Err rollback setup education marshal document : ", errRollback)
+				}
+
+				return sa.User{}, err
+			}
+
+			qInsertUserDocument = qInsertUserDocument.Values(user.ID, byteDoc, timeNow)
+		}
+
+		query, args, err = qInsertUserDocument.PlaceholderFormat(sq.Dollar).ToSql()
 		if err != nil {
 			if errRollback = tx.Rollback(); errRollback != nil {
-				fmt.Println("Err rollback setup education marshal document : ", errRollback)
+				fmt.Println("Err rollback setup education generate sql user document : ", errRollback)
 			}
 
 			return sa.User{}, err
 		}
 
-		qInsertUserDocument = qInsertUserDocument.Values(user.ID, byteDoc, timeNow)
-	}
+		if _, err = tx.ExecContext(ctx, query, args...); err != nil {
+			if errRollback = tx.Rollback(); errRollback != nil {
+				fmt.Println("Err rollback setup education exec user document : ", errRollback)
+			}
 
-	query, args, err = qInsertUserDocument.PlaceholderFormat(sq.Dollar).ToSql()
-	if err != nil {
-		if errRollback = tx.Rollback(); errRollback != nil {
-			fmt.Println("Err rollback setup education generate sql user document : ", errRollback)
+			return sa.User{}, err
 		}
-
-		return sa.User{}, err
 	}
-
-	if _, err = tx.ExecContext(ctx, query, args...); err != nil {
-		if errRollback = tx.Rollback(); errRollback != nil {
-			fmt.Println("Err rollback setup education exec user document : ", errRollback)
-		}
-
-		return sa.User{}, err
-	}
-	// insert user document done
+	// insert user document end
 
 	if err = tx.Commit(); err != nil {
 		if errRollback = tx.Rollback(); errRollback != nil {

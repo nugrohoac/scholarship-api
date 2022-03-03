@@ -34,6 +34,7 @@ type UserService interface {
 	ResendEmailVerification(ctx context.Context, email string) (string, error)
 	ResetPassword(ctx context.Context, password string) (User, error)
 	ForgotPassword(ctx context.Context, email string) (string, error)
+	SetupEducation(ctx context.Context, user User) (User, error)
 }
 
 // CountryRepository .
