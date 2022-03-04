@@ -108,3 +108,40 @@ func (s scholarshipSuite) TestScholarshipRepoGetByID() {
 	require.NoError(s.T(), err)
 	require.Equal(s.T(), 2, len(response.Requirements))
 }
+
+func (s scholarshipSuite) TestScholarshipRepoApplyScholarship() {
+	var (
+		user        sa.User
+		scholarship sa.Scholarship
+		t           = s.T()
+	)
+
+	documents := []sa.Document{
+		{
+			Name: "essay_request",
+			Value: sa.Image{
+				URL:    "https://docs1",
+				Width:  100,
+				Height: 100,
+			},
+		},
+		{
+			Name: "recommendation_letter_request",
+			Value: sa.Image{
+				URL:    "https://docs2",
+				Width:  100,
+				Height: 100,
+			},
+		},
+	}
+
+	currentApplicant := scholarship.CurrentApplicant + 1
+
+	testdata.GoldenJSONUnmarshal(t, "scholarship", &scholarship)
+	testdata.GoldenJSONUnmarshal(t, "user", &user)
+	postgresql.SeedScholarship(s.DBConn, t, []sa.Scholarship{scholarship})
+
+	scholarshipRepo := postgresql.NewScholarshipRepository(s.DBConn, 72)
+	err := scholarshipRepo.Apply(context.Background(), user.ID, scholarship.ID, currentApplicant, documents)
+	require.NoError(t, err)
+}

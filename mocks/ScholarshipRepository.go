@@ -14,6 +14,20 @@ type ScholarshipRepository struct {
 	mock.Mock
 }
 
+// Apply provides a mock function with given fields: ctx, userID, scholarshipID, applicant, documents
+func (_m *ScholarshipRepository) Apply(ctx context.Context, userID int64, scholarshipID int64, applicant int, documents []scholarship_api.Document) error {
+	ret := _m.Called(ctx, userID, scholarshipID, applicant, documents)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, int64, int64, int, []scholarship_api.Document) error); ok {
+		r0 = rf(ctx, userID, scholarshipID, applicant, documents)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // Create provides a mock function with given fields: ctx, scholarship
 func (_m *ScholarshipRepository) Create(ctx context.Context, scholarship scholarship_api.Scholarship) (scholarship_api.Scholarship, error) {
 	ret := _m.Called(ctx, scholarship)

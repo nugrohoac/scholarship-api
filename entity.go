@@ -427,3 +427,22 @@ type InputUserSchool struct {
 	GraduationDate string
 	Gpa            *float64
 }
+
+// Document .
+type Document struct {
+	Name  string
+	Value Image
+}
+
+// InputApplyScholarship .
+type InputApplyScholarship struct {
+	UserID        int32
+	ScholarshipID int32
+	Documents     *[]*InputDocument
+}
+
+// InputDocument .
+type InputDocument struct {
+	Name  string
+	Value InputImage
+}

@@ -68,4 +68,10 @@ type Mutation {
         userSchools: [inputUserSchool!]!
         userDocuments: [inputImage!]!
     ): user
+
+    ApplyScholarship(
+        userId: Int!
+        scholarshipId: Int!
+        documents: [inputDocument]
+    ): String
 }

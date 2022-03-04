@@ -83,6 +83,41 @@ func (s ScholarshipMutation) CreateScholarship(ctx context.Context, param sa.Inp
 	return &resolver.ScholarshipResolver{Scholarship: scholarship}, nil
 }
 
+// ApplyScholarship .
+func (s ScholarshipMutation) ApplyScholarship(ctx context.Context, param sa.InputApplyScholarship) (*string, error) {
+	documents := make([]sa.Document, 0)
+
+	if param.Documents != nil {
+		for _, doc := range *param.Documents {
+			var document sa.Document
+
+			document.Name = doc.Name
+			document.Value = sa.Image{
+				URL:    doc.Value.URL,
+				Width:  doc.Value.Width,
+				Height: doc.Value.Height,
+			}
+
+			if doc.Value.Mime != nil {
+				document.Value.Mime = *doc.Value.Mime
+			}
+
+			if doc.Value.Caption != nil {
+				document.Value.Mime = *doc.Value.Caption
+			}
+
+			documents = append(documents, document)
+		}
+	}
+
+	message, err := s.scholarshipService.Apply(ctx, int64(param.UserID), int64(param.ScholarshipID), documents)
+	if err != nil {
+		return nil, err
+	}
+
+	return &message, nil
+}
+
 // NewScholarshipMutation ....
 func NewScholarshipMutation(scholarshipService sa.ScholarshipService) ScholarshipMutation {
 	return ScholarshipMutation{scholarshipService: scholarshipService}
