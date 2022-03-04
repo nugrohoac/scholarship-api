@@ -132,6 +132,56 @@ func (s scholarshipService) GetByID(ctx context.Context, ID int64) (sa.Scholarsh
 	return scholarship, nil
 }
 
+// Apply .
+func (s scholarshipService) Apply(ctx context.Context, userID, scholarshipID int64, documents []sa.Document) (string, error) {
+	userCtx, err := sa.GetUserOnContext(ctx)
+	if err != nil {
+		return "", err
+	}
+
+	if userCtx.ID != userID {
+		return "", sa.ErrUnAuthorize{Message: "user is not match"}
+	}
+
+	scholarship, err := s.scholarshipRepo.GetByID(ctx, scholarshipID)
+	if err != nil {
+		return "", err
+	}
+
+	applicant := scholarship.CurrentApplicant + 1
+	if applicant > scholarship.Awardee {
+		return "", sa.ErrNotAllowed{Message: "awardee has been maximum"}
+	}
+
+	mapRequirementType := map[string]bool{}
+	totalReqs := 0
+	reqsFound := 0
+
+	for _, req := range scholarship.Requirements {
+		if req.Value == "required" {
+			mapRequirementType[req.Name] = true
+
+			totalReqs++
+		}
+	}
+
+	for _, req := range documents {
+		if mapRequirementType[req.Name] {
+			reqsFound++
+		}
+	}
+
+	if totalReqs != reqsFound {
+		return "", sa.ErrNotAllowed{Message: "there are requirements is not provided"}
+	}
+
+	if err = s.scholarshipRepo.Apply(ctx, userID, scholarshipID, applicant, documents); err != nil {
+		return "", err
+	}
+
+	return "success", nil
+}
+
 // NewScholarshipService ...
 func NewScholarshipService(
 	scholarshipRepo sa.ScholarshipRepository,

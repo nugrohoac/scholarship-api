@@ -25,3 +25,8 @@ type scholarshipFeed {
     cursor: String
     scholarships: [scholarship]
 }
+
+input inputDocument {
+    name: String!
+    value: inputImage!
+}

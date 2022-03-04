@@ -64,7 +64,7 @@ type ScholarshipRepository interface {
 	Create(ctx context.Context, scholarship Scholarship) (Scholarship, error)
 	Fetch(ctx context.Context, filter ScholarshipFilter) ([]Scholarship, string, error)
 	GetByID(ctx context.Context, ID int64) (Scholarship, error)
-	ApplyScholarship(ctx context.Context, userID, scholarshipID int64, applicant int, documents []Image) error
+	Apply(ctx context.Context, userID, scholarshipID int64, applicant int, documents []Document) error
 }
 
 // RequirementDescriptionRepository .
@@ -77,6 +77,7 @@ type ScholarshipService interface {
 	Create(ctx context.Context, scholarship Scholarship) (Scholarship, error)
 	Fetch(ctx context.Context, filter ScholarshipFilter) (ScholarshipFeed, error)
 	GetByID(ctx context.Context, ID int64) (Scholarship, error)
+	Apply(ctx context.Context, userID, scholarshipID int64, documents []Document) (string, error)
 }
 
 // BankTransferRepository ...
