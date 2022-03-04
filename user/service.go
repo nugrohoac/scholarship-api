@@ -102,7 +102,16 @@ func (u userService) UpdateByID(ctx context.Context, ID int64, user sa.User) (sa
 
 	// 2 = active and profile is complete
 	user.Status = 2
-	return u.userRepo.UpdateByID(ctx, ID, user)
+	user, err = u.userRepo.UpdateByID(ctx, ID, user)
+	if err != nil {
+		return sa.User{}, err
+	}
+
+	user.Email = userOnCtx.Email
+	user.Type = userOnCtx.Type
+	user.Name = userOnCtx.Name
+
+	return user, nil
 }
 
 // ActivateStatus ...
