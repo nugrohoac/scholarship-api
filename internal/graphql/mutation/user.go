@@ -46,13 +46,8 @@ func (u UserMutation) UpdateUser(ctx context.Context, param sa.InputUpdateUser) 
 	}
 
 	user := sa.User{
-		ID:   int64(param.ID),
-		Name: param.Name,
-		Photo: sa.Image{
-			URL:    param.Photo.URL,
-			Width:  param.Photo.Width,
-			Height: param.Photo.Height,
-		},
+		ID:              int64(param.ID),
+		Name:            param.Name,
 		CompanyName:     *param.CompanyName,
 		CountryID:       param.CountryID,
 		PostalCode:      param.PostalCode,
