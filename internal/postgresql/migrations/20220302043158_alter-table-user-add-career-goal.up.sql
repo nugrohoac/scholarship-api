@@ -1,0 +1,1 @@
+ALTER TABLE "user" ADD COLUMN career_goal text not null default '';

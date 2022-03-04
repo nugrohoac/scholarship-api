@@ -205,6 +205,36 @@ func (u userService) ResetPassword(ctx context.Context, password string) (sa.Use
 	return user, nil
 }
 
+// SetupEducation .
+func (u userService) SetupEducation(ctx context.Context, user sa.User) (sa.User, error) {
+	userCtx, err := sa.GetUserOnContext(ctx)
+	if err != nil {
+		return sa.User{}, err
+	}
+
+	if userCtx.ID != user.ID {
+		return sa.User{}, sa.ErrUnAuthorize{Message: "user is not match"}
+	}
+
+	if userCtx.Type != sa.Student {
+		return sa.User{}, sa.ErrNotAllowed{Message: "user type is not student"}
+	}
+
+	user.Name = userCtx.Name
+	user.Email = userCtx.Email
+	user.Type = userCtx.Type
+
+	// check status, should 2
+	if userCtx.Status != 2 {
+		return sa.User{}, sa.ErrNotAllowed{Message: "user status is not complete profile"}
+	}
+
+	// look at readme.md to get more status
+	user.Status = 3
+
+	return u.userRepo.SetupEducation(ctx, user)
+}
+
 // NewUserService .
 func NewUserService(userRepo sa.UserRepository, jwtHash sa.JwtHash, emailRepo sa.EmailRepository) sa.UserService {
 	return userService{userRepo: userRepo, jwtHash: jwtHash, emailRepo: emailRepo}

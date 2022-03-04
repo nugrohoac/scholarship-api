@@ -58,4 +58,14 @@ type Mutation {
         type: String!
         address: String!
     ): school
+
+    SetupEducation(
+        userId: Int!
+        gapYearReason: String
+        CareerGoal: String!
+        studyCountryGoal: inputUserCountryGoal!
+        studyDestination: String!
+        userSchools: [inputUserSchool!]!
+        userDocuments: [inputImage!]!
+    ): user
 }

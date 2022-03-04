@@ -1,0 +1,1 @@
+ALTER TABLE "user" ADD COLUMN study_destination varchar(255) not null default '';

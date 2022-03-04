@@ -22,6 +22,7 @@ type UserRepository interface {
 	UpdateByID(ctx context.Context, ID int64, user User) (User, error)
 	SetStatus(ctx context.Context, ID int64, status int) error
 	ResetPassword(ctx context.Context, email, password string) error
+	SetupEducation(ctx context.Context, user User) (User, error)
 }
 
 // UserService ....
@@ -33,6 +34,7 @@ type UserService interface {
 	ResendEmailVerification(ctx context.Context, email string) (string, error)
 	ResetPassword(ctx context.Context, password string) (User, error)
 	ForgotPassword(ctx context.Context, email string) (string, error)
+	SetupEducation(ctx context.Context, user User) (User, error)
 }
 
 // CountryRepository .
