@@ -3,6 +3,7 @@ package postgresql
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"github.com/sirupsen/logrus"
 	"strings"
 	"time"
@@ -78,13 +79,16 @@ func (s schoolRepo) Fetch(ctx context.Context, filter sa.SchoolFilter) ([]sa.Sch
 
 	if filter.Name != "" {
 		name := "%" + strings.ToLower(filter.Name) + "%"
-		qSelect = qSelect.Where(sq.Like{"name": name})
+		qSelect = qSelect.Where(sq.Like{"LOWER(name)": name})
 	}
 
 	query, args, err := qSelect.PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
 		return nil, "", err
 	}
+
+	fmt.Println(query)
+	fmt.Println(args)
 
 	rows, err := s.db.QueryContext(ctx, query, args...)
 	if err != nil {
