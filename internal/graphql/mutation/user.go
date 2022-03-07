@@ -66,6 +66,14 @@ func (u UserMutation) UpdateUser(ctx context.Context, param sa.InputUpdateUser) 
 		}
 	}
 
+	if param.Ethnic != nil {
+		user.Ethnic = *param.Ethnic
+	}
+
+	if param.Gender != nil {
+		user.Gender = *param.Gender
+	}
+
 	userUpdated, err := u.userService.UpdateByID(ctx, user.ID, user)
 	if err != nil {
 		return nil, err
