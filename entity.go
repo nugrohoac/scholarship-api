@@ -196,6 +196,8 @@ type InputUpdateUser struct {
 	BankID          int32
 	BankAccountNo   string
 	BankAccountName string
+	Ethnic          *string
+	Gender          *string
 }
 
 // Scholarship ...
