@@ -3,7 +3,6 @@ package postgresql
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"github.com/sirupsen/logrus"
 	"strings"
 	"time"
@@ -86,9 +85,6 @@ func (s schoolRepo) Fetch(ctx context.Context, filter sa.SchoolFilter) ([]sa.Sch
 	if err != nil {
 		return nil, "", err
 	}
-
-	fmt.Println(query)
-	fmt.Println(args)
 
 	rows, err := s.db.QueryContext(ctx, query, args...)
 	if err != nil {

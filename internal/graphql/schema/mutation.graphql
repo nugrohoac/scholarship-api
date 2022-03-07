@@ -62,7 +62,7 @@ type Mutation {
     SetupEducation(
         userId: Int!
         gapYearReason: String
-        CareerGoal: String!
+        careerGoal: String!
         studyCountryGoal: inputUserCountryGoal!
         studyDestination: String!
         userSchools: [inputUserSchool!]!
