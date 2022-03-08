@@ -393,7 +393,7 @@ func (s scholarshipRepo) GetByID(ctx context.Context, ID int64) (sa.Scholarship,
 }
 
 // Apply .
-func (s scholarshipRepo) Apply(ctx context.Context, userID, scholarshipID int64, applicant int, documents []sa.Document) error {
+func (s scholarshipRepo) Apply(ctx context.Context, userID, scholarshipID int64, applicant int, essay string, recommendationLetter sa.Image) error {
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
 		return err
@@ -403,13 +403,19 @@ func (s scholarshipRepo) Apply(ctx context.Context, userID, scholarshipID int64,
 		timeNow           = time.Now()
 		errRollback       error
 		userScholarshipID int64
-		byteDoc           []byte
+		byteRecLetter     []byte
 	)
+
+	byteRecLetter, err = json.Marshal(recommendationLetter)
+	if err != nil {
+		return err
+	}
 
 	// update current applicant
 	query, args, err := sq.Update("scholarship").
 		SetMap(sq.Eq{"current_applicant": applicant, "updated_at": timeNow}).
 		PlaceholderFormat(sq.Dollar).
+		Where(sq.Eq{"id": scholarshipID}).
 		ToSql()
 	if err != nil {
 		return err
@@ -424,10 +430,14 @@ func (s scholarshipRepo) Apply(ctx context.Context, userID, scholarshipID int64,
 		Columns("scholarship_id",
 			"user_id",
 			"status",
+			"essay",
+			"recommendation_letter",
 			"created_at",
 		).Values(scholarshipID,
 		userID,
 		0,
+		essay,
+		byteRecLetter,
 		timeNow,
 	).Suffix("RETURNING \"id\"").
 		PlaceholderFormat(sq.Dollar).
@@ -447,42 +457,6 @@ func (s scholarshipRepo) Apply(ctx context.Context, userID, scholarshipID int64,
 		}
 
 		return err
-	}
-
-	// insert user scholarship document
-	if len(documents) > 0 {
-		qInsert := sq.Insert("user_scholarship_document").
-			Columns("user_scholarship_id", "name", "value", "created_at")
-
-		for _, doc := range documents {
-			byteDoc, err = json.Marshal(doc.Value)
-			if err != nil {
-				if errRollback = tx.Rollback(); errRollback != nil {
-					logrus.Error(errRollback)
-				}
-
-				return err
-			}
-
-			qInsert = qInsert.Values(userScholarshipID, doc.Name, byteDoc, timeNow)
-		}
-
-		query, args, err = qInsert.PlaceholderFormat(sq.Dollar).ToSql()
-		if err != nil {
-			if errRollback = tx.Rollback(); errRollback != nil {
-				logrus.Error(errRollback)
-			}
-
-			return err
-		}
-
-		if _, err = tx.ExecContext(ctx, query, args...); err != nil {
-			if errRollback = tx.Rollback(); errRollback != nil {
-				logrus.Error(errRollback)
-			}
-
-			return err
-		}
 	}
 
 	if errCommit := tx.Commit(); errCommit != nil {

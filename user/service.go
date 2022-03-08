@@ -234,6 +234,7 @@ func (u userService) SetupEducation(ctx context.Context, user sa.User) (sa.User,
 	user.Type = userCtx.Type
 
 	// check status, should 2
+	// ambil dari repo
 	if userCtx.Status != 2 {
 		return sa.User{}, sa.ErrNotAllowed{Message: "user status is not complete profile"}
 	}

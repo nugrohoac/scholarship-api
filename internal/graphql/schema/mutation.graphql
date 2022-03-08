@@ -74,6 +74,7 @@ type Mutation {
     ApplyScholarship(
         userId: Int!
         scholarshipId: Int!
-        documents: [inputDocument]
+        essay: String
+        recommendationLetter: inputImage
     ): String
 }
