@@ -14,13 +14,13 @@ type ScholarshipRepository struct {
 	mock.Mock
 }
 
-// Apply provides a mock function with given fields: ctx, userID, scholarshipID, applicant, documents
-func (_m *ScholarshipRepository) Apply(ctx context.Context, userID int64, scholarshipID int64, applicant int, documents []scholarship_api.Document) error {
-	ret := _m.Called(ctx, userID, scholarshipID, applicant, documents)
+// Apply provides a mock function with given fields: ctx, userID, scholarshipID, applicant, essay, recommendationLetter
+func (_m *ScholarshipRepository) Apply(ctx context.Context, userID int64, scholarshipID int64, applicant int, essay string, recommendationLetter scholarship_api.Image) error {
+	ret := _m.Called(ctx, userID, scholarshipID, applicant, essay, recommendationLetter)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, int64, int64, int, []scholarship_api.Document) error); ok {
-		r0 = rf(ctx, userID, scholarshipID, applicant, documents)
+	if rf, ok := ret.Get(0).(func(context.Context, int64, int64, int, string, scholarship_api.Image) error); ok {
+		r0 = rf(ctx, userID, scholarshipID, applicant, essay, recommendationLetter)
 	} else {
 		r0 = ret.Error(0)
 	}

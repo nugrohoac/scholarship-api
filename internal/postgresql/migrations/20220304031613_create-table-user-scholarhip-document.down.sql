@@ -1,1 +1,0 @@
-DROP TABLE "user_scholarship_document";

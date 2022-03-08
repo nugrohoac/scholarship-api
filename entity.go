@@ -438,13 +438,8 @@ type Document struct {
 
 // InputApplyScholarship .
 type InputApplyScholarship struct {
-	UserID        int32
-	ScholarshipID int32
-	Documents     *[]*InputDocument
-}
-
-// InputDocument .
-type InputDocument struct {
-	Name  string
-	Value InputImage
+	UserID               int32
+	ScholarshipID        int32
+	Essay                *string
+	RecommendationLetter *InputImage
 }

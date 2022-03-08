@@ -85,32 +85,32 @@ func (s ScholarshipMutation) CreateScholarship(ctx context.Context, param sa.Inp
 
 // ApplyScholarship .
 func (s ScholarshipMutation) ApplyScholarship(ctx context.Context, param sa.InputApplyScholarship) (*string, error) {
-	documents := make([]sa.Document, 0)
+	var (
+		essay                string
+		recommendationLetter sa.Image
+	)
 
-	if param.Documents != nil {
-		for _, doc := range *param.Documents {
-			var document sa.Document
+	if param.Essay != nil {
+		essay = *param.Essay
+	}
 
-			document.Name = doc.Name
-			document.Value = sa.Image{
-				URL:    doc.Value.URL,
-				Width:  doc.Value.Width,
-				Height: doc.Value.Height,
-			}
+	if param.RecommendationLetter != nil {
+		recommendationLetter = sa.Image{
+			URL:    param.RecommendationLetter.URL,
+			Width:  param.RecommendationLetter.Width,
+			Height: param.RecommendationLetter.Height,
+		}
 
-			if doc.Value.Mime != nil {
-				document.Value.Mime = *doc.Value.Mime
-			}
+		if param.RecommendationLetter.Mime != nil {
+			recommendationLetter.Mime = *param.RecommendationLetter.Mime
+		}
 
-			if doc.Value.Caption != nil {
-				document.Value.Mime = *doc.Value.Caption
-			}
-
-			documents = append(documents, document)
+		if param.RecommendationLetter.Caption != nil {
+			recommendationLetter.Caption = *param.RecommendationLetter.Caption
 		}
 	}
 
-	message, err := s.scholarshipService.Apply(ctx, int64(param.UserID), int64(param.ScholarshipID), documents)
+	message, err := s.scholarshipService.Apply(ctx, int64(param.UserID), int64(param.ScholarshipID), essay, recommendationLetter)
 	if err != nil {
 		return nil, err
 	}

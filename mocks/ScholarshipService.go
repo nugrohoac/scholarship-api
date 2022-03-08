@@ -14,20 +14,20 @@ type ScholarshipService struct {
 	mock.Mock
 }
 
-// Apply provides a mock function with given fields: ctx, userID, scholarshipID, documents
-func (_m *ScholarshipService) Apply(ctx context.Context, userID int64, scholarshipID int64, documents []scholarship_api.Document) (string, error) {
-	ret := _m.Called(ctx, userID, scholarshipID, documents)
+// Apply provides a mock function with given fields: ctx, userID, scholarshipID, essay, recommendationLetter
+func (_m *ScholarshipService) Apply(ctx context.Context, userID int64, scholarshipID int64, essay string, recommendationLetter scholarship_api.Image) (string, error) {
+	ret := _m.Called(ctx, userID, scholarshipID, essay, recommendationLetter)
 
 	var r0 string
-	if rf, ok := ret.Get(0).(func(context.Context, int64, int64, []scholarship_api.Document) string); ok {
-		r0 = rf(ctx, userID, scholarshipID, documents)
+	if rf, ok := ret.Get(0).(func(context.Context, int64, int64, string, scholarship_api.Image) string); ok {
+		r0 = rf(ctx, userID, scholarshipID, essay, recommendationLetter)
 	} else {
 		r0 = ret.Get(0).(string)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, int64, int64, []scholarship_api.Document) error); ok {
-		r1 = rf(ctx, userID, scholarshipID, documents)
+	if rf, ok := ret.Get(1).(func(context.Context, int64, int64, string, scholarship_api.Image) error); ok {
+		r1 = rf(ctx, userID, scholarshipID, essay, recommendationLetter)
 	} else {
 		r1 = ret.Error(1)
 	}

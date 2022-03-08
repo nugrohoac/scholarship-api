@@ -3,6 +3,7 @@ package scholarship
 import (
 	"context"
 	sa "github.com/Nusantara-Muda/scholarship-api"
+	"reflect"
 )
 
 type scholarshipService struct {
@@ -133,7 +134,7 @@ func (s scholarshipService) GetByID(ctx context.Context, ID int64) (sa.Scholarsh
 }
 
 // Apply .
-func (s scholarshipService) Apply(ctx context.Context, userID, scholarshipID int64, documents []sa.Document) (string, error) {
+func (s scholarshipService) Apply(ctx context.Context, userID, scholarshipID int64, essay string, recommendationLetter sa.Image) (string, error) {
 	userCtx, err := sa.GetUserOnContext(ctx)
 	if err != nil {
 		return "", err
@@ -153,29 +154,24 @@ func (s scholarshipService) Apply(ctx context.Context, userID, scholarshipID int
 		return "", sa.ErrNotAllowed{Message: "awardee has been maximum"}
 	}
 
-	mapRequirementType := map[string]bool{}
-	totalReqs := 0
-	reqsFound := 0
-
 	for _, req := range scholarship.Requirements {
-		if req.Value == "required" {
-			mapRequirementType[req.Name] = true
-
-			totalReqs++
+		switch req.Name {
+		case "essay_request":
+			if req.Value == "required" {
+				if essay == "" {
+					return "", sa.ErrNotAllowed{Message: "essay is required"}
+				}
+			}
+		case "recommendation_letter_request":
+			if req.Value == "required" {
+				if reflect.DeepEqual(sa.Image{}, recommendationLetter) {
+					return "", sa.ErrNotAllowed{Message: "recommendation letter is required"}
+				}
+			}
 		}
 	}
 
-	for _, req := range documents {
-		if mapRequirementType[req.Name] {
-			reqsFound++
-		}
-	}
-
-	if totalReqs != reqsFound {
-		return "", sa.ErrNotAllowed{Message: "there are requirements is not provided"}
-	}
-
-	if err = s.scholarshipRepo.Apply(ctx, userID, scholarshipID, applicant, documents); err != nil {
+	if err = s.scholarshipRepo.Apply(ctx, userID, scholarshipID, applicant, essay, recommendationLetter); err != nil {
 		return "", err
 	}
 

@@ -116,24 +116,13 @@ func (s scholarshipSuite) TestScholarshipRepoApplyScholarship() {
 		t           = s.T()
 	)
 
-	documents := []sa.Document{
-		{
-			Name: "essay_request",
-			Value: sa.Image{
-				URL:    "https://docs1",
-				Width:  100,
-				Height: 100,
-			},
-		},
-		{
-			Name: "recommendation_letter_request",
-			Value: sa.Image{
-				URL:    "https://docs2",
-				Width:  100,
-				Height: 100,
-			},
-		},
+	recommendationLetter := sa.Image{
+		URL:    "https://recommendation-letter",
+		Width:  100,
+		Height: 100,
 	}
+
+	essay := "essay example"
 
 	currentApplicant := scholarship.CurrentApplicant + 1
 
@@ -142,6 +131,6 @@ func (s scholarshipSuite) TestScholarshipRepoApplyScholarship() {
 	postgresql.SeedScholarship(s.DBConn, t, []sa.Scholarship{scholarship})
 
 	scholarshipRepo := postgresql.NewScholarshipRepository(s.DBConn, 72)
-	err := scholarshipRepo.Apply(context.Background(), user.ID, scholarship.ID, currentApplicant, documents)
+	err := scholarshipRepo.Apply(context.Background(), user.ID, scholarship.ID, currentApplicant, essay, recommendationLetter)
 	require.NoError(t, err)
 }
