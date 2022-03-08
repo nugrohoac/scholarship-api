@@ -954,7 +954,6 @@ func TestUserServiceSetupEducation(t *testing.T) {
 			Gpa:            3.125,
 		},
 	}
-
 	user.UserDocuments = []sa.UserDocument{
 		{
 			UserID: user.ID,
@@ -981,6 +980,9 @@ func TestUserServiceSetupEducation(t *testing.T) {
 	userResponse := user
 	userResponse.Status = 3
 
+	userSetupEducation := user
+	userSetupEducation.Status = 2
+
 	ctxValid := sa.SetUserOnContext(context.Background(), user)
 
 	userSponsor := user
@@ -994,6 +996,7 @@ func TestUserServiceSetupEducation(t *testing.T) {
 	tests := map[string]struct {
 		paramCtx       context.Context
 		paramUser      sa.User
+		login          testdata.FuncCaller
 		setupEducation testdata.FuncCaller
 		expectedResp   sa.User
 		expectedErr    error
@@ -1001,6 +1004,7 @@ func TestUserServiceSetupEducation(t *testing.T) {
 		"context doesn't contain user": {
 			paramCtx:       context.Background(),
 			paramUser:      sa.User{},
+			login:          testdata.FuncCaller{},
 			setupEducation: testdata.FuncCaller{},
 			expectedResp:   sa.User{},
 			expectedErr:    sa.ErrBadRequest{Message: "context doesn't contain user"},
@@ -1008,16 +1012,10 @@ func TestUserServiceSetupEducation(t *testing.T) {
 		"user id is not match": {
 			paramCtx:       ctxValid,
 			paramUser:      sa.User{ID: 99},
+			login:          testdata.FuncCaller{},
 			setupEducation: testdata.FuncCaller{},
 			expectedResp:   sa.User{},
 			expectedErr:    sa.ErrUnAuthorize{Message: "user is not match"},
-		},
-		"user un complete profile": {
-			paramCtx:       ctxUnCompleteProfile,
-			paramUser:      sa.User{ID: user.ID, Status: 1, Type: sa.Student},
-			setupEducation: testdata.FuncCaller{},
-			expectedResp:   sa.User{},
-			expectedErr:    sa.ErrNotAllowed{Message: "user status is not complete profile"},
 		},
 		"user type is sponsor": {
 			paramCtx:       ctxSponsor,
@@ -1026,9 +1024,38 @@ func TestUserServiceSetupEducation(t *testing.T) {
 			expectedResp:   sa.User{},
 			expectedErr:    sa.ErrNotAllowed{Message: "user type is not student"},
 		},
+		"user un complete profile": {
+			paramCtx:  ctxUnCompleteProfile,
+			paramUser: sa.User{ID: user.ID, Status: 1, Type: sa.Student},
+			login: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, user.Email},
+				Output:   []interface{}{userUnCompleteProfile, nil},
+			},
+			setupEducation: testdata.FuncCaller{},
+			expectedResp:   sa.User{},
+			expectedErr:    sa.ErrNotAllowed{Message: "user status is not complete profile"},
+		},
+		"error login": {
+			paramCtx:  ctxUnCompleteProfile,
+			paramUser: sa.User{ID: user.ID, Status: 1, Type: sa.Student},
+			login: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, user.Email},
+				Output:   []interface{}{sa.User{}, errors.New("error")},
+			},
+			setupEducation: testdata.FuncCaller{},
+			expectedResp:   sa.User{},
+			expectedErr:    errors.New("error"),
+		},
 		"error setup education": {
 			paramCtx:  ctxValid,
 			paramUser: user,
+			login: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, user.Email},
+				Output:   []interface{}{userSetupEducation, nil},
+			},
 			setupEducation: testdata.FuncCaller{
 				IsCalled: true,
 				Input:    []interface{}{mock.Anything, userResponse},
@@ -1040,6 +1067,11 @@ func TestUserServiceSetupEducation(t *testing.T) {
 		"success": {
 			paramCtx:  ctxValid,
 			paramUser: user,
+			login: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, user.Email},
+				Output:   []interface{}{userSetupEducation, nil},
+			},
 			setupEducation: testdata.FuncCaller{
 				IsCalled: true,
 				Input:    []interface{}{mock.Anything, userResponse},
@@ -1059,6 +1091,12 @@ func TestUserServiceSetupEducation(t *testing.T) {
 			if test.setupEducation.IsCalled {
 				userRepoMock.On("SetupEducation", test.setupEducation.Input...).
 					Return(test.setupEducation.Output...).
+					Once()
+			}
+
+			if test.login.IsCalled {
+				userRepoMock.On("Login", test.login.Input...).
+					Return(test.login.Output...).
 					Once()
 			}
 
