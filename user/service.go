@@ -229,15 +229,20 @@ func (u userService) SetupEducation(ctx context.Context, user sa.User) (sa.User,
 		return sa.User{}, sa.ErrNotAllowed{Message: "user type is not student"}
 	}
 
+	userLogin, err := u.userRepo.Login(ctx, userCtx.Email)
+	if err != nil {
+		return sa.User{}, err
+	}
+
+	// check status, should 2
+	if userLogin.Status != 2 {
+		return sa.User{}, sa.ErrNotAllowed{Message: "user status is not complete profile"}
+	}
+
 	user.Name = userCtx.Name
 	user.Email = userCtx.Email
 	user.Type = userCtx.Type
-
-	// check status, should 2
-	// ambil dari repo
-	if userCtx.Status != 2 {
-		return sa.User{}, sa.ErrNotAllowed{Message: "user status is not complete profile"}
-	}
+	user.Status = userLogin.Status
 
 	// look at readme.md to get more status
 	user.Status = 3

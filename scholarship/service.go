@@ -149,6 +149,11 @@ func (s scholarshipService) Apply(ctx context.Context, userID, scholarshipID int
 		return "", err
 	}
 
+	// status 3 is open registration
+	if scholarship.Status != 3 {
+		return "", sa.ErrNotAllowed{Message: "scholarship is not open registration"}
+	}
+
 	applicant := scholarship.CurrentApplicant + 1
 	if applicant > scholarship.Awardee {
 		return "", sa.ErrNotAllowed{Message: "awardee has been maximum"}
