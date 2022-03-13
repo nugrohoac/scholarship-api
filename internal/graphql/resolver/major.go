@@ -1,10 +1,12 @@
 package resolver
 
-import sa "github.com/Nusantara-Muda/scholarship-api"
+import (
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
+)
 
 // MajorResolver .
 type MajorResolver struct {
-	Major sa.Major
+	Major entity.Major
 }
 
 // ID .
@@ -20,7 +22,7 @@ func (m MajorResolver) Name() *string {
 
 // MajorFeedResolver ...
 type MajorFeedResolver struct {
-	MajorFeed sa.MajorFeed
+	MajorFeed entity.MajorFeed
 }
 
 // Cursor .

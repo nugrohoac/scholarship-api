@@ -2,13 +2,13 @@ package postgresql_test
 
 import (
 	"context"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	"github.com/stretchr/testify/require"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/suite"
 
-	sa "github.com/Nusantara-Muda/scholarship-api"
 	"github.com/Nusantara-Muda/scholarship-api/internal/postgresql"
 	"github.com/Nusantara-Muda/scholarship-api/testdata"
 )
@@ -27,7 +27,7 @@ func TestPaymentRepository(t *testing.T) {
 
 func (p paymentSuite) TestPaymentFetch() {
 	t := p.T()
-	var payments []sa.Payment
+	var payments []entity.Payment
 	testdata.GoldenJSONUnmarshal(t, "payments", &payments)
 	postgresql.SeedPayments(p.DBConn, t, payments)
 
@@ -46,23 +46,23 @@ func (p paymentSuite) TestPaymentFetch() {
 
 func (p paymentSuite) TestPaymentSubmitTransfer() {
 	var (
-		scholarship sa.Scholarship
-		payment     sa.Payment
+		scholarship entity.Scholarship
+		payment     entity.Payment
 		t           = p.T()
 	)
 
 	testdata.GoldenJSONUnmarshal(t, "scholarship", &scholarship)
 	testdata.GoldenJSONUnmarshal(t, "payment", &payment)
 
-	postgresql.SeedScholarship(p.DBConn, t, []sa.Scholarship{scholarship})
+	postgresql.SeedScholarship(p.DBConn, t, []entity.Scholarship{scholarship})
 
 	payment.ScholarshipID = scholarship.ID
 
 	oldPayment := payment
 	oldPayment.TransferDate = time.Time{}
 	oldPayment.BankAccountName = ""
-	oldPayment.Image = sa.Image{}
-	postgresql.SeedPayments(p.DBConn, t, []sa.Payment{oldPayment})
+	oldPayment.Image = entity.Image{}
+	postgresql.SeedPayments(p.DBConn, t, []entity.Payment{oldPayment})
 
 	paymentRepo := postgresql.NewPaymentRepository(p.DBConn)
 	paymentResp, err := paymentRepo.SubmitTransfer(context.Background(), payment)

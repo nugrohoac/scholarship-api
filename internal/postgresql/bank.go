@@ -3,12 +3,12 @@ package postgresql
 import (
 	"context"
 	"database/sql"
+	"github.com/Nusantara-Muda/scholarship-api/src/business"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	"github.com/sirupsen/logrus"
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
-
-	sa "github.com/Nusantara-Muda/scholarship-api"
 )
 
 type bankRepo struct {
@@ -16,7 +16,7 @@ type bankRepo struct {
 }
 
 // Fetch ...
-func (b *bankRepo) Fetch(ctx context.Context, filter sa.BankFilter) ([]sa.Bank, string, error) {
+func (b *bankRepo) Fetch(ctx context.Context, filter entity.BankFilter) ([]entity.Bank, string, error) {
 	qSelect := sq.Select("id",
 		"name",
 		"code",
@@ -60,12 +60,12 @@ func (b *bankRepo) Fetch(ctx context.Context, filter sa.BankFilter) ([]sa.Bank, 
 	}()
 
 	var (
-		banks  = make([]sa.Bank, 0)
+		banks  = make([]entity.Bank, 0)
 		cursor = time.Time{}
 	)
 
 	for rows.Next() {
-		var bank sa.Bank
+		var bank entity.Bank
 
 		if err = rows.Scan(
 			&bank.ID,
@@ -89,6 +89,6 @@ func (b *bankRepo) Fetch(ctx context.Context, filter sa.BankFilter) ([]sa.Bank, 
 }
 
 // NewBankRepository ...
-func NewBankRepository(db *sql.DB) sa.BankRepository {
+func NewBankRepository(db *sql.DB) business.BankRepository {
 	return &bankRepo{db: db}
 }

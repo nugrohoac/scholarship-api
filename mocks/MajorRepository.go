@@ -4,8 +4,8 @@ package mocks
 
 import (
 	context "context"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 
-	scholarship_api "github.com/Nusantara-Muda/scholarship-api"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -15,27 +15,27 @@ type MajorRepository struct {
 }
 
 // Fetch provides a mock function with given fields: ctx, filter
-func (_m *MajorRepository) Fetch(ctx context.Context, filter scholarship_api.MajorFilter) ([]scholarship_api.Major, string, error) {
+func (_m *MajorRepository) Fetch(ctx context.Context, filter entity.MajorFilter) ([]entity.Major, string, error) {
 	ret := _m.Called(ctx, filter)
 
-	var r0 []scholarship_api.Major
-	if rf, ok := ret.Get(0).(func(context.Context, scholarship_api.MajorFilter) []scholarship_api.Major); ok {
+	var r0 []entity.Major
+	if rf, ok := ret.Get(0).(func(context.Context, entity.MajorFilter) []entity.Major); ok {
 		r0 = rf(ctx, filter)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]scholarship_api.Major)
+			r0 = ret.Get(0).([]entity.Major)
 		}
 	}
 
 	var r1 string
-	if rf, ok := ret.Get(1).(func(context.Context, scholarship_api.MajorFilter) string); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, entity.MajorFilter) string); ok {
 		r1 = rf(ctx, filter)
 	} else {
 		r1 = ret.Get(1).(string)
 	}
 
 	var r2 error
-	if rf, ok := ret.Get(2).(func(context.Context, scholarship_api.MajorFilter) error); ok {
+	if rf, ok := ret.Get(2).(func(context.Context, entity.MajorFilter) error); ok {
 		r2 = rf(ctx, filter)
 	} else {
 		r2 = ret.Error(2)

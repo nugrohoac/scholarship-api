@@ -1,10 +1,12 @@
 package resolver
 
-import sa "github.com/Nusantara-Muda/scholarship-api"
+import (
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
+)
 
 // ImageResolver ...
 type ImageResolver struct {
-	Image sa.Image
+	Image entity.Image
 }
 
 // URL ...

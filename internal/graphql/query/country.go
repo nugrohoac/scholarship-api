@@ -2,19 +2,20 @@ package query
 
 import (
 	"context"
+	"github.com/Nusantara-Muda/scholarship-api/src/business"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 
-	sa "github.com/Nusantara-Muda/scholarship-api"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/resolver"
 )
 
 // CountryQuery ...
 type CountryQuery struct {
-	countryService sa.CountryService
+	countryService business.CountryService
 }
 
 // FetchCountry .
-func (c CountryQuery) FetchCountry(ctx context.Context, param sa.InputCountryFilter) (*resolver.CountryFeedResolver, error) {
-	filter := sa.CountryFilter{}
+func (c CountryQuery) FetchCountry(ctx context.Context, param entity.InputCountryFilter) (*resolver.CountryFeedResolver, error) {
+	filter := entity.CountryFilter{}
 
 	if param.Limit != nil {
 		filter.Limit = int(*param.Limit)
@@ -37,6 +38,6 @@ func (c CountryQuery) FetchCountry(ctx context.Context, param sa.InputCountryFil
 }
 
 // NewCountryQuery ...
-func NewCountryQuery(countryService sa.CountryService) CountryQuery {
+func NewCountryQuery(countryService business.CountryService) CountryQuery {
 	return CountryQuery{countryService: countryService}
 }

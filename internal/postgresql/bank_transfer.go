@@ -4,9 +4,11 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"github.com/Nusantara-Muda/scholarship-api/src/business"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/errors"
 
 	sq "github.com/Masterminds/squirrel"
-	sa "github.com/Nusantara-Muda/scholarship-api"
 )
 
 type bankTransferRepo struct {
@@ -14,7 +16,7 @@ type bankTransferRepo struct {
 }
 
 // Get ...
-func (b bankTransferRepo) Get(ctx context.Context) (sa.BankTransfer, error) {
+func (b bankTransferRepo) Get(ctx context.Context) (entity.BankTransfer, error) {
 	query, args, err := sq.Select("id",
 		"name",
 		"account_name",
@@ -24,11 +26,11 @@ func (b bankTransferRepo) Get(ctx context.Context) (sa.BankTransfer, error) {
 		PlaceholderFormat(sq.Dollar).
 		ToSql()
 	if err != nil {
-		return sa.BankTransfer{}, err
+		return entity.BankTransfer{}, err
 	}
 
 	var (
-		bankTransfer sa.BankTransfer
+		bankTransfer entity.BankTransfer
 		byteImage    []byte
 	)
 
@@ -41,15 +43,15 @@ func (b bankTransferRepo) Get(ctx context.Context) (sa.BankTransfer, error) {
 		&byteImage,
 	); err != nil {
 		if err == sql.ErrNoRows {
-			return sa.BankTransfer{}, sa.ErrNotFound{Message: "bank transfer is not found"}
+			return entity.BankTransfer{}, errors.ErrNotFound{Message: "bank transfer is not found"}
 		}
 
-		return sa.BankTransfer{}, err
+		return entity.BankTransfer{}, err
 	}
 
 	if byteImage != nil {
 		if err = json.Unmarshal(byteImage, &bankTransfer.Image); err != nil {
-			return sa.BankTransfer{}, err
+			return entity.BankTransfer{}, err
 		}
 	}
 
@@ -57,7 +59,7 @@ func (b bankTransferRepo) Get(ctx context.Context) (sa.BankTransfer, error) {
 }
 
 // NewBankTransferRepository ...
-func NewBankTransferRepository(db *sql.DB) sa.BankTransferRepository {
+func NewBankTransferRepository(db *sql.DB) business.BankTransferRepository {
 	return bankTransferRepo{
 		db: db,
 	}

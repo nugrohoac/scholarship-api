@@ -3,10 +3,10 @@ package postgresql
 import (
 	"context"
 	"database/sql"
+	"github.com/Nusantara-Muda/scholarship-api/src/business"
 	"github.com/sirupsen/logrus"
 
 	sq "github.com/Masterminds/squirrel"
-	sa "github.com/Nusantara-Muda/scholarship-api"
 )
 
 type requirementDesc struct {
@@ -57,6 +57,6 @@ func (r requirementDesc) Fetch(ctx context.Context, scholarshipIDs []int64) (map
 }
 
 // NewRequirementDescriptionRepository ...
-func NewRequirementDescriptionRepository(db *sql.DB) sa.RequirementDescriptionRepository {
+func NewRequirementDescriptionRepository(db *sql.DB) business.RequirementDescriptionRepository {
 	return requirementDesc{db: db}
 }

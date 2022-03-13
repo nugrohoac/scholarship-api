@@ -4,13 +4,14 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"github.com/Nusantara-Muda/scholarship-api/src/business"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	"strings"
 	"time"
 
 	"github.com/sirupsen/logrus"
 
 	sq "github.com/Masterminds/squirrel"
-	sa "github.com/Nusantara-Muda/scholarship-api"
 )
 
 type scholarshipRepo struct {
@@ -19,15 +20,15 @@ type scholarshipRepo struct {
 }
 
 // Create ...
-func (s scholarshipRepo) Create(ctx context.Context, scholarship sa.Scholarship) (sa.Scholarship, error) {
+func (s scholarshipRepo) Create(ctx context.Context, scholarship entity.Scholarship) (entity.Scholarship, error) {
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return sa.Scholarship{}, err
+		return entity.Scholarship{}, err
 	}
 
 	byteImage, err := json.Marshal(scholarship.Image)
 	if err != nil {
-		return sa.Scholarship{}, err
+		return entity.Scholarship{}, err
 	}
 
 	var (
@@ -68,7 +69,7 @@ func (s scholarshipRepo) Create(ctx context.Context, scholarship sa.Scholarship)
 		PlaceholderFormat(sq.Dollar).
 		ToSql()
 	if err != nil {
-		return sa.Scholarship{}, err
+		return entity.Scholarship{}, err
 	}
 
 	row := tx.QueryRowContext(ctx, query, args...)
@@ -77,7 +78,7 @@ func (s scholarshipRepo) Create(ctx context.Context, scholarship sa.Scholarship)
 			logrus.Error(errRollback)
 		}
 
-		return sa.Scholarship{}, err
+		return entity.Scholarship{}, err
 	}
 
 	// Insert requirements start
@@ -105,7 +106,7 @@ func (s scholarshipRepo) Create(ctx context.Context, scholarship sa.Scholarship)
 				logrus.Error(errRollback)
 			}
 
-			return sa.Scholarship{}, err
+			return entity.Scholarship{}, err
 		}
 
 		if _, err = tx.ExecContext(ctx, query, args...); err != nil {
@@ -113,7 +114,7 @@ func (s scholarshipRepo) Create(ctx context.Context, scholarship sa.Scholarship)
 				logrus.Error(errRollback)
 			}
 
-			return sa.Scholarship{}, err
+			return entity.Scholarship{}, err
 		}
 	}
 	// Insert requirements end
@@ -134,7 +135,7 @@ func (s scholarshipRepo) Create(ctx context.Context, scholarship sa.Scholarship)
 				logrus.Error(errRollback)
 			}
 
-			return sa.Scholarship{}, err
+			return entity.Scholarship{}, err
 		}
 
 		if _, err = tx.ExecContext(ctx, query, args...); err != nil {
@@ -142,7 +143,7 @@ func (s scholarshipRepo) Create(ctx context.Context, scholarship sa.Scholarship)
 				logrus.Error(errRollback)
 			}
 
-			return sa.Scholarship{}, err
+			return entity.Scholarship{}, err
 		}
 	}
 	// insert requirements description end
@@ -170,7 +171,7 @@ func (s scholarshipRepo) Create(ctx context.Context, scholarship sa.Scholarship)
 			logrus.Error(errRollback)
 		}
 
-		return sa.Scholarship{}, err
+		return entity.Scholarship{}, err
 	}
 
 	row = tx.QueryRowContext(ctx, query, args...)
@@ -179,7 +180,7 @@ func (s scholarshipRepo) Create(ctx context.Context, scholarship sa.Scholarship)
 			logrus.Error(errRollback)
 		}
 
-		return sa.Scholarship{}, err
+		return entity.Scholarship{}, err
 	}
 	// Create payment end
 
@@ -188,7 +189,7 @@ func (s scholarshipRepo) Create(ctx context.Context, scholarship sa.Scholarship)
 			logrus.Error(errRollback)
 		}
 
-		return sa.Scholarship{}, errCommit
+		return entity.Scholarship{}, errCommit
 	}
 
 	scholarship.CreatedAt = timeNow
@@ -196,7 +197,7 @@ func (s scholarshipRepo) Create(ctx context.Context, scholarship sa.Scholarship)
 }
 
 // Fetch ....
-func (s scholarshipRepo) Fetch(ctx context.Context, filter sa.ScholarshipFilter) ([]sa.Scholarship, string, error) {
+func (s scholarshipRepo) Fetch(ctx context.Context, filter entity.ScholarshipFilter) ([]entity.Scholarship, string, error) {
 	qSelect := sq.Select("id",
 		"sponsor_id",
 		"name",
@@ -260,14 +261,14 @@ func (s scholarshipRepo) Fetch(ctx context.Context, filter sa.ScholarshipFilter)
 	}()
 
 	var (
-		scholarships = make([]sa.Scholarship, 0)
+		scholarships = make([]entity.Scholarship, 0)
 		cursor       time.Time
 		cursorStr    string
 		byteImg      []byte
 	)
 
 	for rows.Next() {
-		var scholarship sa.Scholarship
+		var scholarship entity.Scholarship
 
 		if err = rows.Scan(
 			&scholarship.ID,
@@ -309,7 +310,7 @@ func (s scholarshipRepo) Fetch(ctx context.Context, filter sa.ScholarshipFilter)
 }
 
 // GetByID ...
-func (s scholarshipRepo) GetByID(ctx context.Context, ID int64) (sa.Scholarship, error) {
+func (s scholarshipRepo) GetByID(ctx context.Context, ID int64) (entity.Scholarship, error) {
 	query, args, err := sq.Select("s.id",
 		"s.sponsor_id",
 		"s.name",
@@ -335,12 +336,12 @@ func (s scholarshipRepo) GetByID(ctx context.Context, ID int64) (sa.Scholarship,
 		Where(sq.Eq{"s.id": ID}).
 		ToSql()
 	if err != nil {
-		return sa.Scholarship{}, err
+		return entity.Scholarship{}, err
 	}
 
 	rows, err := s.db.QueryContext(ctx, query, args...)
 	if err != nil {
-		return sa.Scholarship{}, err
+		return entity.Scholarship{}, err
 	}
 
 	defer func() {
@@ -350,12 +351,12 @@ func (s scholarshipRepo) GetByID(ctx context.Context, ID int64) (sa.Scholarship,
 	}()
 
 	var (
-		scholarship sa.Scholarship
+		scholarship entity.Scholarship
 		byteImage   []byte
 	)
 
 	for rows.Next() {
-		var requirement sa.Requirement
+		var requirement entity.Requirement
 
 		if err = rows.Scan(
 			&scholarship.ID,
@@ -378,12 +379,12 @@ func (s scholarshipRepo) GetByID(ctx context.Context, ID int64) (sa.Scholarship,
 			&requirement.Type,
 			&requirement.Value,
 		); err != nil {
-			return sa.Scholarship{}, err
+			return entity.Scholarship{}, err
 		}
 
 		if byteImage != nil {
 			if err = json.Unmarshal(byteImage, &scholarship.Image); err != nil {
-				return sa.Scholarship{}, err
+				return entity.Scholarship{}, err
 			}
 		}
 		scholarship.Requirements = append(scholarship.Requirements, requirement)
@@ -393,7 +394,7 @@ func (s scholarshipRepo) GetByID(ctx context.Context, ID int64) (sa.Scholarship,
 }
 
 // Apply .
-func (s scholarshipRepo) Apply(ctx context.Context, userID, scholarshipID int64, applicant int, essay string, recommendationLetter sa.Image) error {
+func (s scholarshipRepo) Apply(ctx context.Context, userID, scholarshipID int64, applicant int, essay string, recommendationLetter entity.Image) error {
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
 		return err
@@ -471,7 +472,7 @@ func (s scholarshipRepo) Apply(ctx context.Context, userID, scholarshipID int64,
 }
 
 // NewScholarshipRepository ...
-func NewScholarshipRepository(db *sql.DB, deadlinePayment int) sa.ScholarshipRepository {
+func NewScholarshipRepository(db *sql.DB, deadlinePayment int) business.ScholarshipRepository {
 	return scholarshipRepo{
 		db:              db,
 		deadlinePayment: deadlinePayment,

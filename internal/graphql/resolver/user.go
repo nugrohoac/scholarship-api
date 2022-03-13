@@ -1,10 +1,12 @@
 package resolver
 
-import sa "github.com/Nusantara-Muda/scholarship-api"
+import (
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
+)
 
 // UserResolver ...
 type UserResolver struct {
-	User sa.User
+	User entity.User
 }
 
 // ID ...
@@ -110,7 +112,7 @@ func (u UserResolver) CardIdentities() *[]*CardIdentityResolver {
 
 // LoginResponseResolver ...
 type LoginResponseResolver struct {
-	LoginResponse sa.LoginResponse
+	LoginResponse entity.LoginResponse
 }
 
 // Token ...

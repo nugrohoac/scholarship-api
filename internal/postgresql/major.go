@@ -3,13 +3,14 @@ package postgresql
 import (
 	"context"
 	"database/sql"
+	"github.com/Nusantara-Muda/scholarship-api/src/business"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	"strings"
 	"time"
 
 	"github.com/sirupsen/logrus"
 
 	sq "github.com/Masterminds/squirrel"
-	sa "github.com/Nusantara-Muda/scholarship-api"
 )
 
 type majorRepo struct {
@@ -17,7 +18,7 @@ type majorRepo struct {
 }
 
 // Fetch .
-func (m majorRepo) Fetch(ctx context.Context, filter sa.MajorFilter) ([]sa.Major, string, error) {
+func (m majorRepo) Fetch(ctx context.Context, filter entity.MajorFilter) ([]entity.Major, string, error) {
 	qSelect := sq.Select("id",
 		"name",
 		"created_at",
@@ -59,13 +60,13 @@ func (m majorRepo) Fetch(ctx context.Context, filter sa.MajorFilter) ([]sa.Major
 	}()
 
 	var (
-		majors    = make([]sa.Major, 0)
+		majors    = make([]entity.Major, 0)
 		cursor    time.Time
 		cursorStr string
 	)
 
 	for rows.Next() {
-		var major sa.Major
+		var major entity.Major
 		if err = rows.Scan(
 			&major.ID,
 			&major.Name,
@@ -89,6 +90,6 @@ func (m majorRepo) Fetch(ctx context.Context, filter sa.MajorFilter) ([]sa.Major
 }
 
 // NewMajorRepository .
-func NewMajorRepository(db *sql.DB) sa.MajorRepository {
+func NewMajorRepository(db *sql.DB) business.MajorRepository {
 	return majorRepo{db: db}
 }

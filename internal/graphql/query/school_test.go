@@ -6,44 +6,44 @@ import (
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/query"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/resolver"
 	"github.com/Nusantara-Muda/scholarship-api/mocks"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	"testing"
 
-	sa "github.com/Nusantara-Muda/scholarship-api"
 	"github.com/Nusantara-Muda/scholarship-api/testdata"
 )
 
 func TestSchoolQuery_FetchSchool(t *testing.T) {
-	var schools []sa.School
+	var schools []entity.School
 	testdata.GoldenJSONUnmarshal(t, "schools", &schools)
 
-	schoolFeed := sa.SchoolFeed{
+	schoolFeed := entity.SchoolFeed{
 		Cursor:  "cursor",
 		Schools: schools,
 	}
 
 	tests := map[string]struct {
-		paramFilter  sa.InputSchoolFilter
+		paramFilter  entity.InputSchoolFilter
 		fetchSchool  testdata.FuncCaller
 		expectedResp *resolver.SchoolFeedResolver
 		expectedErr  error
 	}{
 		"error": {
-			paramFilter: sa.InputSchoolFilter{},
+			paramFilter: entity.InputSchoolFilter{},
 			fetchSchool: testdata.FuncCaller{
 				IsCalled: true,
-				Input:    []interface{}{mock.Anything, sa.SchoolFilter{}},
-				Output:   []interface{}{sa.SchoolFeed{}, errors.New("school")},
+				Input:    []interface{}{mock.Anything, entity.SchoolFilter{}},
+				Output:   []interface{}{entity.SchoolFeed{}, errors.New("school")},
 			},
 			expectedResp: nil,
 			expectedErr:  errors.New("school"),
 		},
 		"success": {
-			paramFilter: sa.InputSchoolFilter{},
+			paramFilter: entity.InputSchoolFilter{},
 			fetchSchool: testdata.FuncCaller{
 				IsCalled: true,
-				Input:    []interface{}{mock.Anything, sa.SchoolFilter{}},
+				Input:    []interface{}{mock.Anything, entity.SchoolFilter{}},
 				Output:   []interface{}{schoolFeed, nil},
 			},
 			expectedResp: &resolver.SchoolFeedResolver{SchoolFeed: schoolFeed},

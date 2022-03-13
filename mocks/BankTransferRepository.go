@@ -4,8 +4,8 @@ package mocks
 
 import (
 	context "context"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 
-	scholarship_api "github.com/Nusantara-Muda/scholarship-api"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -15,14 +15,14 @@ type BankTransferRepository struct {
 }
 
 // Get provides a mock function with given fields: ctx
-func (_m *BankTransferRepository) Get(ctx context.Context) (scholarship_api.BankTransfer, error) {
+func (_m *BankTransferRepository) Get(ctx context.Context) (entity.BankTransfer, error) {
 	ret := _m.Called(ctx)
 
-	var r0 scholarship_api.BankTransfer
-	if rf, ok := ret.Get(0).(func(context.Context) scholarship_api.BankTransfer); ok {
+	var r0 entity.BankTransfer
+	if rf, ok := ret.Get(0).(func(context.Context) entity.BankTransfer); ok {
 		r0 = rf(ctx)
 	} else {
-		r0 = ret.Get(0).(scholarship_api.BankTransfer)
+		r0 = ret.Get(0).(entity.BankTransfer)
 	}
 
 	var r1 error

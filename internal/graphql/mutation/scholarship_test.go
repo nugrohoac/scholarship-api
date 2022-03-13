@@ -3,10 +3,10 @@ package mutation_test
 import (
 	"context"
 	"errors"
-	sa "github.com/Nusantara-Muda/scholarship-api"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/mutation"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/resolver"
 	"github.com/Nusantara-Muda/scholarship-api/mocks"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	"github.com/Nusantara-Muda/scholarship-api/testdata"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -16,20 +16,20 @@ import (
 
 func TestScholarshipMutationCreate(t *testing.T) {
 	var (
-		scholarship  sa.Scholarship
-		requirements = make([]sa.Requirement, 0)
-		payment      sa.Payment
+		scholarship  entity.Scholarship
+		requirements = make([]entity.Requirement, 0)
+		payment      entity.Payment
 	)
 
 	testdata.GoldenJSONUnmarshal(t, "scholarship", &scholarship)
 	testdata.GoldenJSONUnmarshal(t, "requirements", &requirements)
 	testdata.GoldenJSONUnmarshal(t, "payment", &payment)
 
-	inputScholarship := sa.InputScholarship{
+	inputScholarship := entity.InputScholarship{
 		SponsorID: int32(scholarship.SponsorID),
 		Name:      scholarship.Name,
 		Amount:    int32(scholarship.Amount),
-		Image: &sa.InputImage{
+		Image: &entity.InputImage{
 			URL:    scholarship.Image.URL,
 			Width:  scholarship.Image.Width,
 			Height: scholarship.Image.Height,
@@ -46,7 +46,7 @@ func TestScholarshipMutationCreate(t *testing.T) {
 	}
 
 	for i, req := range requirements {
-		inputScholarship.Requirements = append(inputScholarship.Requirements, sa.InputRequirement{
+		inputScholarship.Requirements = append(inputScholarship.Requirements, entity.InputRequirement{
 			Type:  req.Type,
 			Name:  req.Name,
 			Value: req.Value,
@@ -69,7 +69,7 @@ func TestScholarshipMutationCreate(t *testing.T) {
 	scholarshipResolver := resolver.ScholarshipResolver{Scholarship: scholarshipResp}
 
 	tests := map[string]struct {
-		paramScholarship  sa.InputScholarship
+		paramScholarship  entity.InputScholarship
 		createScholarship testdata.FuncCaller
 		expectedResp      *resolver.ScholarshipResolver
 		expectedErr       error
@@ -89,7 +89,7 @@ func TestScholarshipMutationCreate(t *testing.T) {
 			createScholarship: testdata.FuncCaller{
 				IsCalled: true,
 				Input:    []interface{}{mock.Anything, scholarship},
-				Output:   []interface{}{sa.Scholarship{}, errors.New("error")},
+				Output:   []interface{}{entity.Scholarship{}, errors.New("error")},
 			},
 			expectedResp: nil,
 			expectedErr:  errors.New("error"),

@@ -3,7 +3,7 @@ package email
 import (
 	"context"
 	"fmt"
-	sa "github.com/Nusantara-Muda/scholarship-api"
+	"github.com/Nusantara-Muda/scholarship-api/src/business"
 	"github.com/mailgun/mailgun-go/v4"
 	"github.com/sirupsen/logrus"
 )
@@ -142,7 +142,7 @@ func (e emailRepo) SendForgotPassword(ctx context.Context, email, token string) 
 }
 
 // NewEmailRepository ...
-func NewEmailRepository(mailgunImpl *mailgun.MailgunImpl, sender, pathActivateUser, pathForgotPassword string) sa.EmailRepository {
+func NewEmailRepository(mailgunImpl *mailgun.MailgunImpl, sender, pathActivateUser, pathForgotPassword string) business.EmailRepository {
 	return emailRepo{
 		mailgunImpl:        mailgunImpl,
 		sender:             sender,

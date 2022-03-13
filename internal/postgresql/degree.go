@@ -3,10 +3,11 @@ package postgresql
 import (
 	"context"
 	"database/sql"
+	"github.com/Nusantara-Muda/scholarship-api/src/business"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	"github.com/sirupsen/logrus"
 
 	sq "github.com/Masterminds/squirrel"
-	sa "github.com/Nusantara-Muda/scholarship-api"
 )
 
 type degreeRepo struct {
@@ -14,7 +15,7 @@ type degreeRepo struct {
 }
 
 // Fetch ...
-func (d degreeRepo) Fetch(ctx context.Context) ([]sa.Degree, error) {
+func (d degreeRepo) Fetch(ctx context.Context) ([]entity.Degree, error) {
 	query, args, err := sq.Select("id", "name").
 		From("degree").
 		OrderBy("created_at desc").
@@ -35,10 +36,10 @@ func (d degreeRepo) Fetch(ctx context.Context) ([]sa.Degree, error) {
 		}
 	}()
 
-	var degrees []sa.Degree
+	var degrees []entity.Degree
 
 	for rows.Next() {
-		var degree sa.Degree
+		var degree entity.Degree
 
 		if err = rows.Scan(&degree.ID, &degree.Name); err != nil {
 			return nil, err
@@ -51,6 +52,6 @@ func (d degreeRepo) Fetch(ctx context.Context) ([]sa.Degree, error) {
 }
 
 // NewDegreeRepository .
-func NewDegreeRepository(db *sql.DB) sa.DegreeRepository {
+func NewDegreeRepository(db *sql.DB) business.DegreeRepository {
 	return degreeRepo{db: db}
 }

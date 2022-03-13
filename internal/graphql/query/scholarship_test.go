@@ -5,10 +5,10 @@ import (
 	"errors"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/query"
 	"github.com/Nusantara-Muda/scholarship-api/mocks"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	"github.com/stretchr/testify/require"
 	"testing"
 
-	sa "github.com/Nusantara-Muda/scholarship-api"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/resolver"
 	"github.com/Nusantara-Muda/scholarship-api/testdata"
 	"github.com/stretchr/testify/mock"
@@ -18,8 +18,8 @@ var cursor = "next-cursor"
 
 func TestScholarshipQuery_GetScholarshipBySponsor(t *testing.T) {
 	var (
-		sponsor      sa.User
-		scholarships = make([]sa.Scholarship, 0)
+		sponsor      entity.User
+		scholarships = make([]entity.Scholarship, 0)
 	)
 
 	testdata.GoldenJSONUnmarshal(t, "user", &sponsor)
@@ -31,32 +31,32 @@ func TestScholarshipQuery_GetScholarshipBySponsor(t *testing.T) {
 	scholarshipFeedResolver := resolver.ScholarshipFeedResolver{
 		ScholarshipFeed: struct {
 			Cursor       string
-			Scholarships []sa.Scholarship
+			Scholarships []entity.Scholarship
 		}{Cursor: cursor, Scholarships: scholarships},
 	}
 
 	tests := map[string]struct {
-		param            sa.InputScholarshipFilter
+		param            entity.InputScholarshipFilter
 		fetchScholarship testdata.FuncCaller
 		expectedResp     *resolver.ScholarshipFeedResolver
 		expectedErr      error
 	}{
 		"success": {
-			param: sa.InputScholarshipFilter{},
+			param: entity.InputScholarshipFilter{},
 			fetchScholarship: testdata.FuncCaller{
 				IsCalled: true,
-				Input:    []interface{}{mock.Anything, sa.ScholarshipFilter{}},
-				Output:   []interface{}{sa.ScholarshipFeed{Cursor: cursor, Scholarships: scholarships}, nil},
+				Input:    []interface{}{mock.Anything, entity.ScholarshipFilter{}},
+				Output:   []interface{}{entity.ScholarshipFeed{Cursor: cursor, Scholarships: scholarships}, nil},
 			},
 			expectedResp: &scholarshipFeedResolver,
 			expectedErr:  nil,
 		},
 		"error": {
-			param: sa.InputScholarshipFilter{},
+			param: entity.InputScholarshipFilter{},
 			fetchScholarship: testdata.FuncCaller{
 				IsCalled: true,
-				Input:    []interface{}{mock.Anything, sa.ScholarshipFilter{}},
-				Output:   []interface{}{sa.ScholarshipFeed{}, errors.New("error")},
+				Input:    []interface{}{mock.Anything, entity.ScholarshipFilter{}},
+				Output:   []interface{}{entity.ScholarshipFeed{}, errors.New("error")},
 			},
 			expectedResp: nil,
 			expectedErr:  errors.New("error"),
@@ -92,9 +92,9 @@ func TestScholarshipQuery_GetScholarshipBySponsor(t *testing.T) {
 
 func TestScholarshipQuery_GetScholarshipByID(t *testing.T) {
 	var (
-		scholarship  sa.Scholarship
-		payment      sa.Payment
-		bankTransfer sa.BankTransfer
+		scholarship  entity.Scholarship
+		payment      entity.Payment
+		bankTransfer entity.BankTransfer
 	)
 
 	testdata.GoldenJSONUnmarshal(t, "scholarship", &scholarship)
@@ -119,7 +119,7 @@ func TestScholarshipQuery_GetScholarshipByID(t *testing.T) {
 			getScholarshipByID: testdata.FuncCaller{
 				IsCalled: true,
 				Input:    []interface{}{mock.Anything, scholarship.ID},
-				Output:   []interface{}{sa.Scholarship{}, errors.New("error")},
+				Output:   []interface{}{entity.Scholarship{}, errors.New("error")},
 			},
 			expectedResp: nil,
 			expectedErr:  errors.New("error"),

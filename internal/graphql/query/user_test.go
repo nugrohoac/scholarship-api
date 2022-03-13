@@ -3,9 +3,9 @@ package query
 import (
 	"context"
 	"errors"
-	sa "github.com/Nusantara-Muda/scholarship-api"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/resolver"
 	"github.com/Nusantara-Muda/scholarship-api/mocks"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	"github.com/Nusantara-Muda/scholarship-api/testdata"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -19,10 +19,10 @@ var (
 )
 
 func TestUserQueryLogin(t *testing.T) {
-	users := make([]sa.User, 0)
+	users := make([]entity.User, 0)
 	testdata.GoldenJSONUnmarshal(t, "users", &users)
 
-	loginResp := sa.LoginResponse{
+	loginResp := entity.LoginResponse{
 		Token: "token",
 		User:  users[0],
 	}
@@ -32,13 +32,13 @@ func TestUserQueryLogin(t *testing.T) {
 	}
 
 	tests := map[string]struct {
-		paramLogin   sa.InputLogin
+		paramLogin   entity.InputLogin
 		login        testdata.FuncCaller
 		expectedResp *resolver.LoginResponseResolver
 		expectedErr  error
 	}{
 		"success": {
-			paramLogin: sa.InputLogin{Email: email, Password: password},
+			paramLogin: entity.InputLogin{Email: email, Password: password},
 			login: testdata.FuncCaller{
 				IsCalled: true,
 				Input:    []interface{}{mock.Anything, email, password},
@@ -48,11 +48,11 @@ func TestUserQueryLogin(t *testing.T) {
 			expectedErr:  nil,
 		},
 		"error": {
-			paramLogin: sa.InputLogin{Email: email, Password: password},
+			paramLogin: entity.InputLogin{Email: email, Password: password},
 			login: testdata.FuncCaller{
 				IsCalled: true,
 				Input:    []interface{}{mock.Anything, email, password},
-				Output:   []interface{}{sa.LoginResponse{}, errors.New("internal server error")},
+				Output:   []interface{}{entity.LoginResponse{}, errors.New("internal server error")},
 			},
 			expectedResp: &loginResponseResolver,
 			expectedErr:  errors.New("internal server error"),

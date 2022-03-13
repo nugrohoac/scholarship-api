@@ -2,21 +2,22 @@ package mutation
 
 import (
 	"context"
-	sa "github.com/Nusantara-Muda/scholarship-api"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/resolver"
+	"github.com/Nusantara-Muda/scholarship-api/src/business"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	"time"
 )
 
 // ScholarshipMutation ...
 type ScholarshipMutation struct {
-	scholarshipService sa.ScholarshipService
+	scholarshipService business.ScholarshipService
 }
 
 // CreateScholarship ...
-func (s ScholarshipMutation) CreateScholarship(ctx context.Context, param sa.InputScholarship) (*resolver.ScholarshipResolver, error) {
-	requirements := make([]sa.Requirement, 0)
+func (s ScholarshipMutation) CreateScholarship(ctx context.Context, param entity.InputScholarship) (*resolver.ScholarshipResolver, error) {
+	requirements := make([]entity.Requirement, 0)
 
-	scholarship := sa.Scholarship{
+	scholarship := entity.Scholarship{
 		SponsorID:              int64(param.SponsorID),
 		Name:                   param.Name,
 		Amount:                 int(param.Amount),
@@ -26,7 +27,7 @@ func (s ScholarshipMutation) CreateScholarship(ctx context.Context, param sa.Inp
 	}
 
 	if param.Image != nil {
-		scholarship.Image = sa.Image{
+		scholarship.Image = entity.Image{
 			URL:    param.Image.URL,
 			Width:  param.Image.Width,
 			Height: param.Image.Height,
@@ -64,7 +65,7 @@ func (s ScholarshipMutation) CreateScholarship(ctx context.Context, param sa.Inp
 	scholarship.AnnouncementDate = announcementDate
 
 	for _, req := range param.Requirements {
-		requirements = append(requirements, sa.Requirement{
+		requirements = append(requirements, entity.Requirement{
 			Type:  req.Type,
 			Name:  req.Name,
 			Value: req.Value,
@@ -84,10 +85,10 @@ func (s ScholarshipMutation) CreateScholarship(ctx context.Context, param sa.Inp
 }
 
 // ApplyScholarship .
-func (s ScholarshipMutation) ApplyScholarship(ctx context.Context, param sa.InputApplyScholarship) (*string, error) {
+func (s ScholarshipMutation) ApplyScholarship(ctx context.Context, param entity.InputApplyScholarship) (*string, error) {
 	var (
 		essay                string
-		recommendationLetter sa.Image
+		recommendationLetter entity.Image
 	)
 
 	if param.Essay != nil {
@@ -95,7 +96,7 @@ func (s ScholarshipMutation) ApplyScholarship(ctx context.Context, param sa.Inpu
 	}
 
 	if param.RecommendationLetter != nil {
-		recommendationLetter = sa.Image{
+		recommendationLetter = entity.Image{
 			URL:    param.RecommendationLetter.URL,
 			Width:  param.RecommendationLetter.Width,
 			Height: param.RecommendationLetter.Height,
@@ -119,6 +120,6 @@ func (s ScholarshipMutation) ApplyScholarship(ctx context.Context, param sa.Inpu
 }
 
 // NewScholarshipMutation ....
-func NewScholarshipMutation(scholarshipService sa.ScholarshipService) ScholarshipMutation {
+func NewScholarshipMutation(scholarshipService business.ScholarshipService) ScholarshipMutation {
 	return ScholarshipMutation{scholarshipService: scholarshipService}
 }

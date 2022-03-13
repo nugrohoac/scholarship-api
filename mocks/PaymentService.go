@@ -4,8 +4,8 @@ package mocks
 
 import (
 	context "context"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 
-	scholarship_api "github.com/Nusantara-Muda/scholarship-api"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -15,18 +15,18 @@ type PaymentService struct {
 }
 
 // SubmitTransfer provides a mock function with given fields: ctx, payment
-func (_m *PaymentService) SubmitTransfer(ctx context.Context, payment scholarship_api.Payment) (scholarship_api.Payment, error) {
+func (_m *PaymentService) SubmitTransfer(ctx context.Context, payment entity.Payment) (entity.Payment, error) {
 	ret := _m.Called(ctx, payment)
 
-	var r0 scholarship_api.Payment
-	if rf, ok := ret.Get(0).(func(context.Context, scholarship_api.Payment) scholarship_api.Payment); ok {
+	var r0 entity.Payment
+	if rf, ok := ret.Get(0).(func(context.Context, entity.Payment) entity.Payment); ok {
 		r0 = rf(ctx, payment)
 	} else {
-		r0 = ret.Get(0).(scholarship_api.Payment)
+		r0 = ret.Get(0).(entity.Payment)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, scholarship_api.Payment) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, entity.Payment) error); ok {
 		r1 = rf(ctx, payment)
 	} else {
 		r1 = ret.Error(1)

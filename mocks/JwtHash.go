@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	scholarship_api "github.com/Nusantara-Muda/scholarship-api"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -13,11 +13,11 @@ type JwtHash struct {
 }
 
 // Decode provides a mock function with given fields: tokenString, claim
-func (_m *JwtHash) Decode(tokenString string, claim *scholarship_api.Claim) error {
+func (_m *JwtHash) Decode(tokenString string, claim *entity.Claim) error {
 	ret := _m.Called(tokenString, claim)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(string, *scholarship_api.Claim) error); ok {
+	if rf, ok := ret.Get(0).(func(string, *entity.Claim) error); ok {
 		r0 = rf(tokenString, claim)
 	} else {
 		r0 = ret.Error(0)
@@ -27,18 +27,18 @@ func (_m *JwtHash) Decode(tokenString string, claim *scholarship_api.Claim) erro
 }
 
 // Encode provides a mock function with given fields: user
-func (_m *JwtHash) Encode(user scholarship_api.User) (string, error) {
+func (_m *JwtHash) Encode(user entity.User) (string, error) {
 	ret := _m.Called(user)
 
 	var r0 string
-	if rf, ok := ret.Get(0).(func(scholarship_api.User) string); ok {
+	if rf, ok := ret.Get(0).(func(entity.User) string); ok {
 		r0 = rf(user)
 	} else {
 		r0 = ret.Get(0).(string)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(scholarship_api.User) error); ok {
+	if rf, ok := ret.Get(1).(func(entity.User) error); ok {
 		r1 = rf(user)
 	} else {
 		r1 = ret.Error(1)

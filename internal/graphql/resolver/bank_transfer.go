@@ -1,10 +1,12 @@
 package resolver
 
-import sa "github.com/Nusantara-Muda/scholarship-api"
+import (
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
+)
 
 // BankTransferResolver ...
 type BankTransferResolver struct {
-	BankTransfer sa.BankTransfer
+	BankTransfer entity.BankTransfer
 }
 
 // Name ....

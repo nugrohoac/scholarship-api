@@ -5,33 +5,33 @@ import (
 	"errors"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/mutation"
 	"github.com/Nusantara-Muda/scholarship-api/mocks"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	"github.com/stretchr/testify/require"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/mock"
 
-	sa "github.com/Nusantara-Muda/scholarship-api"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/resolver"
 	"github.com/Nusantara-Muda/scholarship-api/testdata"
 )
 
 func TestPaymentSubmitTransferPayment(t *testing.T) {
-	var payment sa.Payment
+	var payment entity.Payment
 	testdata.GoldenJSONUnmarshal(t, "payment", &payment)
 
-	input := sa.InputSubmitTransfer{
+	input := entity.InputSubmitTransfer{
 		ScholarshipID:   int32(payment.ScholarshipID),
 		TransferDate:    payment.TransferDate.Format(time.RFC3339Nano),
 		BankAccountName: payment.BankAccountName,
-		Image: sa.InputImage{
+		Image: entity.InputImage{
 			URL:    payment.Image.URL,
 			Width:  payment.Image.Width,
 			Height: payment.Image.Height,
 		},
 	}
 
-	_payment := sa.Payment{
+	_payment := entity.Payment{
 		ScholarshipID:   payment.ScholarshipID,
 		TransferDate:    payment.TransferDate,
 		BankAccountName: payment.BankAccountName,
@@ -41,7 +41,7 @@ func TestPaymentSubmitTransferPayment(t *testing.T) {
 	response := resolver.PaymentResolver{Payment: _payment}
 
 	tests := map[string]struct {
-		param         sa.InputSubmitTransfer
+		param         entity.InputSubmitTransfer
 		submitPayment testdata.FuncCaller
 		expectedResp  *resolver.PaymentResolver
 		expectedErr   error
@@ -51,7 +51,7 @@ func TestPaymentSubmitTransferPayment(t *testing.T) {
 			submitPayment: testdata.FuncCaller{
 				IsCalled: true,
 				Input:    []interface{}{mock.Anything, _payment},
-				Output:   []interface{}{sa.Payment{}, errors.New("error")},
+				Output:   []interface{}{entity.Payment{}, errors.New("error")},
 			},
 			expectedResp: nil,
 			expectedErr:  errors.New("error"),

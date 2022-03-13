@@ -4,7 +4,8 @@ import (
 	"context"
 	"database/sql"
 	sq "github.com/Masterminds/squirrel"
-	sa "github.com/Nusantara-Muda/scholarship-api"
+	"github.com/Nusantara-Muda/scholarship-api/src/business"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	"github.com/sirupsen/logrus"
 	"time"
 )
@@ -14,7 +15,7 @@ type countryRepo struct {
 }
 
 // Fetch ...
-func (c countryRepo) Fetch(ctx context.Context, filter sa.CountryFilter) ([]sa.Country, string, error) {
+func (c countryRepo) Fetch(ctx context.Context, filter entity.CountryFilter) ([]entity.Country, string, error) {
 	qSelect := sq.Select("id", "name", "created_at").
 		From("country").
 		OrderBy("created_at desc").
@@ -56,12 +57,12 @@ func (c countryRepo) Fetch(ctx context.Context, filter sa.CountryFilter) ([]sa.C
 	}()
 
 	var (
-		countries = make([]sa.Country, 0)
+		countries = make([]entity.Country, 0)
 		cursor    = time.Time{}
 	)
 
 	for rows.Next() {
-		var country sa.Country
+		var country entity.Country
 
 		if err = rows.Scan(
 			&country.ID,
@@ -86,6 +87,6 @@ func (c countryRepo) Fetch(ctx context.Context, filter sa.CountryFilter) ([]sa.C
 // Fetch .
 
 // NewCountryRepository ...
-func NewCountryRepository(db *sql.DB) sa.CountryRepository {
+func NewCountryRepository(db *sql.DB) business.CountryRepository {
 	return countryRepo{db: db}
 }

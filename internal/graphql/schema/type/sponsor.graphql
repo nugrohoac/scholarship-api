@@ -1,0 +1,4 @@
+type sponsorFeed {
+    cursor: String
+    sponsors: [user]
+}

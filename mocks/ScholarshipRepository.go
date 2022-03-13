@@ -4,8 +4,8 @@ package mocks
 
 import (
 	context "context"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 
-	scholarship_api "github.com/Nusantara-Muda/scholarship-api"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -15,11 +15,11 @@ type ScholarshipRepository struct {
 }
 
 // Apply provides a mock function with given fields: ctx, userID, scholarshipID, applicant, essay, recommendationLetter
-func (_m *ScholarshipRepository) Apply(ctx context.Context, userID int64, scholarshipID int64, applicant int, essay string, recommendationLetter scholarship_api.Image) error {
+func (_m *ScholarshipRepository) Apply(ctx context.Context, userID int64, scholarshipID int64, applicant int, essay string, recommendationLetter entity.Image) error {
 	ret := _m.Called(ctx, userID, scholarshipID, applicant, essay, recommendationLetter)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, int64, int64, int, string, scholarship_api.Image) error); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, int64, int64, int, string, entity.Image) error); ok {
 		r0 = rf(ctx, userID, scholarshipID, applicant, essay, recommendationLetter)
 	} else {
 		r0 = ret.Error(0)
@@ -29,18 +29,18 @@ func (_m *ScholarshipRepository) Apply(ctx context.Context, userID int64, schola
 }
 
 // Create provides a mock function with given fields: ctx, scholarship
-func (_m *ScholarshipRepository) Create(ctx context.Context, scholarship scholarship_api.Scholarship) (scholarship_api.Scholarship, error) {
+func (_m *ScholarshipRepository) Create(ctx context.Context, scholarship entity.Scholarship) (entity.Scholarship, error) {
 	ret := _m.Called(ctx, scholarship)
 
-	var r0 scholarship_api.Scholarship
-	if rf, ok := ret.Get(0).(func(context.Context, scholarship_api.Scholarship) scholarship_api.Scholarship); ok {
+	var r0 entity.Scholarship
+	if rf, ok := ret.Get(0).(func(context.Context, entity.Scholarship) entity.Scholarship); ok {
 		r0 = rf(ctx, scholarship)
 	} else {
-		r0 = ret.Get(0).(scholarship_api.Scholarship)
+		r0 = ret.Get(0).(entity.Scholarship)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, scholarship_api.Scholarship) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, entity.Scholarship) error); ok {
 		r1 = rf(ctx, scholarship)
 	} else {
 		r1 = ret.Error(1)
@@ -50,27 +50,27 @@ func (_m *ScholarshipRepository) Create(ctx context.Context, scholarship scholar
 }
 
 // Fetch provides a mock function with given fields: ctx, filter
-func (_m *ScholarshipRepository) Fetch(ctx context.Context, filter scholarship_api.ScholarshipFilter) ([]scholarship_api.Scholarship, string, error) {
+func (_m *ScholarshipRepository) Fetch(ctx context.Context, filter entity.ScholarshipFilter) ([]entity.Scholarship, string, error) {
 	ret := _m.Called(ctx, filter)
 
-	var r0 []scholarship_api.Scholarship
-	if rf, ok := ret.Get(0).(func(context.Context, scholarship_api.ScholarshipFilter) []scholarship_api.Scholarship); ok {
+	var r0 []entity.Scholarship
+	if rf, ok := ret.Get(0).(func(context.Context, entity.ScholarshipFilter) []entity.Scholarship); ok {
 		r0 = rf(ctx, filter)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]scholarship_api.Scholarship)
+			r0 = ret.Get(0).([]entity.Scholarship)
 		}
 	}
 
 	var r1 string
-	if rf, ok := ret.Get(1).(func(context.Context, scholarship_api.ScholarshipFilter) string); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, entity.ScholarshipFilter) string); ok {
 		r1 = rf(ctx, filter)
 	} else {
 		r1 = ret.Get(1).(string)
 	}
 
 	var r2 error
-	if rf, ok := ret.Get(2).(func(context.Context, scholarship_api.ScholarshipFilter) error); ok {
+	if rf, ok := ret.Get(2).(func(context.Context, entity.ScholarshipFilter) error); ok {
 		r2 = rf(ctx, filter)
 	} else {
 		r2 = ret.Error(2)
@@ -80,14 +80,14 @@ func (_m *ScholarshipRepository) Fetch(ctx context.Context, filter scholarship_a
 }
 
 // GetByID provides a mock function with given fields: ctx, ID
-func (_m *ScholarshipRepository) GetByID(ctx context.Context, ID int64) (scholarship_api.Scholarship, error) {
+func (_m *ScholarshipRepository) GetByID(ctx context.Context, ID int64) (entity.Scholarship, error) {
 	ret := _m.Called(ctx, ID)
 
-	var r0 scholarship_api.Scholarship
-	if rf, ok := ret.Get(0).(func(context.Context, int64) scholarship_api.Scholarship); ok {
+	var r0 entity.Scholarship
+	if rf, ok := ret.Get(0).(func(context.Context, int64) entity.Scholarship); ok {
 		r0 = rf(ctx, ID)
 	} else {
-		r0 = ret.Get(0).(scholarship_api.Scholarship)
+		r0 = ret.Get(0).(entity.Scholarship)
 	}
 
 	var r1 error

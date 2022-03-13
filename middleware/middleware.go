@@ -1,19 +1,20 @@
 package middleware
 
 import (
+	"github.com/Nusantara-Muda/scholarship-api/src/business"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/common"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	"github.com/graph-gophers/graphql-go/errors"
 	"net/http"
 	"strings"
 
 	_graphql "github.com/graph-gophers/graphql-go"
 	"github.com/labstack/echo/v4"
-
-	sa "github.com/Nusantara-Muda/scholarship-api"
 )
 
 // Middleware ...
 type Middleware struct {
-	jwtHash sa.JwtHash
+	jwtHash business.JwtHash
 }
 
 // Auth .
@@ -29,7 +30,7 @@ func (m Middleware) Auth(handler echo.HandlerFunc) echo.HandlerFunc {
 
 		token = tokens[1]
 
-		var claim sa.Claim
+		var claim entity.Claim
 		err := m.jwtHash.Decode(token, &claim)
 		if err != nil {
 			res := _graphql.Response{
@@ -43,7 +44,7 @@ func (m Middleware) Auth(handler echo.HandlerFunc) echo.HandlerFunc {
 			return c.JSON(http.StatusOK, res)
 		}
 
-		ctx = sa.SetUserOnContext(ctx, sa.User{
+		ctx = common.SetUserOnContext(ctx, entity.User{
 			ID:     claim.ID,
 			Name:   claim.Name,
 			Email:  claim.Email,
@@ -58,6 +59,6 @@ func (m Middleware) Auth(handler echo.HandlerFunc) echo.HandlerFunc {
 }
 
 // New ...
-func New(jtwHash sa.JwtHash) Middleware {
+func New(jtwHash business.JwtHash) Middleware {
 	return Middleware{jwtHash: jtwHash}
 }

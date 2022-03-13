@@ -1,10 +1,12 @@
 package resolver
 
-import sa "github.com/Nusantara-Muda/scholarship-api"
+import (
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
+)
 
 // SchoolResolver .
 type SchoolResolver struct {
-	School sa.School
+	School entity.School
 }
 
 // ID .
@@ -36,7 +38,7 @@ func (s SchoolResolver) Status() *int32 {
 
 // SchoolFeedResolver .
 type SchoolFeedResolver struct {
-	SchoolFeed sa.SchoolFeed
+	SchoolFeed entity.SchoolFeed
 }
 
 // Cursor .

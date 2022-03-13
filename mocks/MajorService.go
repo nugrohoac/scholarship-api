@@ -4,8 +4,8 @@ package mocks
 
 import (
 	context "context"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 
-	scholarship_api "github.com/Nusantara-Muda/scholarship-api"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -15,18 +15,18 @@ type MajorService struct {
 }
 
 // Fetch provides a mock function with given fields: ctx, filter
-func (_m *MajorService) Fetch(ctx context.Context, filter scholarship_api.MajorFilter) (scholarship_api.MajorFeed, error) {
+func (_m *MajorService) Fetch(ctx context.Context, filter entity.MajorFilter) (entity.MajorFeed, error) {
 	ret := _m.Called(ctx, filter)
 
-	var r0 scholarship_api.MajorFeed
-	if rf, ok := ret.Get(0).(func(context.Context, scholarship_api.MajorFilter) scholarship_api.MajorFeed); ok {
+	var r0 entity.MajorFeed
+	if rf, ok := ret.Get(0).(func(context.Context, entity.MajorFilter) entity.MajorFeed); ok {
 		r0 = rf(ctx, filter)
 	} else {
-		r0 = ret.Get(0).(scholarship_api.MajorFeed)
+		r0 = ret.Get(0).(entity.MajorFeed)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, scholarship_api.MajorFilter) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, entity.MajorFilter) error); ok {
 		r1 = rf(ctx, filter)
 	} else {
 		r1 = ret.Error(1)

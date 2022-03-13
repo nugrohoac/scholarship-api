@@ -2,19 +2,20 @@ package query
 
 import (
 	"context"
+	"github.com/Nusantara-Muda/scholarship-api/src/business"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 
-	sa "github.com/Nusantara-Muda/scholarship-api"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/resolver"
 )
 
 // ScholarshipQuery ...
 type ScholarshipQuery struct {
-	scholarshipService sa.ScholarshipService
+	scholarshipService business.ScholarshipService
 }
 
 // FetchScholarship ...
-func (s ScholarshipQuery) FetchScholarship(ctx context.Context, param sa.InputScholarshipFilter) (*resolver.ScholarshipFeedResolver, error) {
-	filter := sa.ScholarshipFilter{}
+func (s ScholarshipQuery) FetchScholarship(ctx context.Context, param entity.InputScholarshipFilter) (*resolver.ScholarshipFeedResolver, error) {
+	filter := entity.ScholarshipFilter{}
 
 	if param.Limit != nil {
 		filter.Limit = uint64(*param.Limit)
@@ -57,6 +58,6 @@ func (s ScholarshipQuery) GetScholarshipByID(ctx context.Context, param struct{ 
 }
 
 // NewScholarshipQuery ...
-func NewScholarshipQuery(scholarshipService sa.ScholarshipService) ScholarshipQuery {
+func NewScholarshipQuery(scholarshipService business.ScholarshipService) ScholarshipQuery {
 	return ScholarshipQuery{scholarshipService: scholarshipService}
 }

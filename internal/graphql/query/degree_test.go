@@ -3,10 +3,10 @@ package query_test
 import (
 	"context"
 	"errors"
-	sa "github.com/Nusantara-Muda/scholarship-api"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/query"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/resolver"
 	"github.com/Nusantara-Muda/scholarship-api/mocks"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	"github.com/Nusantara-Muda/scholarship-api/testdata"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -14,7 +14,7 @@ import (
 )
 
 func TestDegreeQuery_GetDegree(t *testing.T) {
-	var degrees []sa.Degree
+	var degrees []entity.Degree
 	testdata.GoldenJSONUnmarshal(t, "degrees", &degrees)
 
 	response := make([]*resolver.DegreeResolver, 0)

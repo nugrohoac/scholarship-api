@@ -2,19 +2,20 @@ package query
 
 import (
 	"context"
+	"github.com/Nusantara-Muda/scholarship-api/src/business"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 
-	sa "github.com/Nusantara-Muda/scholarship-api"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/resolver"
 )
 
 // MajorQuery .
 type MajorQuery struct {
-	majorService sa.MajorService
+	majorService business.MajorService
 }
 
 // FetchMajor .
-func (m MajorQuery) FetchMajor(ctx context.Context, param sa.InputMajorFilter) (*resolver.MajorFeedResolver, error) {
-	filter := sa.MajorFilter{}
+func (m MajorQuery) FetchMajor(ctx context.Context, param entity.InputMajorFilter) (*resolver.MajorFeedResolver, error) {
+	filter := entity.MajorFilter{}
 	if param.Limit != nil {
 		filter.Limit = uint64(*param.Limit)
 	}
@@ -36,6 +37,6 @@ func (m MajorQuery) FetchMajor(ctx context.Context, param sa.InputMajorFilter) (
 }
 
 // NewMajorQuery .
-func NewMajorQuery(majorService sa.MajorService) MajorQuery {
+func NewMajorQuery(majorService business.MajorService) MajorQuery {
 	return MajorQuery{majorService: majorService}
 }

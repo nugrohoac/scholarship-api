@@ -4,27 +4,30 @@ import (
 	"database/sql"
 	"flag"
 	"fmt"
-	"github.com/Nusantara-Muda/scholarship-api/major"
-	"github.com/Nusantara-Muda/scholarship-api/school"
+	backoffice2 "github.com/Nusantara-Muda/scholarship-api/internal/graphql/query/backoffice"
+	"github.com/Nusantara-Muda/scholarship-api/src/business"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/domain/backoffice"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/backoffice/sponsor"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/major"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/school"
 	"log"
 	"time"
 
 	"github.com/mailgun/mailgun-go/v4"
 	"github.com/spf13/viper"
 
-	sa "github.com/Nusantara-Muda/scholarship-api"
-	"github.com/Nusantara-Muda/scholarship-api/bank"
-	"github.com/Nusantara-Muda/scholarship-api/country"
-	_degree "github.com/Nusantara-Muda/scholarship-api/degree"
 	"github.com/Nusantara-Muda/scholarship-api/internal/email"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/mutation"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/query"
 	"github.com/Nusantara-Muda/scholarship-api/internal/postgresql"
-	"github.com/Nusantara-Muda/scholarship-api/jwt_hash"
 	_middleware "github.com/Nusantara-Muda/scholarship-api/middleware"
-	"github.com/Nusantara-Muda/scholarship-api/payment"
-	"github.com/Nusantara-Muda/scholarship-api/scholarship"
-	"github.com/Nusantara-Muda/scholarship-api/user"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/bank"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/country"
+	_degree "github.com/Nusantara-Muda/scholarship-api/src/business/usecase/degree"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/jwt_hash"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/payment"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/scholarship"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/user"
 )
 
 var (
@@ -32,26 +35,28 @@ var (
 	dsn             string
 	deadlinePayment int
 
-	bankRepo            sa.BankRepository
-	countryRepo         sa.CountryRepository
-	userRepo            sa.UserRepository
-	emailRepo           sa.EmailRepository
-	scholarshipRepo     sa.ScholarshipRepository
-	bankTransferRepo    sa.BankTransferRepository
-	paymentRepo         sa.PaymentRepository
-	degreeRepo          sa.DegreeRepository
-	requirementDescRepo sa.RequirementDescriptionRepository
-	majorRepo           sa.MajorRepository
-	schoolRepo          sa.SchoolRepository
+	bankRepo            business.BankRepository
+	countryRepo         business.CountryRepository
+	userRepo            business.UserRepository
+	emailRepo           business.EmailRepository
+	scholarshipRepo     business.ScholarshipRepository
+	bankTransferRepo    business.BankTransferRepository
+	paymentRepo         business.PaymentRepository
+	degreeRepo          business.DegreeRepository
+	requirementDescRepo business.RequirementDescriptionRepository
+	majorRepo           business.MajorRepository
+	schoolRepo          business.SchoolRepository
+	sponsorRepo         business.SponsorRepository
 
-	bankService        sa.BankService
-	countryService     sa.CountryService
-	userService        sa.UserService
-	scholarshipService sa.ScholarshipService
-	paymentService     sa.PaymentService
-	degreeService      sa.DegreeService
-	majorService       sa.MajorService
-	schoolService      sa.SchoolService
+	bankService        business.BankService
+	countryService     business.CountryService
+	userService        business.UserService
+	scholarshipService business.ScholarshipService
+	paymentService     business.PaymentService
+	degreeService      business.DegreeService
+	majorService       business.MajorService
+	schoolService      business.SchoolService
+	sponsorService     business.SponsorService
 
 	// email
 	emailDomain        string
@@ -83,6 +88,8 @@ var (
 	ScholarshipQuery query.ScholarshipQuery
 	// DegreeQuery ...
 	DegreeQuery query.DegreeQuery
+	// SponsorQuery ...
+	SponsorQuery backoffice2.SponsorQuery
 
 	// PortApp apps
 	PortApp = 7070
@@ -183,6 +190,7 @@ func initApp() {
 	requirementDescRepo = postgresql.NewRequirementDescriptionRepository(db)
 	majorRepo = postgresql.NewMajorRepository(db)
 	schoolRepo = postgresql.NewSchoolRepository(db)
+	sponsorRepo = backoffice.NewSponsorRepository(db)
 
 	bankService = bank.NewBankService(bankRepo)
 	userService = user.NewUserService(userRepo, jwtHash, emailRepo)
@@ -192,6 +200,7 @@ func initApp() {
 	degreeService = _degree.NewDegreeService(degreeRepo)
 	majorService = major.NewMajorService(majorRepo)
 	schoolService = school.NewSchoolService(schoolRepo)
+	sponsorService = sponsor.NewSponsorService(sponsorRepo)
 
 	UserMutation = mutation.NewUserMutation(userService)
 	ScholarshipMutation = mutation.NewScholarshipMutation(scholarshipService)
@@ -205,4 +214,5 @@ func initApp() {
 	DegreeQuery = query.NewDegreeQuery(degreeService)
 	MajorQuery = query.NewMajorQuery(majorService)
 	SchoolQuery = query.NewSchoolQuery(schoolService)
+	SponsorQuery = backoffice2.NewSponsorQuery(sponsorService)
 }

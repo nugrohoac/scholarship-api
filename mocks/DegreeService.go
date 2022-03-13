@@ -4,8 +4,8 @@ package mocks
 
 import (
 	context "context"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 
-	scholarship_api "github.com/Nusantara-Muda/scholarship-api"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -15,15 +15,15 @@ type DegreeService struct {
 }
 
 // Fetch provides a mock function with given fields: ctx
-func (_m *DegreeService) Fetch(ctx context.Context) ([]scholarship_api.Degree, error) {
+func (_m *DegreeService) Fetch(ctx context.Context) ([]entity.Degree, error) {
 	ret := _m.Called(ctx)
 
-	var r0 []scholarship_api.Degree
-	if rf, ok := ret.Get(0).(func(context.Context) []scholarship_api.Degree); ok {
+	var r0 []entity.Degree
+	if rf, ok := ret.Get(0).(func(context.Context) []entity.Degree); ok {
 		r0 = rf(ctx)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]scholarship_api.Degree)
+			r0 = ret.Get(0).([]entity.Degree)
 		}
 	}
 

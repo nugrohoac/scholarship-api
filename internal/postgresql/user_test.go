@@ -2,8 +2,8 @@ package postgresql_test
 
 import (
 	"context"
-	sa "github.com/Nusantara-Muda/scholarship-api"
 	"github.com/Nusantara-Muda/scholarship-api/internal/postgresql"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	"github.com/Nusantara-Muda/scholarship-api/testdata"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
@@ -25,7 +25,7 @@ func TestUserRepository(t *testing.T) {
 
 func (u userSuite) TestUserRepoStore() {
 	t := u.T()
-	users := make([]sa.User, 0)
+	users := make([]entity.User, 0)
 	testdata.GoldenJSONUnmarshal(t, "users", &users)
 
 	userRepo := postgresql.NewUserRepository(u.DBConn)
@@ -41,12 +41,12 @@ func (u userSuite) TestUserRepoStore() {
 
 func (u userSuite) TestUserRepoFetch() {
 	t := u.T()
-	users := make([]sa.User, 0)
+	users := make([]entity.User, 0)
 	testdata.GoldenJSONUnmarshal(t, "users", &users)
 	postgresql.SeedUsers(u.DBConn, t, users)
 
 	userRepo := postgresql.NewUserRepository(u.DBConn)
-	usersResp, cursor, err := userRepo.Fetch(context.Background(), sa.UserFilter{Email: users[0].Email})
+	usersResp, cursor, err := userRepo.Fetch(context.Background(), entity.UserFilter{Email: users[0].Email})
 	require.NoError(t, err)
 	require.Equal(t, "MjAyMi0wMS0xMVQxNzozMzo1OC40MDNa", cursor)
 	require.Equal(t, 1, len(usersResp))
@@ -55,7 +55,7 @@ func (u userSuite) TestUserRepoFetch() {
 
 func (u userSuite) TestUserRepoLogin() {
 	t := u.T()
-	users := make([]sa.User, 0)
+	users := make([]entity.User, 0)
 	testdata.GoldenJSONUnmarshal(t, "users", &users)
 	postgresql.SeedUsers(u.DBConn, t, users)
 
@@ -70,13 +70,13 @@ func (u userSuite) TestUserRepoLogin() {
 func (u userSuite) TestUserRepoUpdateByID() {
 	t := u.T()
 
-	users := make([]sa.User, 0)
+	users := make([]entity.User, 0)
 	testdata.GoldenJSONUnmarshal(t, "users", &users)
 	user := users[0]
 
 	for i := range users {
 		users[i].Name = ""
-		users[i].Photo = sa.Image{}
+		users[i].Photo = entity.Image{}
 		users[i].CompanyName = ""
 		users[i].CountryID = 0
 		users[i].PostalCode = ""
@@ -88,7 +88,7 @@ func (u userSuite) TestUserRepoUpdateByID() {
 
 	postgresql.SeedUsers(u.DBConn, t, users)
 
-	cardIdentities := make([]sa.CardIdentity, 0)
+	cardIdentities := make([]entity.CardIdentity, 0)
 	testdata.GoldenJSONUnmarshal(t, "card_identities", &cardIdentities)
 
 	user.CardIdentities = cardIdentities
@@ -98,7 +98,7 @@ func (u userSuite) TestUserRepoUpdateByID() {
 	userResp, err := userRepo.UpdateByID(context.Background(), user.ID, user)
 
 	require.NoError(t, err)
-	require.NotEqual(t, sa.User{}, userResp)
+	require.NotEqual(t, entity.User{}, userResp)
 
 	var count int
 	row := u.DBConn.QueryRow("SELECT COUNT(id) FROM card_identity WHERE user_id = $1", user.ID)
@@ -115,7 +115,7 @@ func (u userSuite) TestUserRepoUpdateByID() {
 
 func (u userSuite) TestUserSetStatus() {
 	t := u.T()
-	users := make([]sa.User, 0)
+	users := make([]entity.User, 0)
 	testdata.GoldenJSONUnmarshal(t, "users", &users)
 
 	postgresql.SeedUsers(u.DBConn, t, users)
@@ -133,7 +133,7 @@ func (u userSuite) TestUserSetStatus() {
 
 func (u userSuite) TestUserUpdatePassword() {
 	t := u.T()
-	users := make([]sa.User, 0)
+	users := make([]entity.User, 0)
 	testdata.GoldenJSONUnmarshal(t, "users", &users)
 
 	postgresql.SeedUsers(u.DBConn, t, users)
@@ -155,7 +155,7 @@ func (u userSuite) TestUserUpdatePassword() {
 
 func (u userSuite) TestUserSetupEducation() {
 	var (
-		user sa.User
+		user entity.User
 		t    = u.T()
 	)
 
@@ -167,33 +167,33 @@ func (u userSuite) TestUserSetupEducation() {
 
 	testdata.GoldenJSONUnmarshal(t, "user", &user)
 
-	postgresql.SeedUsers(u.DBConn, t, []sa.User{user})
+	postgresql.SeedUsers(u.DBConn, t, []entity.User{user})
 	user.CareerGoal = "my career goal"
-	user.StudyCountryGoal = sa.Country{ID: 10}
+	user.StudyCountryGoal = entity.Country{ID: 10}
 	user.StudyDestination = "japan, oksaka university"
 	user.GapYearReason = "gap year reason"
 
-	user.UserSchools = []sa.UserSchool{
+	user.UserSchools = []entity.UserSchool{
 		{
 			UserID:         user.ID,
-			School:         sa.School{ID: 8},
+			School:         entity.School{ID: 8},
 			GraduationDate: enrollmentDate,
 		},
 		{
 			UserID:         user.ID,
-			School:         sa.School{ID: 7},
-			Degree:         sa.Degree{ID: 3},
-			Major:          sa.Major{ID: 5},
+			School:         entity.School{ID: 7},
+			Degree:         entity.Degree{ID: 3},
+			Major:          entity.Major{ID: 5},
 			EnrollmentDate: enrollmentDate,
 			GraduationDate: graduationDate,
 			Gpa:            3.125,
 		},
 	}
 
-	user.UserDocuments = []sa.UserDocument{
+	user.UserDocuments = []entity.UserDocument{
 		{
 			UserID: user.ID,
-			Document: sa.Image{
+			Document: entity.Image{
 				URL:     "https://image1.com",
 				Width:   100,
 				Height:  100,
@@ -203,7 +203,7 @@ func (u userSuite) TestUserSetupEducation() {
 		},
 		{
 			UserID: user.ID,
-			Document: sa.Image{
+			Document: entity.Image{
 				URL:     "https://image2.com",
 				Width:   100,
 				Height:  100,

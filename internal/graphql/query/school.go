@@ -2,19 +2,20 @@ package query
 
 import (
 	"context"
+	"github.com/Nusantara-Muda/scholarship-api/src/business"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 
-	sa "github.com/Nusantara-Muda/scholarship-api"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/resolver"
 )
 
 // SchoolQuery .
 type SchoolQuery struct {
-	schoolService sa.SchoolService
+	schoolService business.SchoolService
 }
 
 // FetchSchool .
-func (s SchoolQuery) FetchSchool(ctx context.Context, param sa.InputSchoolFilter) (*resolver.SchoolFeedResolver, error) {
-	var filter sa.SchoolFilter
+func (s SchoolQuery) FetchSchool(ctx context.Context, param entity.InputSchoolFilter) (*resolver.SchoolFeedResolver, error) {
+	var filter entity.SchoolFilter
 
 	if param.Limit != nil {
 		filter.Limit = uint64(*param.Limit)
@@ -41,6 +42,6 @@ func (s SchoolQuery) FetchSchool(ctx context.Context, param sa.InputSchoolFilter
 }
 
 // NewSchoolQuery .
-func NewSchoolQuery(schoolService sa.SchoolService) SchoolQuery {
+func NewSchoolQuery(schoolService business.SchoolService) SchoolQuery {
 	return SchoolQuery{schoolService: schoolService}
 }
