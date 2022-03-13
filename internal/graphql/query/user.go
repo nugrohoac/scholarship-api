@@ -3,17 +3,17 @@ package query
 import (
 	"context"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/resolver"
-
-	sa "github.com/Nusantara-Muda/scholarship-api"
+	"github.com/Nusantara-Muda/scholarship-api/src/business"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 )
 
 // UserQuery ...
 type UserQuery struct {
-	userService sa.UserService
+	userService business.UserService
 }
 
 // Login ...
-func (u UserQuery) Login(ctx context.Context, param sa.InputLogin) (*resolver.LoginResponseResolver, error) {
+func (u UserQuery) Login(ctx context.Context, param entity.InputLogin) (*resolver.LoginResponseResolver, error) {
 	loginResponse, err := u.userService.Login(ctx, param.Email, param.Password)
 	if err != nil {
 		return nil, err
@@ -43,6 +43,6 @@ func (u UserQuery) ForgotPassword(ctx context.Context, param struct{ Email strin
 }
 
 // NewUserQuery ...
-func NewUserQuery(userService sa.UserService) UserQuery {
+func NewUserQuery(userService business.UserService) UserQuery {
 	return UserQuery{userService: userService}
 }

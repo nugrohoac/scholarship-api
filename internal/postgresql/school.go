@@ -3,12 +3,13 @@ package postgresql
 import (
 	"context"
 	"database/sql"
+	"github.com/Nusantara-Muda/scholarship-api/src/business"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	"github.com/sirupsen/logrus"
 	"strings"
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
-	sa "github.com/Nusantara-Muda/scholarship-api"
 )
 
 type schoolRepo struct {
@@ -16,7 +17,7 @@ type schoolRepo struct {
 }
 
 // Create .
-func (s schoolRepo) Create(ctx context.Context, school sa.School) (sa.School, error) {
+func (s schoolRepo) Create(ctx context.Context, school entity.School) (entity.School, error) {
 	school.Status = 1
 	school.CreatedAt = time.Now()
 
@@ -37,19 +38,19 @@ func (s schoolRepo) Create(ctx context.Context, school sa.School) (sa.School, er
 		Suffix("RETURNING \"id\"").
 		ToSql()
 	if err != nil {
-		return sa.School{}, err
+		return entity.School{}, err
 	}
 
 	row := s.db.QueryRowContext(ctx, query, args...)
 	if err = row.Scan(&school.ID); err != nil {
-		return sa.School{}, err
+		return entity.School{}, err
 	}
 
 	return school, nil
 }
 
 // Fetch .
-func (s schoolRepo) Fetch(ctx context.Context, filter sa.SchoolFilter) ([]sa.School, string, error) {
+func (s schoolRepo) Fetch(ctx context.Context, filter entity.SchoolFilter) ([]entity.School, string, error) {
 	qSelect := sq.Select("id",
 		"type",
 		"name",
@@ -98,13 +99,13 @@ func (s schoolRepo) Fetch(ctx context.Context, filter sa.SchoolFilter) ([]sa.Sch
 	}()
 
 	var (
-		schools   = make([]sa.School, 0)
+		schools   = make([]entity.School, 0)
 		cursor    = time.Time{}
 		cursorStr = ""
 	)
 
 	for rows.Next() {
-		var school sa.School
+		var school entity.School
 
 		if err = rows.Scan(
 			&school.ID,
@@ -132,6 +133,6 @@ func (s schoolRepo) Fetch(ctx context.Context, filter sa.SchoolFilter) ([]sa.Sch
 }
 
 // NewSchoolRepository .
-func NewSchoolRepository(db *sql.DB) sa.SchoolRepository {
+func NewSchoolRepository(db *sql.DB) business.SchoolRepository {
 	return schoolRepo{db: db}
 }

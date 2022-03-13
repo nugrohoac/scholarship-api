@@ -2,13 +2,13 @@ package query
 
 import (
 	"context"
-	sa "github.com/Nusantara-Muda/scholarship-api"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/resolver"
+	"github.com/Nusantara-Muda/scholarship-api/src/business"
 )
 
 // DegreeQuery ...
 type DegreeQuery struct {
-	degreeService sa.DegreeService
+	degreeService business.DegreeService
 }
 
 // FetchDegree ...
@@ -29,6 +29,6 @@ func (d DegreeQuery) FetchDegree(ctx context.Context) (*[]*resolver.DegreeResolv
 }
 
 // NewDegreeQuery ...
-func NewDegreeQuery(degreeService sa.DegreeService) DegreeQuery {
+func NewDegreeQuery(degreeService business.DegreeService) DegreeQuery {
 	return DegreeQuery{degreeService: degreeService}
 }

@@ -3,16 +3,16 @@ package postgresql
 import (
 	"database/sql"
 	"encoding/json"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 
 	sq "github.com/Masterminds/squirrel"
-	sa "github.com/Nusantara-Muda/scholarship-api"
 )
 
 // SeedBanks ...
-func SeedBanks(db *sql.DB, t *testing.T, banks []sa.Bank) {
+func SeedBanks(db *sql.DB, t *testing.T, banks []entity.Bank) {
 	qInsert := sq.Insert("bank").Columns("name", "code", "created_at")
 
 	for _, bank := range banks {
@@ -27,7 +27,7 @@ func SeedBanks(db *sql.DB, t *testing.T, banks []sa.Bank) {
 }
 
 // SeedCountries ...
-func SeedCountries(db *sql.DB, t *testing.T, countries []sa.Country) {
+func SeedCountries(db *sql.DB, t *testing.T, countries []entity.Country) {
 	qInsert := sq.Insert("country").Columns("name", "created_at")
 
 	for _, country := range countries {
@@ -42,7 +42,7 @@ func SeedCountries(db *sql.DB, t *testing.T, countries []sa.Country) {
 }
 
 // SeedUsers ...
-func SeedUsers(db *sql.DB, t *testing.T, users []sa.User) {
+func SeedUsers(db *sql.DB, t *testing.T, users []entity.User) {
 	qInsert := sq.Insert("\"user\"").
 		Columns("id",
 			"name",
@@ -97,7 +97,7 @@ func SeedUsers(db *sql.DB, t *testing.T, users []sa.User) {
 }
 
 // SeedCardIdentities ...
-func SeedCardIdentities(db *sql.DB, t *testing.T, cardIdentities []sa.CardIdentity) {
+func SeedCardIdentities(db *sql.DB, t *testing.T, cardIdentities []entity.CardIdentity) {
 	var (
 		byteImg []byte
 		err     error
@@ -134,7 +134,7 @@ func SeedCardIdentities(db *sql.DB, t *testing.T, cardIdentities []sa.CardIdenti
 }
 
 // SeedScholarship ...
-func SeedScholarship(db *sql.DB, t *testing.T, scholarships []sa.Scholarship) {
+func SeedScholarship(db *sql.DB, t *testing.T, scholarships []entity.Scholarship) {
 	qInsert := sq.Insert("scholarship").
 		Columns("id",
 			"sponsor_id",
@@ -195,7 +195,7 @@ func SeedScholarship(db *sql.DB, t *testing.T, scholarships []sa.Scholarship) {
 }
 
 // SeedRequirements ...
-func SeedRequirements(db *sql.DB, t *testing.T, requirements []sa.Requirement) {
+func SeedRequirements(db *sql.DB, t *testing.T, requirements []entity.Requirement) {
 	qInsert := sq.Insert("requirement").
 		Columns("id",
 			"scholarship_id",
@@ -223,7 +223,7 @@ func SeedRequirements(db *sql.DB, t *testing.T, requirements []sa.Requirement) {
 }
 
 // SeedPayments ...
-func SeedPayments(db *sql.DB, t *testing.T, payments []sa.Payment) {
+func SeedPayments(db *sql.DB, t *testing.T, payments []entity.Payment) {
 	qInsert := sq.Insert("payment").
 		Columns("id",
 			"scholarship_id",
@@ -258,7 +258,7 @@ func SeedPayments(db *sql.DB, t *testing.T, payments []sa.Payment) {
 }
 
 // SeedMajors ...
-func SeedMajors(db *sql.DB, t *testing.T, majors []sa.Major) {
+func SeedMajors(db *sql.DB, t *testing.T, majors []entity.Major) {
 	qInsert := sq.Insert("major").Columns("id", "name", "created_at")
 
 	for _, major := range majors {
@@ -273,7 +273,7 @@ func SeedMajors(db *sql.DB, t *testing.T, majors []sa.Major) {
 }
 
 // SeedSchools .
-func SeedSchools(db *sql.DB, t *testing.T, schools []sa.School) {
+func SeedSchools(db *sql.DB, t *testing.T, schools []entity.School) {
 	qInsert := sq.Insert("school").
 		Columns("id",
 			"name",
@@ -303,7 +303,7 @@ func SeedSchools(db *sql.DB, t *testing.T, schools []sa.School) {
 }
 
 // SeedDegrees .
-func SeedDegrees(db *sql.DB, t *testing.T, degrees []sa.Degree) {
+func SeedDegrees(db *sql.DB, t *testing.T, degrees []entity.Degree) {
 	qInsert := sq.Insert("degree").
 		Columns("id",
 			"name",
@@ -326,7 +326,7 @@ func SeedDegrees(db *sql.DB, t *testing.T, degrees []sa.Degree) {
 }
 
 // SeedBankTransfer ....
-func SeedBankTransfer(db *sql.DB, t *testing.T, bankTransfers ...sa.BankTransfer) {
+func SeedBankTransfer(db *sql.DB, t *testing.T, bankTransfers ...entity.BankTransfer) {
 	qInsert := sq.Insert("bank_transfer").
 		Columns("id",
 			"name",

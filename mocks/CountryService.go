@@ -4,8 +4,8 @@ package mocks
 
 import (
 	context "context"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 
-	scholarship_api "github.com/Nusantara-Muda/scholarship-api"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -15,18 +15,18 @@ type CountryService struct {
 }
 
 // Fetch provides a mock function with given fields: ctx, filter
-func (_m *CountryService) Fetch(ctx context.Context, filter scholarship_api.CountryFilter) (scholarship_api.CountryFeed, error) {
+func (_m *CountryService) Fetch(ctx context.Context, filter entity.CountryFilter) (entity.CountryFeed, error) {
 	ret := _m.Called(ctx, filter)
 
-	var r0 scholarship_api.CountryFeed
-	if rf, ok := ret.Get(0).(func(context.Context, scholarship_api.CountryFilter) scholarship_api.CountryFeed); ok {
+	var r0 entity.CountryFeed
+	if rf, ok := ret.Get(0).(func(context.Context, entity.CountryFilter) entity.CountryFeed); ok {
 		r0 = rf(ctx, filter)
 	} else {
-		r0 = ret.Get(0).(scholarship_api.CountryFeed)
+		r0 = ret.Get(0).(entity.CountryFeed)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, scholarship_api.CountryFilter) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, entity.CountryFilter) error); ok {
 		r1 = rf(ctx, filter)
 	} else {
 		r1 = ret.Error(1)

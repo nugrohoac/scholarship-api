@@ -3,13 +3,12 @@ package postgresql_test
 import (
 	"context"
 	"github.com/Nusantara-Muda/scholarship-api/internal/postgresql"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	"github.com/stretchr/testify/suite"
 	"testing"
 
 	"github.com/Nusantara-Muda/scholarship-api/testdata"
 	"github.com/stretchr/testify/require"
-
-	sa "github.com/Nusantara-Muda/scholarship-api"
 )
 
 type bankTransferSuite struct {
@@ -26,7 +25,7 @@ func TestBankTransferRepo(t *testing.T) {
 
 func (b bankTransferSuite) TestBankTransferRepo_Get() {
 	var (
-		bankTransfer sa.BankTransfer
+		bankTransfer entity.BankTransfer
 		t            = b.T()
 	)
 	testdata.GoldenJSONUnmarshal(t, "bank_transfer", &bankTransfer)

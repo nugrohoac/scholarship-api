@@ -2,19 +2,20 @@ package mutation
 
 import (
 	"context"
-	sa "github.com/Nusantara-Muda/scholarship-api"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/resolver"
+	"github.com/Nusantara-Muda/scholarship-api/src/business"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	"time"
 )
 
 // UserMutation ...
 type UserMutation struct {
-	userService sa.UserService
+	userService business.UserService
 }
 
 // RegisterUser ...
-func (u UserMutation) RegisterUser(ctx context.Context, param sa.InputRegisterUser) (*resolver.UserResolver, error) {
-	user := sa.User{
+func (u UserMutation) RegisterUser(ctx context.Context, param entity.InputRegisterUser) (*resolver.UserResolver, error) {
+	user := entity.User{
 		Type:     param.Type,
 		Email:    param.Email,
 		PhoneNo:  param.PhoneNo,
@@ -30,13 +31,13 @@ func (u UserMutation) RegisterUser(ctx context.Context, param sa.InputRegisterUs
 }
 
 // UpdateUser ...
-func (u UserMutation) UpdateUser(ctx context.Context, param sa.InputUpdateUser) (*resolver.UserResolver, error) {
-	cardIdentities := make([]sa.CardIdentity, 0)
+func (u UserMutation) UpdateUser(ctx context.Context, param entity.InputUpdateUser) (*resolver.UserResolver, error) {
+	cardIdentities := make([]entity.CardIdentity, 0)
 	for _, c := range param.CardIdentities {
-		cardIdentities = append(cardIdentities, sa.CardIdentity{
+		cardIdentities = append(cardIdentities, entity.CardIdentity{
 			Type: c.Type,
 			No:   c.No,
-			Image: sa.Image{
+			Image: entity.Image{
 				URL:    c.Image.URL,
 				Width:  c.Image.Width,
 				Height: c.Image.Height,
@@ -45,7 +46,7 @@ func (u UserMutation) UpdateUser(ctx context.Context, param sa.InputUpdateUser) 
 		})
 	}
 
-	user := sa.User{
+	user := entity.User{
 		ID:              int64(param.ID),
 		Name:            param.Name,
 		CompanyName:     *param.CompanyName,
@@ -59,7 +60,7 @@ func (u UserMutation) UpdateUser(ctx context.Context, param sa.InputUpdateUser) 
 	}
 
 	if param.Photo != nil {
-		user.Photo = sa.Image{
+		user.Photo = entity.Image{
 			URL:    param.Photo.URL,
 			Width:  param.Photo.Width,
 			Height: param.Photo.Height,
@@ -103,11 +104,11 @@ func (u UserMutation) ResetPassword(ctx context.Context, param struct{ Password 
 }
 
 // SetupEducation ...
-func (u UserMutation) SetupEducation(ctx context.Context, param sa.InputSetupEducation) (*resolver.UserResolver, error) {
-	user := sa.User{
+func (u UserMutation) SetupEducation(ctx context.Context, param entity.InputSetupEducation) (*resolver.UserResolver, error) {
+	user := entity.User{
 		ID:               int64(param.UserID),
 		CareerGoal:       param.CareerGoal,
-		StudyCountryGoal: sa.Country{ID: param.StudyCountryGoal.ID},
+		StudyCountryGoal: entity.Country{ID: param.StudyCountryGoal.ID},
 		StudyDestination: param.StudyDestination,
 	}
 
@@ -116,7 +117,7 @@ func (u UserMutation) SetupEducation(ctx context.Context, param sa.InputSetupEdu
 	}
 
 	for _, us := range param.UserSchools {
-		var userSchool sa.UserSchool
+		var userSchool entity.UserSchool
 
 		userSchool.School.ID = int64(us.School.ID)
 
@@ -152,8 +153,8 @@ func (u UserMutation) SetupEducation(ctx context.Context, param sa.InputSetupEdu
 	}
 
 	for _, ud := range param.UserDocuments {
-		userDoc := sa.UserDocument{
-			Document: sa.Image{
+		userDoc := entity.UserDocument{
+			Document: entity.Image{
 				URL:    ud.URL,
 				Width:  ud.Width,
 				Height: ud.Height,
@@ -180,6 +181,6 @@ func (u UserMutation) SetupEducation(ctx context.Context, param sa.InputSetupEdu
 }
 
 // NewUserMutation ...
-func NewUserMutation(userService sa.UserService) UserMutation {
+func NewUserMutation(userService business.UserService) UserMutation {
 	return UserMutation{userService: userService}
 }

@@ -3,6 +3,7 @@ package graphql
 import (
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/mutation"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/query"
+	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/query/backoffice"
 )
 
 // RootGraphql .
@@ -18,6 +19,7 @@ type RootGraphql struct {
 	mutation.ScholarshipMutation
 	mutation.PaymentMutation
 	mutation.SchoolMutation
+	backoffice.SponsorQuery
 }
 
 // NewRootGraphql ...
@@ -33,6 +35,7 @@ func NewRootGraphql(
 	scholarshipMutation mutation.ScholarshipMutation,
 	paymentMutation mutation.PaymentMutation,
 	schoolMutation mutation.SchoolMutation,
+	sponsorQuery backoffice.SponsorQuery,
 
 ) *RootGraphql {
 	return &RootGraphql{
@@ -47,5 +50,6 @@ func NewRootGraphql(
 		scholarshipMutation,
 		paymentMutation,
 		schoolMutation,
+		sponsorQuery,
 	}
 }

@@ -3,10 +3,10 @@ package mutation_test
 import (
 	"context"
 	"errors"
-	sa "github.com/Nusantara-Muda/scholarship-api"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/mutation"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/resolver"
 	"github.com/Nusantara-Muda/scholarship-api/mocks"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	"github.com/Nusantara-Muda/scholarship-api/testdata"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -15,18 +15,18 @@ import (
 )
 
 func TestUserMutationRegisterUser(t *testing.T) {
-	users := make([]sa.User, 0)
+	users := make([]entity.User, 0)
 	testdata.GoldenJSONUnmarshal(t, "users", &users)
 
-	user := sa.User{
-		Type:     sa.Sponsor,
+	user := entity.User{
+		Type:     entity.Sponsor,
 		Email:    users[0].Email,
 		PhoneNo:  users[0].PhoneNo,
 		Password: "password",
 	}
 
 	userResolver := resolver.UserResolver{User: user}
-	inputRegisterUser := sa.InputRegisterUser{
+	inputRegisterUser := entity.InputRegisterUser{
 		Type:     users[0].Type,
 		Email:    users[0].Email,
 		PhoneNo:  users[0].PhoneNo,
@@ -34,7 +34,7 @@ func TestUserMutationRegisterUser(t *testing.T) {
 	}
 
 	tests := map[string]struct {
-		paramUser    sa.InputRegisterUser
+		paramUser    entity.InputRegisterUser
 		storeUser    testdata.FuncCaller
 		expectedResp *resolver.UserResolver
 		expectedErr  error
@@ -54,7 +54,7 @@ func TestUserMutationRegisterUser(t *testing.T) {
 			storeUser: testdata.FuncCaller{
 				IsCalled: true,
 				Input:    []interface{}{mock.Anything, user},
-				Output:   []interface{}{sa.User{}, errors.New("internal server error")},
+				Output:   []interface{}{entity.User{}, errors.New("internal server error")},
 			},
 			expectedResp: nil,
 			expectedErr:  errors.New("internal server error"),
@@ -89,10 +89,10 @@ func TestUserMutationRegisterUser(t *testing.T) {
 }
 
 func TestUserMutationUpdateUser(t *testing.T) {
-	users := make([]sa.User, 0)
+	users := make([]entity.User, 0)
 	testdata.GoldenJSONUnmarshal(t, "users", &users)
 
-	cardIdentities := make([]sa.CardIdentity, 0)
+	cardIdentities := make([]entity.CardIdentity, 0)
 	testdata.GoldenJSONUnmarshal(t, "card_identities", &cardIdentities)
 
 	for i := range cardIdentities {
@@ -100,12 +100,12 @@ func TestUserMutationUpdateUser(t *testing.T) {
 		cardIdentities[i].CreatedAt = time.Time{}
 	}
 
-	inputCardIdentities := make([]sa.InputCardIdentity, 0)
+	inputCardIdentities := make([]entity.InputCardIdentity, 0)
 
-	user := sa.User{
+	user := entity.User{
 		ID:   users[0].ID,
 		Name: users[0].Name,
-		Photo: sa.Image{
+		Photo: entity.Image{
 			URL:    users[0].Photo.URL,
 			Width:  users[0].Photo.Width,
 			Height: users[0].Photo.Height,
@@ -121,10 +121,10 @@ func TestUserMutationUpdateUser(t *testing.T) {
 	}
 
 	for _, c := range user.CardIdentities {
-		inputCardIdentities = append(inputCardIdentities, sa.InputCardIdentity{
+		inputCardIdentities = append(inputCardIdentities, entity.InputCardIdentity{
 			Type: c.Type,
 			No:   c.No,
-			Image: sa.InputImage{
+			Image: entity.InputImage{
 				URL:    c.Image.URL,
 				Width:  c.Image.Width,
 				Height: c.Image.Height,
@@ -132,10 +132,10 @@ func TestUserMutationUpdateUser(t *testing.T) {
 		})
 	}
 
-	inputUser := sa.InputUpdateUser{
+	inputUser := entity.InputUpdateUser{
 		ID:   int32(users[0].ID),
 		Name: users[0].Name,
-		Photo: &sa.InputImage{
+		Photo: &entity.InputImage{
 			URL:    users[0].Photo.URL,
 			Width:  users[0].Photo.Width,
 			Height: users[0].Photo.Height,
@@ -153,7 +153,7 @@ func TestUserMutationUpdateUser(t *testing.T) {
 	userResolver := resolver.UserResolver{User: user}
 
 	tests := map[string]struct {
-		paramInput   sa.InputUpdateUser
+		paramInput   entity.InputUpdateUser
 		updateUser   testdata.FuncCaller
 		expectedResp *resolver.UserResolver
 		expectedErr  error
@@ -173,7 +173,7 @@ func TestUserMutationUpdateUser(t *testing.T) {
 			updateUser: testdata.FuncCaller{
 				IsCalled: true,
 				Input:    []interface{}{mock.Anything, user.ID, user},
-				Output:   []interface{}{sa.User{}, errors.New("internal server error")},
+				Output:   []interface{}{entity.User{}, errors.New("internal server error")},
 			},
 			expectedResp: nil,
 			expectedErr:  errors.New("internal server error"),
@@ -208,7 +208,7 @@ func TestUserMutationUpdateUser(t *testing.T) {
 }
 
 func TestUserMutationActivateUser(t *testing.T) {
-	users := make([]sa.User, 0)
+	users := make([]entity.User, 0)
 	testdata.GoldenJSONUnmarshal(t, "users", &users)
 
 	token := "token"
@@ -240,7 +240,7 @@ func TestUserMutationActivateUser(t *testing.T) {
 			activateStatus: testdata.FuncCaller{
 				IsCalled: true,
 				Input:    []interface{}{mock.Anything, token},
-				Output:   []interface{}{sa.User{}, errors.New("error")},
+				Output:   []interface{}{entity.User{}, errors.New("error")},
 			},
 			expectedResp: nil,
 			expectedErr:  errors.New("error"),
@@ -275,7 +275,7 @@ func TestUserMutationActivateUser(t *testing.T) {
 }
 
 func TestUserMutationResetPassword(t *testing.T) {
-	var user sa.User
+	var user entity.User
 	testdata.GoldenJSONUnmarshal(t, "user", &user)
 
 	password := "new password"
@@ -306,7 +306,7 @@ func TestUserMutationResetPassword(t *testing.T) {
 			resetPasswd: testdata.FuncCaller{
 				IsCalled: true,
 				Input:    []interface{}{mock.Anything, password},
-				Output:   []interface{}{sa.User{}, errors.New("error")},
+				Output:   []interface{}{entity.User{}, errors.New("error")},
 			},
 			expectedResp: nil,
 			expectedErr:  errors.New("error"),

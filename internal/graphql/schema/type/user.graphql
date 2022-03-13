@@ -16,6 +16,7 @@ type user {
     bankId: Int
     bankAccountNo: String
     bankAccountName: String
+    createdAt: String
 }
 
 type loginResponse {
@@ -26,6 +27,7 @@ type loginResponse {
 enum userType {
     sponsor
     student
+    admin
 }
 
 enum gender {

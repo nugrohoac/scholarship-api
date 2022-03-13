@@ -4,8 +4,8 @@ package mocks
 
 import (
 	context "context"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 
-	scholarship_api "github.com/Nusantara-Muda/scholarship-api"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -15,14 +15,14 @@ type UserService struct {
 }
 
 // ActivateStatus provides a mock function with given fields: ctx, token
-func (_m *UserService) ActivateStatus(ctx context.Context, token string) (scholarship_api.User, error) {
+func (_m *UserService) ActivateStatus(ctx context.Context, token string) (entity.User, error) {
 	ret := _m.Called(ctx, token)
 
-	var r0 scholarship_api.User
-	if rf, ok := ret.Get(0).(func(context.Context, string) scholarship_api.User); ok {
+	var r0 entity.User
+	if rf, ok := ret.Get(0).(func(context.Context, string) entity.User); ok {
 		r0 = rf(ctx, token)
 	} else {
-		r0 = ret.Get(0).(scholarship_api.User)
+		r0 = ret.Get(0).(entity.User)
 	}
 
 	var r1 error
@@ -57,14 +57,14 @@ func (_m *UserService) ForgotPassword(ctx context.Context, email string) (string
 }
 
 // Login provides a mock function with given fields: ctx, email, password
-func (_m *UserService) Login(ctx context.Context, email string, password string) (scholarship_api.LoginResponse, error) {
+func (_m *UserService) Login(ctx context.Context, email string, password string) (entity.LoginResponse, error) {
 	ret := _m.Called(ctx, email, password)
 
-	var r0 scholarship_api.LoginResponse
-	if rf, ok := ret.Get(0).(func(context.Context, string, string) scholarship_api.LoginResponse); ok {
+	var r0 entity.LoginResponse
+	if rf, ok := ret.Get(0).(func(context.Context, string, string) entity.LoginResponse); ok {
 		r0 = rf(ctx, email, password)
 	} else {
-		r0 = ret.Get(0).(scholarship_api.LoginResponse)
+		r0 = ret.Get(0).(entity.LoginResponse)
 	}
 
 	var r1 error
@@ -99,14 +99,14 @@ func (_m *UserService) ResendEmailVerification(ctx context.Context, email string
 }
 
 // ResetPassword provides a mock function with given fields: ctx, password
-func (_m *UserService) ResetPassword(ctx context.Context, password string) (scholarship_api.User, error) {
+func (_m *UserService) ResetPassword(ctx context.Context, password string) (entity.User, error) {
 	ret := _m.Called(ctx, password)
 
-	var r0 scholarship_api.User
-	if rf, ok := ret.Get(0).(func(context.Context, string) scholarship_api.User); ok {
+	var r0 entity.User
+	if rf, ok := ret.Get(0).(func(context.Context, string) entity.User); ok {
 		r0 = rf(ctx, password)
 	} else {
-		r0 = ret.Get(0).(scholarship_api.User)
+		r0 = ret.Get(0).(entity.User)
 	}
 
 	var r1 error
@@ -120,18 +120,18 @@ func (_m *UserService) ResetPassword(ctx context.Context, password string) (scho
 }
 
 // SetupEducation provides a mock function with given fields: ctx, user
-func (_m *UserService) SetupEducation(ctx context.Context, user scholarship_api.User) (scholarship_api.User, error) {
+func (_m *UserService) SetupEducation(ctx context.Context, user entity.User) (entity.User, error) {
 	ret := _m.Called(ctx, user)
 
-	var r0 scholarship_api.User
-	if rf, ok := ret.Get(0).(func(context.Context, scholarship_api.User) scholarship_api.User); ok {
+	var r0 entity.User
+	if rf, ok := ret.Get(0).(func(context.Context, entity.User) entity.User); ok {
 		r0 = rf(ctx, user)
 	} else {
-		r0 = ret.Get(0).(scholarship_api.User)
+		r0 = ret.Get(0).(entity.User)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, scholarship_api.User) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, entity.User) error); ok {
 		r1 = rf(ctx, user)
 	} else {
 		r1 = ret.Error(1)
@@ -141,18 +141,18 @@ func (_m *UserService) SetupEducation(ctx context.Context, user scholarship_api.
 }
 
 // Store provides a mock function with given fields: ctx, user
-func (_m *UserService) Store(ctx context.Context, user scholarship_api.User) (scholarship_api.User, error) {
+func (_m *UserService) Store(ctx context.Context, user entity.User) (entity.User, error) {
 	ret := _m.Called(ctx, user)
 
-	var r0 scholarship_api.User
-	if rf, ok := ret.Get(0).(func(context.Context, scholarship_api.User) scholarship_api.User); ok {
+	var r0 entity.User
+	if rf, ok := ret.Get(0).(func(context.Context, entity.User) entity.User); ok {
 		r0 = rf(ctx, user)
 	} else {
-		r0 = ret.Get(0).(scholarship_api.User)
+		r0 = ret.Get(0).(entity.User)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, scholarship_api.User) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, entity.User) error); ok {
 		r1 = rf(ctx, user)
 	} else {
 		r1 = ret.Error(1)
@@ -162,18 +162,18 @@ func (_m *UserService) Store(ctx context.Context, user scholarship_api.User) (sc
 }
 
 // UpdateByID provides a mock function with given fields: ctx, ID, user
-func (_m *UserService) UpdateByID(ctx context.Context, ID int64, user scholarship_api.User) (scholarship_api.User, error) {
+func (_m *UserService) UpdateByID(ctx context.Context, ID int64, user entity.User) (entity.User, error) {
 	ret := _m.Called(ctx, ID, user)
 
-	var r0 scholarship_api.User
-	if rf, ok := ret.Get(0).(func(context.Context, int64, scholarship_api.User) scholarship_api.User); ok {
+	var r0 entity.User
+	if rf, ok := ret.Get(0).(func(context.Context, int64, entity.User) entity.User); ok {
 		r0 = rf(ctx, ID, user)
 	} else {
-		r0 = ret.Get(0).(scholarship_api.User)
+		r0 = ret.Get(0).(entity.User)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, int64, scholarship_api.User) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, int64, entity.User) error); ok {
 		r1 = rf(ctx, ID, user)
 	} else {
 		r1 = ret.Error(1)

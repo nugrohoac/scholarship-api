@@ -1,13 +1,13 @@
 package resolver
 
 import (
-	sa "github.com/Nusantara-Muda/scholarship-api"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	"time"
 )
 
 // PaymentResolver .
 type PaymentResolver struct {
-	Payment sa.Payment
+	Payment entity.Payment
 }
 
 // ID .

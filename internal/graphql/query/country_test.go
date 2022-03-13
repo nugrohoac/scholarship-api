@@ -5,17 +5,17 @@ import (
 	"errors"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/query"
 	"github.com/Nusantara-Muda/scholarship-api/mocks"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	"testing"
 
-	sa "github.com/Nusantara-Muda/scholarship-api"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/resolver"
 	"github.com/Nusantara-Muda/scholarship-api/testdata"
 )
 
 func TestCountryQuery(t *testing.T) {
-	countries := make([]sa.Country, 0)
+	countries := make([]entity.Country, 0)
 	testdata.GoldenJSONUnmarshal(t, "countries", &countries)
 
 	var (
@@ -23,7 +23,7 @@ func TestCountryQuery(t *testing.T) {
 		cursor       = "cursor"
 	)
 
-	countryFeed := sa.CountryFeed{
+	countryFeed := entity.CountryFeed{
 		Cursor:    cursor,
 		Countries: countries,
 	}
@@ -33,33 +33,33 @@ func TestCountryQuery(t *testing.T) {
 	}
 
 	tests := map[string]struct {
-		paramFilter  sa.InputCountryFilter
+		paramFilter  entity.InputCountryFilter
 		fetchCountry testdata.FuncCaller
 		expectedResp *resolver.CountryFeedResolver
 		expectedErr  error
 	}{
 		"success": {
-			paramFilter: sa.InputCountryFilter{
+			paramFilter: entity.InputCountryFilter{
 				Limit:  &limit,
 				Cursor: &cursor,
 			},
 			fetchCountry: testdata.FuncCaller{
 				IsCalled: true,
-				Input:    []interface{}{mock.Anything, sa.CountryFilter{Limit: int(limit), Cursor: cursor}},
+				Input:    []interface{}{mock.Anything, entity.CountryFilter{Limit: int(limit), Cursor: cursor}},
 				Output:   []interface{}{countryFeed, nil},
 			},
 			expectedResp: &countryFeedResolver,
 			expectedErr:  nil,
 		},
 		"error": {
-			paramFilter: sa.InputCountryFilter{
+			paramFilter: entity.InputCountryFilter{
 				Limit:  &limit,
 				Cursor: &cursor,
 			},
 			fetchCountry: testdata.FuncCaller{
 				IsCalled: true,
-				Input:    []interface{}{mock.Anything, sa.CountryFilter{Limit: int(limit), Cursor: cursor}},
-				Output:   []interface{}{sa.CountryFeed{}, errors.New("internal server error")},
+				Input:    []interface{}{mock.Anything, entity.CountryFilter{Limit: int(limit), Cursor: cursor}},
+				Output:   []interface{}{entity.CountryFeed{}, errors.New("internal server error")},
 			},
 			expectedResp: &countryFeedResolver,
 			expectedErr:  errors.New("internal server error"),

@@ -4,8 +4,8 @@ package mocks
 
 import (
 	context "context"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 
-	scholarship_api "github.com/Nusantara-Muda/scholarship-api"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -15,18 +15,18 @@ type SchoolService struct {
 }
 
 // Create provides a mock function with given fields: ctx, school
-func (_m *SchoolService) Create(ctx context.Context, school scholarship_api.School) (scholarship_api.School, error) {
+func (_m *SchoolService) Create(ctx context.Context, school entity.School) (entity.School, error) {
 	ret := _m.Called(ctx, school)
 
-	var r0 scholarship_api.School
-	if rf, ok := ret.Get(0).(func(context.Context, scholarship_api.School) scholarship_api.School); ok {
+	var r0 entity.School
+	if rf, ok := ret.Get(0).(func(context.Context, entity.School) entity.School); ok {
 		r0 = rf(ctx, school)
 	} else {
-		r0 = ret.Get(0).(scholarship_api.School)
+		r0 = ret.Get(0).(entity.School)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, scholarship_api.School) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, entity.School) error); ok {
 		r1 = rf(ctx, school)
 	} else {
 		r1 = ret.Error(1)
@@ -36,18 +36,18 @@ func (_m *SchoolService) Create(ctx context.Context, school scholarship_api.Scho
 }
 
 // Fetch provides a mock function with given fields: ctx, filter
-func (_m *SchoolService) Fetch(ctx context.Context, filter scholarship_api.SchoolFilter) (scholarship_api.SchoolFeed, error) {
+func (_m *SchoolService) Fetch(ctx context.Context, filter entity.SchoolFilter) (entity.SchoolFeed, error) {
 	ret := _m.Called(ctx, filter)
 
-	var r0 scholarship_api.SchoolFeed
-	if rf, ok := ret.Get(0).(func(context.Context, scholarship_api.SchoolFilter) scholarship_api.SchoolFeed); ok {
+	var r0 entity.SchoolFeed
+	if rf, ok := ret.Get(0).(func(context.Context, entity.SchoolFilter) entity.SchoolFeed); ok {
 		r0 = rf(ctx, filter)
 	} else {
-		r0 = ret.Get(0).(scholarship_api.SchoolFeed)
+		r0 = ret.Get(0).(entity.SchoolFeed)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, scholarship_api.SchoolFilter) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, entity.SchoolFilter) error); ok {
 		r1 = rf(ctx, filter)
 	} else {
 		r1 = ret.Error(1)

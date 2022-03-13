@@ -2,8 +2,8 @@ package postgresql_test
 
 import (
 	"context"
-	sa "github.com/Nusantara-Muda/scholarship-api"
 	"github.com/Nusantara-Muda/scholarship-api/internal/postgresql"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	"github.com/Nusantara-Muda/scholarship-api/testdata"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
@@ -24,7 +24,7 @@ func TestDegreeRepo(t *testing.T) {
 
 func (d degreeSuite) TestDegreeGet() {
 	t := d.T()
-	var degrees []sa.Degree
+	var degrees []entity.Degree
 	testdata.GoldenJSONUnmarshal(t, "degrees", &degrees)
 	postgresql.SeedDegrees(d.DBConn, t, degrees)
 

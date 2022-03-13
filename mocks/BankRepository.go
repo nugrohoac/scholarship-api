@@ -4,8 +4,8 @@ package mocks
 
 import (
 	context "context"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 
-	scholarship_api "github.com/Nusantara-Muda/scholarship-api"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -15,27 +15,27 @@ type BankRepository struct {
 }
 
 // Fetch provides a mock function with given fields: ctx, filter
-func (_m *BankRepository) Fetch(ctx context.Context, filter scholarship_api.BankFilter) ([]scholarship_api.Bank, string, error) {
+func (_m *BankRepository) Fetch(ctx context.Context, filter entity.BankFilter) ([]entity.Bank, string, error) {
 	ret := _m.Called(ctx, filter)
 
-	var r0 []scholarship_api.Bank
-	if rf, ok := ret.Get(0).(func(context.Context, scholarship_api.BankFilter) []scholarship_api.Bank); ok {
+	var r0 []entity.Bank
+	if rf, ok := ret.Get(0).(func(context.Context, entity.BankFilter) []entity.Bank); ok {
 		r0 = rf(ctx, filter)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]scholarship_api.Bank)
+			r0 = ret.Get(0).([]entity.Bank)
 		}
 	}
 
 	var r1 string
-	if rf, ok := ret.Get(1).(func(context.Context, scholarship_api.BankFilter) string); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, entity.BankFilter) string); ok {
 		r1 = rf(ctx, filter)
 	} else {
 		r1 = ret.Get(1).(string)
 	}
 
 	var r2 error
-	if rf, ok := ret.Get(2).(func(context.Context, scholarship_api.BankFilter) error); ok {
+	if rf, ok := ret.Get(2).(func(context.Context, entity.BankFilter) error); ok {
 		r2 = rf(ctx, filter)
 	} else {
 		r2 = ret.Error(2)

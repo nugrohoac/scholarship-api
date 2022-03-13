@@ -4,8 +4,8 @@ package mocks
 
 import (
 	context "context"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 
-	scholarship_api "github.com/Nusantara-Muda/scholarship-api"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -15,18 +15,18 @@ type BankService struct {
 }
 
 // Fetch provides a mock function with given fields: ctx, filter
-func (_m *BankService) Fetch(ctx context.Context, filter scholarship_api.BankFilter) (scholarship_api.BankFeed, error) {
+func (_m *BankService) Fetch(ctx context.Context, filter entity.BankFilter) (entity.BankFeed, error) {
 	ret := _m.Called(ctx, filter)
 
-	var r0 scholarship_api.BankFeed
-	if rf, ok := ret.Get(0).(func(context.Context, scholarship_api.BankFilter) scholarship_api.BankFeed); ok {
+	var r0 entity.BankFeed
+	if rf, ok := ret.Get(0).(func(context.Context, entity.BankFilter) entity.BankFeed); ok {
 		r0 = rf(ctx, filter)
 	} else {
-		r0 = ret.Get(0).(scholarship_api.BankFeed)
+		r0 = ret.Get(0).(entity.BankFeed)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, scholarship_api.BankFilter) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, entity.BankFilter) error); ok {
 		r1 = rf(ctx, filter)
 	} else {
 		r1 = ret.Error(1)

@@ -1,10 +1,12 @@
 package resolver
 
-import sa "github.com/Nusantara-Muda/scholarship-api"
+import (
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
+)
 
 // DegreeResolver .
 type DegreeResolver struct {
-	Degree sa.Degree
+	Degree entity.Degree
 }
 
 // ID .

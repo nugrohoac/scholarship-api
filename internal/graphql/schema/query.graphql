@@ -50,4 +50,10 @@ type Query {
         name: String
         type: String
     ): schoolFeed
+
+    FetchSponsor(
+        limit: Int
+        cursor: String
+        email: String
+    ): sponsorFeed
 }

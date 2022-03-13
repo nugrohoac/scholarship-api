@@ -5,11 +5,12 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"github.com/Nusantara-Muda/scholarship-api/src/business"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	"github.com/sirupsen/logrus"
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
-	sa "github.com/Nusantara-Muda/scholarship-api"
 )
 
 type userRepo struct {
@@ -17,7 +18,7 @@ type userRepo struct {
 }
 
 // Store .
-func (u userRepo) Store(ctx context.Context, user sa.User) (sa.User, error) {
+func (u userRepo) Store(ctx context.Context, user entity.User) (entity.User, error) {
 	user.CreatedAt = time.Now()
 
 	query, args, err := sq.Insert("\"user\"").
@@ -36,19 +37,19 @@ func (u userRepo) Store(ctx context.Context, user sa.User) (sa.User, error) {
 	).PlaceholderFormat(sq.Dollar).
 		ToSql()
 	if err != nil {
-		return sa.User{}, err
+		return entity.User{}, err
 	}
 
 	_, err = u.db.ExecContext(ctx, query, args...)
 	if err != nil {
-		return sa.User{}, err
+		return entity.User{}, err
 	}
 
 	return user, nil
 }
 
 // Fetch ...
-func (u userRepo) Fetch(ctx context.Context, filter sa.UserFilter) ([]sa.User, string, error) {
+func (u userRepo) Fetch(ctx context.Context, filter entity.UserFilter) ([]entity.User, string, error) {
 	qSelect := sq.Select("id",
 		"name",
 		"type",
@@ -95,13 +96,13 @@ func (u userRepo) Fetch(ctx context.Context, filter sa.UserFilter) ([]sa.User, s
 	}()
 
 	var (
-		users     = make([]sa.User, 0)
+		users     = make([]entity.User, 0)
 		cursor    = time.Time{}
 		bytePhoto []byte
 	)
 
 	for rows.Next() {
-		var user sa.User
+		var user entity.User
 
 		if err = rows.Scan(
 			&user.ID,
@@ -145,7 +146,7 @@ func (u userRepo) Fetch(ctx context.Context, filter sa.UserFilter) ([]sa.User, s
 
 // Login is use just for login
 // Different select columns with fetch
-func (u userRepo) Login(ctx context.Context, email string) (sa.User, error) {
+func (u userRepo) Login(ctx context.Context, email string) (entity.User, error) {
 	query, args, err := sq.Select("id",
 		"name",
 		"type",
@@ -158,12 +159,12 @@ func (u userRepo) Login(ctx context.Context, email string) (sa.User, error) {
 		OrderBy("created_at desc").
 		PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
-		return sa.User{}, err
+		return entity.User{}, err
 	}
 
 	row := u.db.QueryRowContext(ctx, query, args...)
 	var (
-		user       sa.User
+		user       entity.User
 		bytesPhoto []byte
 	)
 	if err = row.Scan(&user.ID,
@@ -174,12 +175,12 @@ func (u userRepo) Login(ctx context.Context, email string) (sa.User, error) {
 		&user.Password,
 		&bytesPhoto,
 	); err != nil {
-		return sa.User{}, err
+		return entity.User{}, err
 	}
 
 	if bytesPhoto != nil {
 		if err = json.Unmarshal(bytesPhoto, &user.Photo); err != nil {
-			return sa.User{}, err
+			return entity.User{}, err
 		}
 	}
 
@@ -190,10 +191,10 @@ func (u userRepo) Login(ctx context.Context, email string) (sa.User, error) {
 // Update at table user
 // insert into table card identity
 // use transaction !!!!!!!!!!!
-func (u userRepo) UpdateByID(ctx context.Context, ID int64, user sa.User) (sa.User, error) {
+func (u userRepo) UpdateByID(ctx context.Context, ID int64, user entity.User) (entity.User, error) {
 	tx, err := u.db.BeginTx(ctx, nil)
 	if err != nil {
-		return sa.User{}, err
+		return entity.User{}, err
 	}
 
 	var (
@@ -204,7 +205,7 @@ func (u userRepo) UpdateByID(ctx context.Context, ID int64, user sa.User) (sa.Us
 
 	bytesImg, err = json.Marshal(user.Photo)
 	if err != nil {
-		return sa.User{}, err
+		return entity.User{}, err
 	}
 
 	query, args, err := sq.Update("\"user\"").
@@ -226,11 +227,11 @@ func (u userRepo) UpdateByID(ctx context.Context, ID int64, user sa.User) (sa.Us
 		PlaceholderFormat(sq.Dollar).
 		ToSql()
 	if err != nil {
-		return sa.User{}, err
+		return entity.User{}, err
 	}
 
 	if _, err = tx.ExecContext(ctx, query, args...); err != nil {
-		return sa.User{}, err
+		return entity.User{}, err
 	}
 
 	qInsert := sq.Insert("card_identity").
@@ -247,7 +248,7 @@ func (u userRepo) UpdateByID(ctx context.Context, ID int64, user sa.User) (sa.Us
 				fmt.Println("Err rollback update profile at json marshal image : ", errRollback)
 			}
 
-			return sa.User{}, err
+			return entity.User{}, err
 		}
 
 		qInsert = qInsert.Values(
@@ -265,7 +266,7 @@ func (u userRepo) UpdateByID(ctx context.Context, ID int64, user sa.User) (sa.Us
 			fmt.Println("Err rollback update profile generate query insert card identity : ", errRollback)
 		}
 
-		return sa.User{}, err
+		return entity.User{}, err
 	}
 
 	if _, err = tx.ExecContext(ctx, query, args...); err != nil {
@@ -273,7 +274,7 @@ func (u userRepo) UpdateByID(ctx context.Context, ID int64, user sa.User) (sa.Us
 			fmt.Println("Err rollback update profile exec insert card identity : ", errRollback)
 		}
 
-		return sa.User{}, err
+		return entity.User{}, err
 	}
 
 	if errCommit := tx.Commit(); errCommit != nil {
@@ -327,10 +328,10 @@ func (u userRepo) ResetPassword(ctx context.Context, email, password string) err
 }
 
 // SetupEducation .
-func (u userRepo) SetupEducation(ctx context.Context, user sa.User) (sa.User, error) {
+func (u userRepo) SetupEducation(ctx context.Context, user entity.User) (entity.User, error) {
 	tx, err := u.db.BeginTx(ctx, nil)
 	if err != nil {
-		return sa.User{}, err
+		return entity.User{}, err
 	}
 
 	var (
@@ -352,12 +353,12 @@ func (u userRepo) SetupEducation(ctx context.Context, user sa.User) (sa.User, er
 		Where(sq.Eq{"id": user.ID}).
 		ToSql()
 	if err != nil {
-		return sa.User{}, err
+		return entity.User{}, err
 	}
 
 	if _, err = tx.ExecContext(ctx, query, args...); err != nil {
 		fmt.Println(err)
-		return sa.User{}, err
+		return entity.User{}, err
 	}
 	// update user end
 
@@ -391,7 +392,7 @@ func (u userRepo) SetupEducation(ctx context.Context, user sa.User) (sa.User, er
 			fmt.Println("Err rollback setup education insert user school : ", errRollback)
 		}
 
-		return sa.User{}, err
+		return entity.User{}, err
 	}
 
 	if _, err = tx.ExecContext(ctx, query, args...); err != nil {
@@ -399,7 +400,7 @@ func (u userRepo) SetupEducation(ctx context.Context, user sa.User) (sa.User, er
 			fmt.Println("Err rollback setup education exec insert user school : ", errRollback)
 		}
 
-		return sa.User{}, err
+		return entity.User{}, err
 	}
 
 	// insert user school end
@@ -415,7 +416,7 @@ func (u userRepo) SetupEducation(ctx context.Context, user sa.User) (sa.User, er
 					fmt.Println("Err rollback setup education marshal document : ", errRollback)
 				}
 
-				return sa.User{}, err
+				return entity.User{}, err
 			}
 
 			qInsertUserDocument = qInsertUserDocument.Values(user.ID, byteDoc, timeNow)
@@ -427,7 +428,7 @@ func (u userRepo) SetupEducation(ctx context.Context, user sa.User) (sa.User, er
 				fmt.Println("Err rollback setup education generate sql user document : ", errRollback)
 			}
 
-			return sa.User{}, err
+			return entity.User{}, err
 		}
 
 		if _, err = tx.ExecContext(ctx, query, args...); err != nil {
@@ -435,7 +436,7 @@ func (u userRepo) SetupEducation(ctx context.Context, user sa.User) (sa.User, er
 				fmt.Println("Err rollback setup education exec user document : ", errRollback)
 			}
 
-			return sa.User{}, err
+			return entity.User{}, err
 		}
 	}
 	// insert user document end
@@ -445,13 +446,13 @@ func (u userRepo) SetupEducation(ctx context.Context, user sa.User) (sa.User, er
 			fmt.Println("Err commit setup education : ", errRollback)
 		}
 
-		return sa.User{}, err
+		return entity.User{}, err
 	}
 
 	return user, nil
 }
 
 // NewUserRepository .
-func NewUserRepository(db *sql.DB) sa.UserRepository {
+func NewUserRepository(db *sql.DB) business.UserRepository {
 	return userRepo{db: db}
 }

@@ -4,12 +4,12 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"github.com/Nusantara-Muda/scholarship-api/src/business"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/sirupsen/logrus"
-
-	sa "github.com/Nusantara-Muda/scholarship-api"
 )
 
 type paymentRepo struct {
@@ -17,7 +17,7 @@ type paymentRepo struct {
 }
 
 // Fetch .
-func (p paymentRepo) Fetch(ctx context.Context, scholarshipIDs []int64) ([]sa.Payment, error) {
+func (p paymentRepo) Fetch(ctx context.Context, scholarshipIDs []int64) ([]entity.Payment, error) {
 	qSelect := sq.Select("id",
 		"scholarship_id",
 		"deadline",
@@ -49,11 +49,11 @@ func (p paymentRepo) Fetch(ctx context.Context, scholarshipIDs []int64) ([]sa.Pa
 		}
 	}()
 
-	payments := make([]sa.Payment, 0)
+	payments := make([]entity.Payment, 0)
 
 	for rows.Next() {
 		var (
-			payment    sa.Payment
+			payment    entity.Payment
 			bytesImage []byte
 		)
 
@@ -82,7 +82,7 @@ func (p paymentRepo) Fetch(ctx context.Context, scholarshipIDs []int64) ([]sa.Pa
 }
 
 // SubmitTransfer .
-func (p paymentRepo) SubmitTransfer(ctx context.Context, payment sa.Payment) (sa.Payment, error) {
+func (p paymentRepo) SubmitTransfer(ctx context.Context, payment entity.Payment) (entity.Payment, error) {
 	var (
 		errRollback, errCommit error
 		timeNow                = time.Now()
@@ -90,12 +90,12 @@ func (p paymentRepo) SubmitTransfer(ctx context.Context, payment sa.Payment) (sa
 
 	tx, err := p.db.BeginTx(ctx, nil)
 	if err != nil {
-		return sa.Payment{}, err
+		return entity.Payment{}, err
 	}
 
 	byteImage, err := json.Marshal(payment.Image)
 	if err != nil {
-		return sa.Payment{}, err
+		return entity.Payment{}, err
 	}
 
 	query, args, err := sq.Update("payment").
@@ -109,7 +109,7 @@ func (p paymentRepo) SubmitTransfer(ctx context.Context, payment sa.Payment) (sa
 		PlaceholderFormat(sq.Dollar).
 		ToSql()
 	if err != nil {
-		return sa.Payment{}, err
+		return entity.Payment{}, err
 	}
 
 	if _, err = tx.ExecContext(ctx, query, args...); err != nil {
@@ -117,7 +117,7 @@ func (p paymentRepo) SubmitTransfer(ctx context.Context, payment sa.Payment) (sa
 			logrus.Error(errRollback)
 		}
 
-		return sa.Payment{}, err
+		return entity.Payment{}, err
 	}
 
 	query, args, err = sq.Update("scholarship").
@@ -132,7 +132,7 @@ func (p paymentRepo) SubmitTransfer(ctx context.Context, payment sa.Payment) (sa
 			logrus.Error(errRollback)
 		}
 
-		return sa.Payment{}, err
+		return entity.Payment{}, err
 	}
 
 	if _, err = tx.ExecContext(ctx, query, args...); err != nil {
@@ -140,7 +140,7 @@ func (p paymentRepo) SubmitTransfer(ctx context.Context, payment sa.Payment) (sa
 			logrus.Error(errRollback)
 		}
 
-		return sa.Payment{}, err
+		return entity.Payment{}, err
 	}
 
 	if errCommit = tx.Commit(); errCommit != nil {
@@ -148,13 +148,13 @@ func (p paymentRepo) SubmitTransfer(ctx context.Context, payment sa.Payment) (sa
 			logrus.Error(errRollback)
 		}
 
-		return sa.Payment{}, errCommit
+		return entity.Payment{}, errCommit
 	}
 
 	return payment, nil
 }
 
 // NewPaymentRepository ...
-func NewPaymentRepository(db *sql.DB) sa.PaymentRepository {
+func NewPaymentRepository(db *sql.DB) business.PaymentRepository {
 	return paymentRepo{db: db}
 }

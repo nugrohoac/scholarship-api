@@ -1,10 +1,12 @@
 package resolver
 
-import sa "github.com/Nusantara-Muda/scholarship-api"
+import (
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
+)
 
 // RequirementResolver ...
 type RequirementResolver struct {
-	Requirement sa.Requirement
+	Requirement entity.Requirement
 }
 
 // ID ...

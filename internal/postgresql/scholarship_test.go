@@ -2,8 +2,8 @@ package postgresql_test
 
 import (
 	"context"
-	sa "github.com/Nusantara-Muda/scholarship-api"
 	"github.com/Nusantara-Muda/scholarship-api/internal/postgresql"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	"github.com/Nusantara-Muda/scholarship-api/testdata"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
@@ -24,8 +24,8 @@ func TestScholarshipRepository(t *testing.T) {
 
 func (s scholarshipSuite) TestScholarshipRepoCreate() {
 	var (
-		scholarship  sa.Scholarship
-		requirements = make([]sa.Requirement, 0)
+		scholarship  entity.Scholarship
+		requirements = make([]entity.Requirement, 0)
 	)
 
 	testdata.GoldenJSONUnmarshal(s.T(), "scholarship", &scholarship)
@@ -52,14 +52,14 @@ func (s scholarshipSuite) TestScholarshipRepoCreate() {
 
 func (s scholarshipSuite) TestScholarshipRepoFetch() {
 	t := s.T()
-	scholarships := make([]sa.Scholarship, 0)
+	scholarships := make([]entity.Scholarship, 0)
 	testdata.GoldenJSONUnmarshal(t, "scholarships", &scholarships)
 	postgresql.SeedScholarship(s.DBConn, t, scholarships)
 
 	scholarshipRepository := postgresql.NewScholarshipRepository(s.DBConn, 72)
 
 	// without filter
-	response, cursor, err := scholarshipRepository.Fetch(context.Background(), sa.ScholarshipFilter{})
+	response, cursor, err := scholarshipRepository.Fetch(context.Background(), entity.ScholarshipFilter{})
 	require.NoError(t, err)
 	require.Equal(t, "MjAyMi0wMS0yOVQxMzozMTowMS4yNjNa", cursor)
 	require.Equal(t, 2, len(response))
@@ -67,21 +67,21 @@ func (s scholarshipSuite) TestScholarshipRepoFetch() {
 	require.Equal(t, int64(2), response[1].ID)
 
 	// filter limit 1
-	response, cursor, err = scholarshipRepository.Fetch(context.Background(), sa.ScholarshipFilter{Limit: 1})
+	response, cursor, err = scholarshipRepository.Fetch(context.Background(), entity.ScholarshipFilter{Limit: 1})
 	require.NoError(t, err)
 	require.Equal(t, "MjAyMi0wMS0yOVQxMzozMTowMy4yNjNa", cursor)
 	require.Equal(t, 1, len(response))
 	require.Equal(t, int64(3), response[0].ID)
 
 	// filter cursor
-	response, cursor, err = scholarshipRepository.Fetch(context.Background(), sa.ScholarshipFilter{Cursor: "MjAyMi0wMS0yOVQxMzozMTowMy4yNjNa"})
+	response, cursor, err = scholarshipRepository.Fetch(context.Background(), entity.ScholarshipFilter{Cursor: "MjAyMi0wMS0yOVQxMzozMTowMy4yNjNa"})
 	require.NoError(t, err)
 	require.Equal(t, "MjAyMi0wMS0yOVQxMzozMTowMS4yNjNa", cursor)
 	require.Equal(t, 1, len(response))
 	require.Equal(t, int64(2), response[0].ID)
 
 	// filter sponsor id
-	response, cursor, err = scholarshipRepository.Fetch(context.Background(), sa.ScholarshipFilter{SponsorID: 1})
+	response, cursor, err = scholarshipRepository.Fetch(context.Background(), entity.ScholarshipFilter{SponsorID: 1})
 	require.NoError(t, err)
 	require.Equal(t, "MjAyMi0wMS0yOVQxMzozMTowMS4yNjNa", cursor)
 	require.Equal(t, 1, len(response))
@@ -90,8 +90,8 @@ func (s scholarshipSuite) TestScholarshipRepoFetch() {
 
 func (s scholarshipSuite) TestScholarshipRepoGetByID() {
 	var (
-		scholarship  sa.Scholarship
-		requirements = make([]sa.Requirement, 0)
+		scholarship  entity.Scholarship
+		requirements = make([]entity.Requirement, 0)
 	)
 
 	testdata.GoldenJSONUnmarshal(s.T(), "scholarship", &scholarship)
@@ -100,7 +100,7 @@ func (s scholarshipSuite) TestScholarshipRepoGetByID() {
 	requirements[0].ScholarshipID = 1
 	requirements[1].ScholarshipID = 1
 
-	postgresql.SeedScholarship(s.DBConn, s.T(), []sa.Scholarship{scholarship})
+	postgresql.SeedScholarship(s.DBConn, s.T(), []entity.Scholarship{scholarship})
 	postgresql.SeedRequirements(s.DBConn, s.T(), requirements)
 
 	scholarshipRepo := postgresql.NewScholarshipRepository(s.DBConn, 72)
@@ -111,12 +111,12 @@ func (s scholarshipSuite) TestScholarshipRepoGetByID() {
 
 func (s scholarshipSuite) TestScholarshipRepoApplyScholarship() {
 	var (
-		user        sa.User
-		scholarship sa.Scholarship
+		user        entity.User
+		scholarship entity.Scholarship
 		t           = s.T()
 	)
 
-	recommendationLetter := sa.Image{
+	recommendationLetter := entity.Image{
 		URL:    "https://recommendation-letter",
 		Width:  100,
 		Height: 100,
@@ -128,7 +128,7 @@ func (s scholarshipSuite) TestScholarshipRepoApplyScholarship() {
 
 	testdata.GoldenJSONUnmarshal(t, "scholarship", &scholarship)
 	testdata.GoldenJSONUnmarshal(t, "user", &user)
-	postgresql.SeedScholarship(s.DBConn, t, []sa.Scholarship{scholarship})
+	postgresql.SeedScholarship(s.DBConn, t, []entity.Scholarship{scholarship})
 
 	scholarshipRepo := postgresql.NewScholarshipRepository(s.DBConn, 72)
 	err := scholarshipRepo.Apply(context.Background(), user.ID, scholarship.ID, currentApplicant, essay, recommendationLetter)

@@ -3,12 +3,12 @@ package query_test
 import (
 	"context"
 	"errors"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	"testing"
 
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 
-	sa "github.com/Nusantara-Muda/scholarship-api"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/query"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/resolver"
 	"github.com/Nusantara-Muda/scholarship-api/mocks"
@@ -21,10 +21,10 @@ func TestBankQuery_Fetch(t *testing.T) {
 		cursor       = "cursor"
 	)
 
-	banks := make([]sa.Bank, 0)
+	banks := make([]entity.Bank, 0)
 	testdata.GoldenJSONUnmarshal(t, "banks", &banks)
 
-	bankFeed := sa.BankFeed{
+	bankFeed := entity.BankFeed{
 		Cursor: cursor,
 		Banks:  banks,
 	}
@@ -33,20 +33,20 @@ func TestBankQuery_Fetch(t *testing.T) {
 
 	tests := map[string]struct {
 		paramCtx     context.Context
-		paramFilter  sa.InputBankFilter
+		paramFilter  entity.InputBankFilter
 		fetchBank    testdata.FuncCaller
 		expectedResp *resolver.BankFeedResolver
 		expectedErr  error
 	}{
 		"success": {
 			paramCtx: context.Background(),
-			paramFilter: sa.InputBankFilter{
+			paramFilter: entity.InputBankFilter{
 				Limit:  &limit,
 				Cursor: &cursor,
 			},
 			fetchBank: testdata.FuncCaller{
 				IsCalled: true,
-				Input:    []interface{}{mock.Anything, sa.BankFilter{Limit: int(limit), Cursor: cursor}},
+				Input:    []interface{}{mock.Anything, entity.BankFilter{Limit: int(limit), Cursor: cursor}},
 				Output:   []interface{}{bankFeed, nil},
 			},
 			expectedResp: &bankResolver,
@@ -54,14 +54,14 @@ func TestBankQuery_Fetch(t *testing.T) {
 		},
 		"error": {
 			paramCtx: context.Background(),
-			paramFilter: sa.InputBankFilter{
+			paramFilter: entity.InputBankFilter{
 				Limit:  &limit,
 				Cursor: &cursor,
 			},
 			fetchBank: testdata.FuncCaller{
 				IsCalled: true,
-				Input:    []interface{}{mock.Anything, sa.BankFilter{Limit: int(limit), Cursor: cursor}},
-				Output:   []interface{}{sa.BankFeed{}, errors.New("internal server error")},
+				Input:    []interface{}{mock.Anything, entity.BankFilter{Limit: int(limit), Cursor: cursor}},
+				Output:   []interface{}{entity.BankFeed{}, errors.New("internal server error")},
 			},
 			expectedResp: nil,
 			expectedErr:  errors.New("internal server error"),

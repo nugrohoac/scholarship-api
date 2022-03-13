@@ -1,14 +1,13 @@
 package resolver
 
 import (
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	"time"
-
-	sa "github.com/Nusantara-Muda/scholarship-api"
 )
 
 // ScholarshipResolver ...
 type ScholarshipResolver struct {
-	Scholarship sa.Scholarship
+	Scholarship entity.Scholarship
 }
 
 // ID ...
@@ -128,7 +127,7 @@ func (s ScholarshipResolver) Requirements() *[]*RequirementResolver {
 
 // ScholarshipFeedResolver ...
 type ScholarshipFeedResolver struct {
-	ScholarshipFeed sa.ScholarshipFeed
+	ScholarshipFeed entity.ScholarshipFeed
 }
 
 // Cursor ...

@@ -1,10 +1,12 @@
 package resolver
 
-import sa "github.com/Nusantara-Muda/scholarship-api"
+import (
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
+)
 
 // BankResolver .
 type BankResolver struct {
-	Bank sa.Bank
+	Bank entity.Bank
 }
 
 // ID ...
@@ -25,7 +27,7 @@ func (b BankResolver) Code() *string {
 
 // BankFeedResolver .
 type BankFeedResolver struct {
-	BankFeed sa.BankFeed
+	BankFeed entity.BankFeed
 }
 
 // Cursor .
