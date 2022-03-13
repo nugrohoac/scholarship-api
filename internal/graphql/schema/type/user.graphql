@@ -16,6 +16,7 @@ type user {
     bankId: Int
     bankAccountNo: String
     bankAccountName: String
+    createdAt: String
 }
 
 type loginResponse {

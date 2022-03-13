@@ -110,6 +110,12 @@ func (u UserResolver) CardIdentities() *[]*CardIdentityResolver {
 	return &cards
 }
 
+// CreatedAt ...
+func (u UserResolver) CreatedAt() *string {
+	time := u.User.CreatedAt.Format("2006-01-02 15:04:05")
+	return &time
+}
+
 // LoginResponseResolver ...
 type LoginResponseResolver struct {
 	LoginResponse entity.LoginResponse

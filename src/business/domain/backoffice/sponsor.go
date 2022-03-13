@@ -23,7 +23,7 @@ func NewSponsorRepository(db *sql.DB) business.SponsorRepository {
 
 // Fetch sponsor
 func (u sponsorRepo) FetchSponsor(ctx context.Context, filter entity.SponsorFilter) ([]entity.User, string, error) {
-	qSelect := sq.Select("id", "name", "email", "phone_no", "photo").
+	qSelect := sq.Select("id", "name", "email", "phone_no", "photo", "created_at").
 		From("public.user").
 		Where(sq.Eq{"type": "sponsor"}).
 		OrderBy("created_at desc").
@@ -77,6 +77,7 @@ func (u sponsorRepo) FetchSponsor(ctx context.Context, filter entity.SponsorFilt
 			&user.Email,
 			&user.PhoneNo,
 			&bytePhoto,
+			&user.CreatedAt,
 		); err != nil {
 			return nil, "", err
 		}
