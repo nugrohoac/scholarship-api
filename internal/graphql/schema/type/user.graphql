@@ -11,7 +11,8 @@ type user {
     postalCode: String
     address: String
     gender: gender
-    ethnic: String
+    ethnicId: Int
+    ethnic: Ethnic
     cardIdentities: [cardIdentity]
     bankId: Int
     bankAccountNo: String
@@ -63,4 +64,8 @@ input inputDegreeUserSchool {
 enum genderType {
     male
     female
+}
+
+input inputEthnic {
+    id: Int
 }

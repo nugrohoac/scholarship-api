@@ -11,13 +11,17 @@
      "mime":"",
      "caption":""
   },
+  "ethnic": {
+    "id": 1,
+    "name": "asian"
+  },
   "company_name":"jhon company name",
   "status":0,
   "country_id":1,
   "postal_code":"57281",
   "address":"jl s parman no 30",
   "gender":"",
-  "ethnic":"",
+  "ethnic_id":0,
   "bank_id":1,
   "bank_account_no":"0912234",
   "bank_account_name":"jhon wick",

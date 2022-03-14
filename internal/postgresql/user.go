@@ -50,33 +50,35 @@ func (u userRepo) Store(ctx context.Context, user entity.User) (entity.User, err
 
 // Fetch ...
 func (u userRepo) Fetch(ctx context.Context, filter entity.UserFilter) ([]entity.User, string, error) {
-	qSelect := sq.Select("id",
-		"name",
-		"type",
-		"email",
-		"phone_no",
-		"photo",
-		"company_name",
-		"status",
-		"country_id",
-		"postal_code",
-		"address",
-		"gender",
-		"ethnic",
-		"bank_id",
-		"bank_account_no",
-		"bank_account_name",
-		"created_at",
-	).From("\"user\"").
+	qSelect := sq.Select("u.id",
+		"u.name",
+		"u.type",
+		"u.email",
+		"u.phone_no",
+		"u.photo",
+		"u.company_name",
+		"u.status",
+		"u.country_id",
+		"u.postal_code",
+		"u.address",
+		"u.gender",
+		"u.ethnic_id",
+		"u.bank_id",
+		"u.bank_account_no",
+		"u.bank_account_name",
+		"u.created_at",
+		"e.name",
+	).From("\"user\" u").
+		LeftJoin("ethnic e on u.ethnic_id = e.id").
 		OrderBy("created_at desc").
 		PlaceholderFormat(sq.Dollar)
 
 	if filter.Email != "" {
-		qSelect = qSelect.Where(sq.Eq{"email": filter.Email})
+		qSelect = qSelect.Where(sq.Eq{"u.email": filter.Email})
 	}
 
 	if len(filter.IDs) > 0 {
-		qSelect = qSelect.Where(sq.Eq{"id": filter.IDs})
+		qSelect = qSelect.Where(sq.Eq{"u.id": filter.IDs})
 	}
 
 	query, args, err := qSelect.ToSql()
@@ -102,7 +104,10 @@ func (u userRepo) Fetch(ctx context.Context, filter entity.UserFilter) ([]entity
 	)
 
 	for rows.Next() {
-		var user entity.User
+		var (
+			user       entity.User
+			ethnicName sql.NullString
+		)
 
 		if err = rows.Scan(
 			&user.ID,
@@ -117,11 +122,12 @@ func (u userRepo) Fetch(ctx context.Context, filter entity.UserFilter) ([]entity
 			&user.PostalCode,
 			&user.Address,
 			&user.Gender,
-			&user.Ethnic,
+			&user.EthnicID,
 			&user.BankID,
 			&user.BankAccountNo,
 			&user.BankAccountName,
 			&user.CreatedAt,
+			&ethnicName,
 		); err != nil {
 			return nil, "", err
 		}
@@ -132,6 +138,12 @@ func (u userRepo) Fetch(ctx context.Context, filter entity.UserFilter) ([]entity
 				return nil, "", err
 			}
 		}
+
+		if ethnicName.Valid {
+			user.Ethnic.Name = ethnicName.String
+		}
+
+		user.Ethnic.ID = user.EthnicID
 
 		users = append(users, user)
 	}
@@ -220,7 +232,7 @@ func (u userRepo) UpdateByID(ctx context.Context, ID int64, user entity.User) (e
 			"bank_account_no":   user.BankAccountNo,
 			"bank_account_name": user.BankAccountName,
 			"status":            user.Status,
-			"ethnic":            user.Ethnic,
+			"ethnic_id":         user.Ethnic.ID,
 			"gender":            user.Gender,
 			"updated_at":        timeNow,
 		}).Where(sq.Eq{"id": ID}).

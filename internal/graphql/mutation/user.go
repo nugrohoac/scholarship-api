@@ -68,7 +68,9 @@ func (u UserMutation) UpdateUser(ctx context.Context, param entity.InputUpdateUs
 	}
 
 	if param.Ethnic != nil {
-		user.Ethnic = *param.Ethnic
+		if param.Ethnic.ID != nil {
+			user.Ethnic.ID = *param.Ethnic.ID
+		}
 	}
 
 	if param.Gender != nil {

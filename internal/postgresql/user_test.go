@@ -45,6 +45,18 @@ func (u userSuite) TestUserRepoFetch() {
 	testdata.GoldenJSONUnmarshal(t, "users", &users)
 	postgresql.SeedUsers(u.DBConn, t, users)
 
+	ethnics := make([]entity.Ethnic, 0)
+	for _, user := range users {
+		if user.Ethnic.ID != 0 {
+			ethnics = append(ethnics, entity.Ethnic{
+				ID:   user.Ethnic.ID,
+				Name: user.Ethnic.Name,
+			})
+		}
+	}
+
+	postgresql.SeedEthnics(u.DBConn, t, ethnics)
+
 	userRepo := postgresql.NewUserRepository(u.DBConn)
 	usersResp, cursor, err := userRepo.Fetch(context.Background(), entity.UserFilter{Email: users[0].Email})
 	require.NoError(t, err)

@@ -12,13 +12,17 @@
          "mime":"",
          "caption":""
       },
+      "ethnic_id":0,
+      "ethnic": {
+          "id": 0,
+          "name": ""
+      },
       "company_name":"jhon company name",
       "status":0,
       "country_id":1,
       "postal_code":"57281",
       "address":"jl s parman no 30",
       "gender":"male",
-      "ethnic":"latin",
       "bank_id":1,
       "bank_account_no":"0912234",
       "bank_account_name":"jhon wick",
@@ -37,13 +41,17 @@
          "mime":"",
          "caption":""
       },
+      "ethnic_id":0,
+      "ethnic": {
+          "id": 1,
+          "name": "asian"
+      },
       "company_name":"yayan company name",
       "status":0,
       "country_id":1,
       "postal_code":"57285",
       "address":"jl ahmad yani no 99",
       "gender":"male",
-      "ethnic":"asian",
       "bank_id":1,
       "bank_account_no":"0888111",
       "bank_account_name":"yayan ruhiyan",

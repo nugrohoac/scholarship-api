@@ -18,8 +18,8 @@ type Mutation {
         bankId: Int!
         bankAccountNo: String!
         bankAccountName: String!
-        ethnic: String
-        gender: String
+        ethnic: inputEthnic
+        gender: genderType
     ): user
 
     ActivateUser(
