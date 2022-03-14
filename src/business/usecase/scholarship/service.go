@@ -179,6 +179,15 @@ func (s scholarshipService) Apply(ctx context.Context, userID, scholarshipID int
 		}
 	}
 
+	isApply, _, err := s.scholarshipRepo.CheckApply(ctx, userID, scholarshipID)
+	if err != nil {
+		return "", err
+	}
+
+	if isApply {
+		return "", errors.ErrNotAllowed{Message: "you have been applied scholarship"}
+	}
+
 	if err = s.scholarshipRepo.Apply(ctx, userID, scholarshipID, applicant, essay, recommendationLetter); err != nil {
 		return "", err
 	}

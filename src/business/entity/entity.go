@@ -11,7 +11,7 @@ const (
 	Sponsor = "sponsor"
 	// Student ...
 	Student = "student"
-	// admin
+	// Admin ...
 	Admin = "admin"
 	// KTP ...
 	//KTP = "ktp"
@@ -157,7 +157,7 @@ type SponsorFilter struct {
 type InputSponsorFilter struct {
 	Limit  *int32
 	Cursor *string
-	Email   *string
+	Email  *string
 }
 
 // Claim ...
