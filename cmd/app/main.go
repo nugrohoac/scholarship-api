@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/Nusantara-Muda/scholarship-api/src/business/handler"
 	"net/http"
 	"time"
 
@@ -14,6 +13,7 @@ import (
 	"github.com/Nusantara-Muda/scholarship-api/cmd"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/schema"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/handler"
 )
 
 func main() {
@@ -39,6 +39,7 @@ func main() {
 		cmd.DegreeQuery,
 		cmd.MajorQuery,
 		cmd.SchoolQuery,
+		cmd.EthnicQuery,
 		cmd.UserMutation,
 		cmd.ScholarshipMutation,
 		cmd.PaymentMutation,

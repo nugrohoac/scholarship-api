@@ -15,6 +15,7 @@ type RootGraphql struct {
 	query.DegreeQuery
 	query.MajorQuery
 	query.SchoolQuery
+	query.EthnicQuery
 	mutation.UserMutation
 	mutation.ScholarshipMutation
 	mutation.PaymentMutation
@@ -31,6 +32,7 @@ func NewRootGraphql(
 	degreeQuery query.DegreeQuery,
 	majorQuery query.MajorQuery,
 	schoolQuery query.SchoolQuery,
+	ethnicQuery query.EthnicQuery,
 	userMutation mutation.UserMutation,
 	scholarshipMutation mutation.ScholarshipMutation,
 	paymentMutation mutation.PaymentMutation,
@@ -46,6 +48,7 @@ func NewRootGraphql(
 		degreeQuery,
 		majorQuery,
 		schoolQuery,
+		ethnicQuery,
 		userMutation,
 		scholarshipMutation,
 		paymentMutation,

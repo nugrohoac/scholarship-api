@@ -57,7 +57,7 @@ func SeedUsers(db *sql.DB, t *testing.T, users []entity.User) {
 			"postal_code",
 			"address",
 			"gender",
-			"ethnic",
+			"ethnic_id",
 			"bank_id",
 			"bank_account_no",
 			"bank_account_name",
@@ -81,7 +81,7 @@ func SeedUsers(db *sql.DB, t *testing.T, users []entity.User) {
 			user.PostalCode,
 			user.Address,
 			user.Gender,
-			user.Ethnic,
+			user.Ethnic.ID,
 			user.BankID,
 			user.BankAccountNo,
 			user.BankAccountName,
@@ -347,6 +347,21 @@ func SeedBankTransfer(db *sql.DB, t *testing.T, bankTransfers ...entity.BankTran
 			byteImage,
 			bt.CreatedAt,
 		)
+	}
+
+	query, args, err := qInsert.PlaceholderFormat(sq.Dollar).ToSql()
+	require.NoError(t, err)
+
+	_, err = db.Exec(query, args...)
+	require.NoError(t, err)
+}
+
+// SeedEthnics .
+func SeedEthnics(db *sql.DB, t *testing.T, ethnics []entity.Ethnic) {
+	qInsert := sq.Insert("ethnic").Columns("id", "name")
+
+	for _, ethnic := range ethnics {
+		qInsert = qInsert.Values(ethnic.ID, ethnic.Name)
 	}
 
 	query, args, err := qInsert.PlaceholderFormat(sq.Dollar).ToSql()

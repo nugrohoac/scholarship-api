@@ -8,6 +8,7 @@ import (
 	"github.com/Nusantara-Muda/scholarship-api/src/business"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/domain/backoffice"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/backoffice/sponsor"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/ethnic"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/major"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/school"
 	"log"
@@ -47,6 +48,7 @@ var (
 	majorRepo           business.MajorRepository
 	schoolRepo          business.SchoolRepository
 	sponsorRepo         business.SponsorRepository
+	ethnicRepo          business.EthnicRepository
 
 	bankService        business.BankService
 	countryService     business.CountryService
@@ -57,6 +59,7 @@ var (
 	majorService       business.MajorService
 	schoolService      business.SchoolService
 	sponsorService     business.SponsorService
+	ethnicService      business.EthnicService
 
 	// email
 	emailDomain        string
@@ -75,6 +78,8 @@ var (
 	MajorQuery query.MajorQuery
 	// SchoolQuery .
 	SchoolQuery query.SchoolQuery
+	// EthnicQuery .
+	EthnicQuery query.EthnicQuery
 
 	// UserMutation ...
 	UserMutation mutation.UserMutation
@@ -191,6 +196,7 @@ func initApp() {
 	majorRepo = postgresql.NewMajorRepository(db)
 	schoolRepo = postgresql.NewSchoolRepository(db)
 	sponsorRepo = backoffice.NewSponsorRepository(db)
+	ethnicRepo = postgresql.NewEthnicRepository(db)
 
 	bankService = bank.NewBankService(bankRepo)
 	userService = user.NewUserService(userRepo, jwtHash, emailRepo)
@@ -201,6 +207,7 @@ func initApp() {
 	majorService = major.NewMajorService(majorRepo)
 	schoolService = school.NewSchoolService(schoolRepo)
 	sponsorService = sponsor.NewSponsorService(sponsorRepo)
+	ethnicService = ethnic.NewEthnicService(ethnicRepo)
 
 	UserMutation = mutation.NewUserMutation(userService)
 	ScholarshipMutation = mutation.NewScholarshipMutation(scholarshipService)
@@ -215,4 +222,5 @@ func initApp() {
 	MajorQuery = query.NewMajorQuery(majorService)
 	SchoolQuery = query.NewSchoolQuery(schoolService)
 	SponsorQuery = backoffice2.NewSponsorQuery(sponsorService)
+	EthnicQuery = query.NewEthnicQuery(ethnicService)
 }

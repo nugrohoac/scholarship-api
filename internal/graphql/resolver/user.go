@@ -77,9 +77,14 @@ func (u UserResolver) Gender() *string {
 	return &u.User.Gender
 }
 
-// Ethnic ...
-func (u UserResolver) Ethnic() *string {
-	return &u.User.Ethnic
+// EthnicID ...
+func (u UserResolver) EthnicID() *int32 {
+	return &u.User.EthnicID
+}
+
+// Ethnic .
+func (u UserResolver) Ethnic() *EthnicResolver {
+	return &EthnicResolver{Ethnic: u.User.Ethnic}
 }
 
 // BankID ...

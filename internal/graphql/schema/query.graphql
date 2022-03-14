@@ -56,4 +56,6 @@ type Query {
         cursor: String
         email: String
     ): sponsorFeed
+
+    FetchEthnic: [Ethnic]
 }

@@ -90,7 +90,8 @@ type User struct {
 	PostalCode       string         `json:"postal_code"`
 	Address          string         `json:"address"`
 	Gender           string         `json:"gender"`
-	Ethnic           string         `json:"ethnic"`
+	EthnicID         int32          `json:"ethnic_id"`
+	Ethnic           Ethnic         `json:"ethnic"`
 	CardIdentities   []CardIdentity `json:"card_identities"`
 	BankID           int32          `json:"bank_id"`
 	BankAccountNo    string         `json:"bank_account_no"`
@@ -103,6 +104,12 @@ type User struct {
 	UserSchools      []UserSchool   `json:"user_schools"`
 	CreatedAt        time.Time      `json:"created_at"`
 	UpdatedAt        time.Time      `json:"-"`
+}
+
+// Ethnic .
+type Ethnic struct {
+	ID   int32
+	Name string
 }
 
 // UserFilter ...
@@ -212,8 +219,13 @@ type InputUpdateUser struct {
 	BankID          int32
 	BankAccountNo   string
 	BankAccountName string
-	Ethnic          *string
+	Ethnic          *InputEthnic
 	Gender          *string
+}
+
+// InputEthnic ...
+type InputEthnic struct {
+	ID *int32
 }
 
 // Scholarship ...
