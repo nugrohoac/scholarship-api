@@ -4,8 +4,8 @@ package mocks
 
 import (
 	context "context"
-	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 
+	entity "github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -26,6 +26,34 @@ func (_m *ScholarshipRepository) Apply(ctx context.Context, userID int64, schola
 	}
 
 	return r0
+}
+
+// CheckApply provides a mock function with given fields: ctx, userID, scholarshipID
+func (_m *ScholarshipRepository) CheckApply(ctx context.Context, userID int64, scholarshipID int64) (bool, int, error) {
+	ret := _m.Called(ctx, userID, scholarshipID)
+
+	var r0 bool
+	if rf, ok := ret.Get(0).(func(context.Context, int64, int64) bool); ok {
+		r0 = rf(ctx, userID, scholarshipID)
+	} else {
+		r0 = ret.Get(0).(bool)
+	}
+
+	var r1 int
+	if rf, ok := ret.Get(1).(func(context.Context, int64, int64) int); ok {
+		r1 = rf(ctx, userID, scholarshipID)
+	} else {
+		r1 = ret.Get(1).(int)
+	}
+
+	var r2 error
+	if rf, ok := ret.Get(2).(func(context.Context, int64, int64) error); ok {
+		r2 = rf(ctx, userID, scholarshipID)
+	} else {
+		r2 = ret.Error(2)
+	}
+
+	return r0, r1, r2
 }
 
 // Create provides a mock function with given fields: ctx, scholarship
