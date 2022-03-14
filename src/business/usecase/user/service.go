@@ -104,6 +104,12 @@ func (u userService) UpdateByID(ctx context.Context, ID int64, user entity.User)
 
 	// 2 = active and profile is complete
 	user.Status = 2
+
+	if users[0].Status > 2 {
+		// 2 = active and profile is complete
+		user.Status = users[0].Status
+	}
+
 	user, err = u.userRepo.UpdateByID(ctx, ID, user)
 	if err != nil {
 		return entity.User{}, err
