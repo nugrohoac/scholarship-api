@@ -237,7 +237,7 @@ func (u userService) SetupEducation(ctx context.Context, user entity.User) (enti
 	}
 
 	// check status, should 2
-	if userLogin.Status != 2 {
+	if userLogin.Status < 2 {
 		return entity.User{}, errors.ErrNotAllowed{Message: "user status is not complete profile"}
 	}
 
