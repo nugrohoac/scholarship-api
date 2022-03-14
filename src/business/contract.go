@@ -66,6 +66,7 @@ type ScholarshipRepository interface {
 	Fetch(ctx context.Context, filter entity.ScholarshipFilter) ([]entity.Scholarship, string, error)
 	GetByID(ctx context.Context, ID int64) (entity.Scholarship, error)
 	Apply(ctx context.Context, userID, scholarshipID int64, applicant int, essay string, recommendationLetter entity.Image) error
+	CheckApply(ctx context.Context, userID, scholarshipID int64) (bool, int, error)
 }
 
 // RequirementDescriptionRepository .
@@ -138,5 +139,3 @@ type SponsorRepository interface {
 type SponsorService interface {
 	FetchSponsor(ctx context.Context, filter entity.SponsorFilter) (entity.SponsorFeed, error)
 }
-
-

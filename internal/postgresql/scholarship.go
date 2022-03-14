@@ -471,6 +471,31 @@ func (s scholarshipRepo) Apply(ctx context.Context, userID, scholarshipID int64,
 	return nil
 }
 
+// CheckApply .
+func (s scholarshipRepo) CheckApply(ctx context.Context, userID, scholarshipID int64) (bool, int, error) {
+	query, args, err := sq.Select("status").
+		From("user_scholarship").
+		Where(sq.Eq{"user_id": userID}).
+		Where(sq.Eq{"scholarship_id": scholarshipID}).
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+	if err != nil {
+		return false, 0, err
+	}
+
+	var status int
+	row := s.db.QueryRowContext(ctx, query, args...)
+	if err = row.Scan(&status); err != nil {
+		if err == sql.ErrNoRows {
+			return false, 0, nil
+		}
+
+		return false, 0, err
+	}
+
+	return true, status, nil
+}
+
 // NewScholarshipRepository ...
 func NewScholarshipRepository(db *sql.DB, deadlinePayment int) business.ScholarshipRepository {
 	return scholarshipRepo{
