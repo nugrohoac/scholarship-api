@@ -43,11 +43,12 @@ $ go test ./... -cover -race
 ```
 
 ## Unit Test
-This is just running unit test without integraton test. Make sure mocks is up-to-date.
+This is just running unit test without integration test. Make sure mocks is up-to-date.
 * generate or update mock base on name of [interface](./contract.go)
 #### generate or update mocks
 ```bash
 $ mockery -name=name-of-interface
+$ mockery --dir=source/directory --name=nameInterface --output=destination/directory
 ```
 #### Running Integration Test
 ```bash

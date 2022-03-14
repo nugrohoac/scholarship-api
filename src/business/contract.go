@@ -130,12 +130,22 @@ type SchoolService interface {
 	Fetch(ctx context.Context, filter entity.SchoolFilter) (entity.SchoolFeed, error)
 }
 
-// SponsorRepository..
+// SponsorRepository .
 type SponsorRepository interface {
 	FetchSponsor(ctx context.Context, filter entity.SponsorFilter) ([]entity.User, string, error)
 }
 
-// SponsorService..
+// SponsorService .
 type SponsorService interface {
 	FetchSponsor(ctx context.Context, filter entity.SponsorFilter) (entity.SponsorFeed, error)
+}
+
+// EthnicRepository .
+type EthnicRepository interface {
+	Fetch(ctx context.Context) ([]entity.Ethnic, error)
+}
+
+// EthnicService .
+type EthnicService interface {
+	Fetch(ctx context.Context) ([]entity.Ethnic, error)
 }
