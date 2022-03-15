@@ -13,6 +13,8 @@ CREATE TABLE "user" (
     "address" varchar(255) DEFAULT '',
     "gender" varchar(15) DEFAULT '',
     "ethnic_id" integer default 0,
+    "birth_date" date NOT NULL default '0001-01-01',
+    "birth_place" varchar(255) not null default '',
     "bank_id" bigint DEFAULT 0,
     "bank_account_no" varchar(50) DEFAULT '',
     "bank_account_name" varchar(100) DEFAULT '',

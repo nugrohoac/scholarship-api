@@ -12,6 +12,8 @@ type user {
     address: String
     gender: gender
     ethnicId: Int
+    birthDate: String
+    birthPlace: String
     ethnic: Ethnic
     cardIdentities: [cardIdentity]
     bankId: Int
