@@ -19,6 +19,7 @@ type scholarship {
     requirements: [requirement]
     payment: payment
     createdAt: String
+    applicationStatus: Int
 }
 
 type scholarshipFeed {

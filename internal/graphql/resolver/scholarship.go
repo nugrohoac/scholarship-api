@@ -158,3 +158,8 @@ func (s ScholarshipResolver) CreatedAt() *string {
 	ca := s.Scholarship.CreatedAt.Format(time.RFC3339)
 	return &ca
 }
+
+// ApplicationStatus .
+func (s ScholarshipResolver) ApplicationStatus() *int32 {
+	return s.Scholarship.ApplicationStatus
+}
