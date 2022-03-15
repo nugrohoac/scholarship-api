@@ -118,7 +118,13 @@ func TestUserMutationUpdateUser(t *testing.T) {
 		BankID:          users[0].BankID,
 		BankAccountNo:   users[0].BankAccountNo,
 		BankAccountName: users[0].BankAccountName,
+		BirthPlace:      users[0].BirthPlace,
 	}
+
+	birthDayStr := users[0].BirthDate.Format("2006-01-02")
+	birthDate, err := time.Parse("2006-01-02", birthDayStr)
+	require.NoError(t, err)
+	user.BirthDate = birthDate
 
 	for _, c := range user.CardIdentities {
 		inputCardIdentities = append(inputCardIdentities, entity.InputCardIdentity{
@@ -148,6 +154,8 @@ func TestUserMutationUpdateUser(t *testing.T) {
 		BankID:          users[0].BankID,
 		BankAccountNo:   users[0].BankAccountNo,
 		BankAccountName: users[0].BankAccountName,
+		BirthPlace:      users[0].BirthPlace,
+		BirthDate:       users[0].BirthDate.Format("2006-01-02"),
 	}
 
 	userResolver := resolver.UserResolver{User: user}

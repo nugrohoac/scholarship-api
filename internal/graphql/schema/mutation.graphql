@@ -20,6 +20,8 @@ type Mutation {
         bankAccountName: String!
         ethnic: inputEthnic
         gender: genderType
+        birthDate: String!
+        birthPlace: String!
     ): user
 
     ActivateUser(

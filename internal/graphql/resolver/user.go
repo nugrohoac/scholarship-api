@@ -2,6 +2,7 @@ package resolver
 
 import (
 	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
+	"time"
 )
 
 // UserResolver ...
@@ -80,6 +81,17 @@ func (u UserResolver) Gender() *string {
 // EthnicID ...
 func (u UserResolver) EthnicID() *int32 {
 	return &u.User.EthnicID
+}
+
+// BirthDate .
+func (u UserResolver) BirthDate() *string {
+	bd := u.User.BirthDate.Format(time.RFC3339)
+	return &bd
+}
+
+// BirthPlace .
+func (u UserResolver) BirthPlace() *string {
+	return &u.User.BirthPlace
 }
 
 // Ethnic .

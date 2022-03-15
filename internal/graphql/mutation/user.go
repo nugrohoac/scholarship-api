@@ -5,6 +5,7 @@ import (
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/resolver"
 	"github.com/Nusantara-Muda/scholarship-api/src/business"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/errors"
 	"time"
 )
 
@@ -57,6 +58,7 @@ func (u UserMutation) UpdateUser(ctx context.Context, param entity.InputUpdateUs
 		BankID:          param.BankID,
 		BankAccountNo:   param.BankAccountNo,
 		BankAccountName: param.BankAccountName,
+		BirthPlace:      param.BirthPlace,
 	}
 
 	if param.Photo != nil {
@@ -76,6 +78,13 @@ func (u UserMutation) UpdateUser(ctx context.Context, param entity.InputUpdateUs
 	if param.Gender != nil {
 		user.Gender = *param.Gender
 	}
+
+	birthDate, err := time.Parse("2006-01-02", param.BirthDate)
+	if err != nil {
+		return nil, errors.ErrBadRequest{Message: err.Error()}
+	}
+
+	user.BirthDate = birthDate
 
 	userUpdated, err := u.userService.UpdateByID(ctx, user.ID, user)
 	if err != nil {

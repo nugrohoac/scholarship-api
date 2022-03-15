@@ -92,6 +92,8 @@ type User struct {
 	Gender           string         `json:"gender"`
 	EthnicID         int32          `json:"ethnic_id"`
 	Ethnic           Ethnic         `json:"ethnic"`
+	BirthDate        time.Time      `json:"birth_date"`
+	BirthPlace       string         `json:"birth_place"`
 	CardIdentities   []CardIdentity `json:"card_identities"`
 	BankID           int32          `json:"bank_id"`
 	BankAccountNo    string         `json:"bank_account_no"`
@@ -221,6 +223,8 @@ type InputUpdateUser struct {
 	BankAccountName string
 	Ethnic          *InputEthnic
 	Gender          *string
+	BirthDate       string
+	BirthPlace      string
 }
 
 // InputEthnic ...
