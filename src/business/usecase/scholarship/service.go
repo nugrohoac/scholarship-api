@@ -133,6 +133,19 @@ func (s scholarshipService) GetByID(ctx context.Context, ID int64) (entity.Schol
 		return entity.Scholarship{}, err
 	}
 
+	user, err := common.GetUserOnContext(ctx)
+	if err == nil {
+		isApply, status, err := s.scholarshipRepo.CheckApply(ctx, user.ID, ID)
+		if err != nil {
+			return entity.Scholarship{}, err
+		}
+
+		if isApply {
+			_status := int32(status)
+			scholarship.ApplicationStatus = &_status
+		}
+	}
+
 	return scholarship, nil
 }
 

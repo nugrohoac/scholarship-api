@@ -255,6 +255,8 @@ type Scholarship struct {
 	Payment                 Payment       `json:"payment"`
 	CreatedAt               time.Time     `json:"created_at"`
 	UpdatedAt               time.Time     `json:"-"`
+	// check status of user apply
+	ApplicationStatus *int32 `json:"application_status,omitempty"`
 }
 
 // ScholarshipFilter ...
