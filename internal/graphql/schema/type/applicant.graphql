@@ -1,0 +1,13 @@
+type applicant {
+    id: Int
+    userId: Int
+    user: user
+    scholarshipId: Int
+    status: Int
+    applyDate: String
+}
+
+type applicantFeed {
+    cursor: String
+    applicants: [applicant]
+}

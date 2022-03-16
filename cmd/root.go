@@ -7,6 +7,7 @@ import (
 	backoffice2 "github.com/Nusantara-Muda/scholarship-api/internal/graphql/query/backoffice"
 	"github.com/Nusantara-Muda/scholarship-api/src/business"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/domain/backoffice"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/applicant"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/backoffice/sponsor"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/ethnic"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/major"
@@ -49,6 +50,7 @@ var (
 	schoolRepo          business.SchoolRepository
 	sponsorRepo         business.SponsorRepository
 	ethnicRepo          business.EthnicRepository
+	applicantRepo       business.ApplicantRepository
 
 	bankService        business.BankService
 	countryService     business.CountryService
@@ -60,6 +62,7 @@ var (
 	schoolService      business.SchoolService
 	sponsorService     business.SponsorService
 	ethnicService      business.EthnicService
+	applicantService   business.ApplicantService
 
 	// email
 	emailDomain        string
@@ -95,6 +98,8 @@ var (
 	DegreeQuery query.DegreeQuery
 	// SponsorQuery ...
 	SponsorQuery backoffice2.SponsorQuery
+	// ApplicantQuery .
+	ApplicantQuery query.ApplicantQuery
 
 	// PortApp apps
 	PortApp = 7070
@@ -197,6 +202,7 @@ func initApp() {
 	schoolRepo = postgresql.NewSchoolRepository(db)
 	sponsorRepo = backoffice.NewSponsorRepository(db)
 	ethnicRepo = postgresql.NewEthnicRepository(db)
+	applicantRepo = postgresql.NewApplicantRepository(db)
 
 	bankService = bank.NewBankService(bankRepo)
 	userService = user.NewUserService(userRepo, jwtHash, emailRepo)
@@ -208,6 +214,7 @@ func initApp() {
 	schoolService = school.NewSchoolService(schoolRepo)
 	sponsorService = sponsor.NewSponsorService(sponsorRepo)
 	ethnicService = ethnic.NewEthnicService(ethnicRepo)
+	applicantService = applicant.NewApplicantService(applicantRepo, scholarshipRepo)
 
 	UserMutation = mutation.NewUserMutation(userService)
 	ScholarshipMutation = mutation.NewScholarshipMutation(scholarshipService)
@@ -223,4 +230,5 @@ func initApp() {
 	SchoolQuery = query.NewSchoolQuery(schoolService)
 	SponsorQuery = backoffice2.NewSponsorQuery(sponsorService)
 	EthnicQuery = query.NewEthnicQuery(ethnicService)
+	ApplicantQuery = query.NewApplicantQuery(applicantService)
 }

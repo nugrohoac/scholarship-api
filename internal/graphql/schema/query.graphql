@@ -58,4 +58,11 @@ type Query {
     ): sponsorFeed
 
     FetchEthnic: [Ethnic]
+
+    FetchApplicant(
+        sponsorId: Int!
+        scholarshipId: Int!
+        limit: Int
+        cursor: String
+    ): applicantFeed
 }

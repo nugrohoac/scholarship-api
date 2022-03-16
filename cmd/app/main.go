@@ -40,6 +40,7 @@ func main() {
 		cmd.MajorQuery,
 		cmd.SchoolQuery,
 		cmd.EthnicQuery,
+		cmd.ApplicantQuery,
 		cmd.UserMutation,
 		cmd.ScholarshipMutation,
 		cmd.PaymentMutation,

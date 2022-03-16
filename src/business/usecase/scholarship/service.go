@@ -156,6 +156,10 @@ func (s scholarshipService) Apply(ctx context.Context, userID, scholarshipID int
 		return "", err
 	}
 
+	if userCtx.Type != entity.Student {
+		return "", errors.ErrNotAllowed{Message: "user is not student"}
+	}
+
 	if userCtx.ID != userID {
 		return "", errors.ErrUnAuthorize{Message: "user is not match"}
 	}

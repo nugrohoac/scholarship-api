@@ -483,3 +483,35 @@ type InputApplyScholarship struct {
 	Essay                *string
 	RecommendationLetter *InputImage
 }
+
+// FilterApplicant .
+type FilterApplicant struct {
+	SponsorID     int64
+	ScholarshipID int64
+	Limit         uint64
+	Cursor        string
+}
+
+// InputApplicantFilter .
+type InputApplicantFilter struct {
+	SponsorID     int32
+	ScholarshipID int32
+	Limit         *int32
+	Cursor        *string
+}
+
+// Applicant .
+type Applicant struct {
+	ID            int64     `json:"id"`
+	ScholarshipID int64     `json:"scholarship_id"`
+	UserID        int64     `json:"user_id"`
+	User          User      `json:"user"`
+	Status        int32     `json:"status"`
+	ApplyDate     time.Time `json:"apply_date"`
+}
+
+// ApplicantFeed .
+type ApplicantFeed struct {
+	Cursor     string      `json:"cursor"`
+	Applicants []Applicant `json:"applicants"`
+}

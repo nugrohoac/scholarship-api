@@ -149,3 +149,13 @@ type EthnicRepository interface {
 type EthnicService interface {
 	Fetch(ctx context.Context) ([]entity.Ethnic, error)
 }
+
+// ApplicantRepository .
+type ApplicantRepository interface {
+	Fetch(ctx context.Context, filter entity.FilterApplicant) ([]entity.Applicant, string, error)
+}
+
+// ApplicantService .
+type ApplicantService interface {
+	Fetch(ctx context.Context, filter entity.FilterApplicant) (entity.ApplicantFeed, error)
+}
