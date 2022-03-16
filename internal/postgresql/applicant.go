@@ -8,7 +8,7 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/sirupsen/logrus"
-	
+
 	"github.com/Nusantara-Muda/scholarship-api/src/business"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 )
@@ -62,6 +62,10 @@ func (a applicantRepository) Fetch(ctx context.Context, filter entity.FilterAppl
 		}
 
 		qSelect = qSelect.Where(sq.Lt{"us.created_at": cursorTime})
+	}
+
+	if len(filter.Status) > 0 {
+		qSelect = qSelect.Where(sq.Eq{"us.status": filter.Status})
 	}
 
 	query, args, err := qSelect.ToSql()
