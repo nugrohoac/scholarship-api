@@ -490,6 +490,7 @@ type FilterApplicant struct {
 	ScholarshipID int64
 	Limit         uint64
 	Cursor        string
+	Status        []int32
 }
 
 // InputApplicantFilter .
@@ -498,6 +499,7 @@ type InputApplicantFilter struct {
 	ScholarshipID int32
 	Limit         *int32
 	Cursor        *string
+	Status        *[]*int32
 }
 
 // Applicant .

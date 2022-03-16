@@ -28,6 +28,14 @@ func (a ApplicantQuery) FetchApplicant(ctx context.Context, param entity.InputAp
 		filter.Cursor = *param.Cursor
 	}
 
+	if param.Status != nil {
+		if len(*param.Status) > 0 {
+			for _, status := range *param.Status {
+				filter.Status = append(filter.Status, *status)
+			}
+		}
+	}
+
 	applicantFeed, err := a.applicantService.Fetch(ctx, filter)
 	if err != nil {
 		return nil, err

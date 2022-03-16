@@ -64,5 +64,6 @@ type Query {
         scholarshipId: Int!
         limit: Int
         cursor: String
+        status: [Int]
     ): applicantFeed
 }
