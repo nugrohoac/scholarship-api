@@ -2,7 +2,6 @@ package applicant
 
 import (
 	"context"
-
 	"github.com/Nusantara-Muda/scholarship-api/src/business"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/common"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
@@ -39,16 +38,21 @@ func (a applicantService) Fetch(ctx context.Context, filter entity.FilterApplica
 		return entity.ApplicantFeed{}, err
 	}
 
+	applicantFeed := entity.ApplicantFeed{
+		Cursor:     cursor,
+		Applicants: applicants,
+	}
+
 	applicants, _, err = a.applicantRepository.Fetch(ctx, entity.FilterApplicant{Limit: 1, Cursor: cursor})
 	if err != nil {
 		return entity.ApplicantFeed{}, err
 	}
 
 	if len(applicants) == 0 {
-		cursor = ""
+		applicantFeed.Cursor = ""
 	}
 
-	return entity.ApplicantFeed{Cursor: cursor, Applicants: applicants}, nil
+	return applicantFeed, nil
 }
 
 // NewApplicantService .
