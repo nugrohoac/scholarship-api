@@ -43,7 +43,10 @@ func (a applicantService) Fetch(ctx context.Context, filter entity.FilterApplica
 		Applicants: applicants,
 	}
 
-	applicants, _, err = a.applicantRepository.Fetch(ctx, entity.FilterApplicant{Limit: 1, Cursor: cursor})
+	filter.Limit = 1
+	filter.Cursor = cursor
+
+	applicants, _, err = a.applicantRepository.Fetch(ctx, filter)
 	if err != nil {
 		return entity.ApplicantFeed{}, err
 	}
