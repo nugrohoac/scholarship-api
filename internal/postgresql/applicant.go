@@ -144,9 +144,11 @@ func (a applicantRepository) Fetch(ctx context.Context, filter entity.FilterAppl
 		applicants = append(applicants, applicant)
 	}
 
-	cursorStr, err = encodeCursor(cursor)
-	if err != nil {
-		return nil, "", err
+	if !cursor.IsZero() {
+		cursorStr, err = encodeCursor(cursor)
+		if err != nil {
+			return nil, "", err
+		}
 	}
 
 	return applicants, cursorStr, nil
