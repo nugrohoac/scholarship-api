@@ -2,7 +2,6 @@ package applicant
 
 import (
 	"context"
-
 	"github.com/Nusantara-Muda/scholarship-api/src/business"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/common"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
@@ -50,7 +49,7 @@ func (a applicantService) Fetch(ctx context.Context, filter entity.FilterApplica
 	}
 
 	if len(applicants) == 0 {
-		cursor = ""
+		applicantFeed.Cursor = ""
 	}
 
 	return applicantFeed, nil
