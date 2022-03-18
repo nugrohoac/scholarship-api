@@ -175,9 +175,6 @@ func (s scholarshipService) Apply(ctx context.Context, userID, scholarshipID int
 	}
 
 	applicant := scholarship.CurrentApplicant + 1
-	if applicant > scholarship.Awardee {
-		return "", errors.ErrNotAllowed{Message: "awardee has been maximum"}
-	}
 
 	for _, req := range scholarship.Requirements {
 		switch req.Name {
