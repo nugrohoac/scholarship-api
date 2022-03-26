@@ -132,6 +132,82 @@ func (s schoolRepo) Fetch(ctx context.Context, filter entity.SchoolFilter) ([]en
 	return schools, cursorStr, nil
 }
 
+// GetUserSchool .
+// ID refer to user id
+func (s schoolRepo) GetUserSchool(ctx context.Context, ID int64) ([]entity.UserSchool, error) {
+	query, args, err := sq.Select("us.id",
+		"us.school_id",
+		"s.name",
+		"s.type",
+		"us.degree_id",
+		"d.name",
+		"us.major_id",
+		"m.name",
+		"us.enrollment_date",
+		"us.graduation_date",
+		"us.gpa",
+	).From("user_school us").
+		LeftJoin("school s on us.school_id = s.id").
+		LeftJoin("\"degree\" d on us.degree_id = d.id").
+		LeftJoin("major m on us.major_id = m.id").
+		Where(sq.Eq{"us.user_id": ID}).
+		OrderBy("us.created_at desc").
+		Limit(uint64(2)).
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := s.db.QueryContext(ctx, query, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	defer func() {
+		if errClose := rows.Close(); errClose != nil {
+			logrus.Error(errClose)
+		}
+	}()
+
+	userSchools := make([]entity.UserSchool, 0)
+	for rows.Next() {
+		var (
+			us         entity.UserSchool
+			degreeName sql.NullString
+			majorName  sql.NullString
+		)
+
+		if err = rows.Scan(
+			&us.ID,
+			&us.School.ID,
+			&us.School.Name,
+			&us.School.Type,
+			&us.Degree.ID,
+			&degreeName,
+			&us.Major.ID,
+			&majorName,
+			&us.EnrollmentDate,
+			&us.GraduationDate,
+			&us.Gpa,
+		); err != nil {
+			return nil, err
+		}
+
+		if degreeName.Valid {
+			us.Degree.Name = degreeName.String
+		}
+
+		if majorName.Valid {
+			us.Major.Name = majorName.String
+		}
+
+		userSchools = append(userSchools, us)
+	}
+
+	return userSchools, nil
+}
+
 // NewSchoolRepository .
 func NewSchoolRepository(db *sql.DB) business.SchoolRepository {
 	return schoolRepo{db: db}

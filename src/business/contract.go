@@ -122,7 +122,7 @@ type MajorService interface {
 type SchoolRepository interface {
 	Create(ctx context.Context, school entity.School) (entity.School, error)
 	Fetch(ctx context.Context, filter entity.SchoolFilter) ([]entity.School, string, error)
-	//GetSchoolUser(ctx context.Context, ID int64) ([]entity.UserSchool, error)
+	GetUserSchool(ctx context.Context, ID int64) ([]entity.UserSchool, error)
 }
 
 // SchoolService .

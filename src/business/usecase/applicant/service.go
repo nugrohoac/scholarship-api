@@ -11,6 +11,7 @@ import (
 type applicantService struct {
 	applicantRepository   business.ApplicantRepository
 	scholarshipRepository business.ScholarshipRepository
+	schoolRepository      business.SchoolRepository
 }
 
 // Fetch .
@@ -60,13 +61,30 @@ func (a applicantService) Fetch(ctx context.Context, filter entity.FilterApplica
 
 // GetByID .
 func (a applicantService) GetByID(ctx context.Context, ID int64) (entity.Applicant, error) {
-	return a.applicantRepository.GetByID(ctx, ID)
+	applicant, err := a.applicantRepository.GetByID(ctx, ID)
+	if err != nil {
+		return entity.Applicant{}, err
+	}
+
+	userSchools, err := a.schoolRepository.GetUserSchool(ctx, applicant.UserID)
+	if err != nil {
+		return entity.Applicant{}, err
+	}
+
+	applicant.User.UserSchools = userSchools
+
+	return applicant, nil
 }
 
 // NewApplicantService .
-func NewApplicantService(applicantRepository business.ApplicantRepository, scholarshipRepository business.ScholarshipRepository) business.ApplicantService {
+func NewApplicantService(
+	applicantRepository business.ApplicantRepository,
+	scholarshipRepository business.ScholarshipRepository,
+	schoolRepository business.SchoolRepository,
+) business.ApplicantService {
 	return applicantService{
 		applicantRepository:   applicantRepository,
 		scholarshipRepository: scholarshipRepository,
+		schoolRepository:      schoolRepository,
 	}
 }

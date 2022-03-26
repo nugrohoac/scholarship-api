@@ -143,6 +143,18 @@ func (u UserResolver) CreatedAt() *string {
 	return &time
 }
 
+// UserSchools .
+func (u UserResolver) UserSchools() *[]*UserSchoolResolver {
+	us := make([]*UserSchoolResolver, 0)
+
+	for _, _us := range u.User.UserSchools {
+		_us := _us
+		us = append(us, &UserSchoolResolver{UserSchool: _us})
+	}
+
+	return &us
+}
+
 // LoginResponseResolver ...
 type LoginResponseResolver struct {
 	LoginResponse entity.LoginResponse
