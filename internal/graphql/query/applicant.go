@@ -44,6 +44,16 @@ func (a ApplicantQuery) FetchApplicant(ctx context.Context, param entity.InputAp
 	return &resolver.ApplicantFeedResolver{ApplicantFeed: applicantFeed}, nil
 }
 
+// GetApplicantByID .
+func (a ApplicantQuery) GetApplicantByID(ctx context.Context, param struct{ ID int32 }) (*resolver.ApplicantResolver, error) {
+	applicant, err := a.applicantService.GetByID(ctx, int64(param.ID))
+	if err != nil {
+		return nil, err
+	}
+
+	return &resolver.ApplicantResolver{Applicant: applicant}, nil
+}
+
 // NewApplicantQuery .
 func NewApplicantQuery(applicantService business.ApplicantService) ApplicantQuery {
 	return ApplicantQuery{applicantService: applicantService}

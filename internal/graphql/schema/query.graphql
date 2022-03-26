@@ -66,4 +66,8 @@ type Query {
         cursor: String
         status: [Int]
     ): applicantFeed
+
+    GetApplicantByID(
+        id: Int!
+    ): applicant
 }

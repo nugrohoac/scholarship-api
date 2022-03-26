@@ -87,6 +87,7 @@ type User struct {
 	Password         string         `json:"-"`
 	Status           int            `json:"status"`
 	CountryID        int32          `json:"country_id"`
+	Country          Country        `json:"country"`
 	PostalCode       string         `json:"postal_code"`
 	Address          string         `json:"address"`
 	Gender           string         `json:"gender"`
@@ -96,6 +97,7 @@ type User struct {
 	BirthPlace       string         `json:"birth_place"`
 	CardIdentities   []CardIdentity `json:"card_identities"`
 	BankID           int32          `json:"bank_id"`
+	Bank             Bank           `json:"bank"`
 	BankAccountNo    string         `json:"bank_account_no"`
 	BankAccountName  string         `json:"bank_account_name"`
 	GapYearReason    string         `json:"gap_year_reason"`
@@ -503,13 +505,16 @@ type InputApplicantFilter struct {
 }
 
 // Applicant .
+// refer to user scholarship
 type Applicant struct {
-	ID            int64     `json:"id"`
-	ScholarshipID int64     `json:"scholarship_id"`
-	UserID        int64     `json:"user_id"`
-	User          User      `json:"user"`
-	Status        int32     `json:"status"`
-	ApplyDate     time.Time `json:"apply_date"`
+	ID                   int64     `json:"id"`
+	ScholarshipID        int64     `json:"scholarship_id"`
+	UserID               int64     `json:"user_id"`
+	User                 User      `json:"user"`
+	Status               int32     `json:"status"`
+	ApplyDate            time.Time `json:"apply_date"`
+	Essay                string    `json:"essay"`
+	RecommendationLetter Image     `json:"recommendation_letter"`
 }
 
 // ApplicantFeed .

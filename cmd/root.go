@@ -214,7 +214,7 @@ func initApp() {
 	schoolService = school.NewSchoolService(schoolRepo)
 	sponsorService = sponsor.NewSponsorService(sponsorRepo)
 	ethnicService = ethnic.NewEthnicService(ethnicRepo)
-	applicantService = applicant.NewApplicantService(applicantRepo, scholarshipRepo)
+	applicantService = applicant.NewApplicantService(applicantRepo, scholarshipRepo, schoolRepo)
 
 	UserMutation = mutation.NewUserMutation(userService)
 	ScholarshipMutation = mutation.NewScholarshipMutation(scholarshipService)

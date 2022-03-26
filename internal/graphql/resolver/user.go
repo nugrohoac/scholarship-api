@@ -63,6 +63,11 @@ func (u UserResolver) CountryID() *int32 {
 	return &countryID
 }
 
+// Country .
+func (u UserResolver) Country() *CountryResolver {
+	return &CountryResolver{Country: u.User.Country}
+}
+
 // PostalCode ...
 func (u UserResolver) PostalCode() *string {
 	return &u.User.PostalCode
@@ -105,6 +110,11 @@ func (u UserResolver) BankID() *int32 {
 	return &bankID
 }
 
+// Bank .
+func (u UserResolver) Bank() *BankResolver {
+	return &BankResolver{Bank: u.User.Bank}
+}
+
 // BankAccountNo ...
 func (u UserResolver) BankAccountNo() *string {
 	return &u.User.BankAccountNo
@@ -131,6 +141,18 @@ func (u UserResolver) CardIdentities() *[]*CardIdentityResolver {
 func (u UserResolver) CreatedAt() *string {
 	time := u.User.CreatedAt.Format("2006-01-02 15:04:05")
 	return &time
+}
+
+// UserSchools .
+func (u UserResolver) UserSchools() *[]*UserSchoolResolver {
+	us := make([]*UserSchoolResolver, 0)
+
+	for _, _us := range u.User.UserSchools {
+		_us := _us
+		us = append(us, &UserSchoolResolver{UserSchool: _us})
+	}
+
+	return &us
 }
 
 // LoginResponseResolver ...

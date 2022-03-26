@@ -122,6 +122,7 @@ type MajorService interface {
 type SchoolRepository interface {
 	Create(ctx context.Context, school entity.School) (entity.School, error)
 	Fetch(ctx context.Context, filter entity.SchoolFilter) ([]entity.School, string, error)
+	GetUserSchool(ctx context.Context, ID int64) ([]entity.UserSchool, error)
 }
 
 // SchoolService .
@@ -153,9 +154,11 @@ type EthnicService interface {
 // ApplicantRepository .
 type ApplicantRepository interface {
 	Fetch(ctx context.Context, filter entity.FilterApplicant) ([]entity.Applicant, string, error)
+	GetByID(ctx context.Context, ID int64) (entity.Applicant, error)
 }
 
 // ApplicantService .
 type ApplicantService interface {
 	Fetch(ctx context.Context, filter entity.FilterApplicant) (entity.ApplicantFeed, error)
+	GetByID(ctx context.Context, ID int64) (entity.Applicant, error)
 }
