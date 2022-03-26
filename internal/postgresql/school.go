@@ -133,8 +133,7 @@ func (s schoolRepo) Fetch(ctx context.Context, filter entity.SchoolFilter) ([]en
 }
 
 // GetUserSchool .
-// ID refer to user id
-func (s schoolRepo) GetUserSchool(ctx context.Context, ID int64) ([]entity.UserSchool, error) {
+func (s schoolRepo) GetUserSchool(ctx context.Context, userID int64) ([]entity.UserSchool, error) {
 	query, args, err := sq.Select("us.id",
 		"us.school_id",
 		"s.name",
@@ -150,7 +149,7 @@ func (s schoolRepo) GetUserSchool(ctx context.Context, ID int64) ([]entity.UserS
 		LeftJoin("school s on us.school_id = s.id").
 		LeftJoin("\"degree\" d on us.degree_id = d.id").
 		LeftJoin("major m on us.major_id = m.id").
-		Where(sq.Eq{"us.user_id": ID}).
+		Where(sq.Eq{"us.user_id": userID}).
 		OrderBy("us.created_at desc").
 		Limit(uint64(2)).
 		PlaceholderFormat(sq.Dollar).

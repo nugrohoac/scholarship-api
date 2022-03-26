@@ -23,6 +23,7 @@ type user {
     bankAccountName: String
     createdAt: String
     userSchools: [userSchool]
+    userDocuments: [userDocument]
 }
 
 type loginResponse {
