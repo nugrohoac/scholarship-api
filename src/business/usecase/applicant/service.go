@@ -58,6 +58,11 @@ func (a applicantService) Fetch(ctx context.Context, filter entity.FilterApplica
 	return applicantFeed, nil
 }
 
+// GetByID .
+func (a applicantService) GetByID(ctx context.Context, ID int64) (entity.Applicant, error) {
+	return a.applicantRepository.GetByID(ctx, ID)
+}
+
 // NewApplicantService .
 func NewApplicantService(applicantRepository business.ApplicantRepository, scholarshipRepository business.ScholarshipRepository) business.ApplicantService {
 	return applicantService{

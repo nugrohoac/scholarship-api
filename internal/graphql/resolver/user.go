@@ -63,6 +63,11 @@ func (u UserResolver) CountryID() *int32 {
 	return &countryID
 }
 
+// Country .
+func (u UserResolver) Country() *CountryResolver {
+	return &CountryResolver{Country: u.User.Country}
+}
+
 // PostalCode ...
 func (u UserResolver) PostalCode() *string {
 	return &u.User.PostalCode
@@ -103,6 +108,11 @@ func (u UserResolver) Ethnic() *EthnicResolver {
 func (u UserResolver) BankID() *int32 {
 	bankID := u.User.BankID
 	return &bankID
+}
+
+// Bank .
+func (u UserResolver) Bank() *BankResolver {
+	return &BankResolver{Bank: u.User.Bank}
 }
 
 // BankAccountNo ...

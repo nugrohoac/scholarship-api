@@ -8,44 +8,54 @@ import (
 
 // ApplicantResolver .
 type ApplicantResolver struct {
-	applicant entity.Applicant
+	Applicant entity.Applicant
 }
 
 // ID .
 func (a ApplicantResolver) ID() *int32 {
-	ID := int32(a.applicant.ID)
+	ID := int32(a.Applicant.ID)
 
 	return &ID
 }
 
 // ScholarshipID .
 func (a ApplicantResolver) ScholarshipID() *int32 {
-	scholarshipID := int32(a.applicant.ScholarshipID)
+	scholarshipID := int32(a.Applicant.ScholarshipID)
 
 	return &scholarshipID
 }
 
 // UserID .
 func (a ApplicantResolver) UserID() *int32 {
-	userID := int32(a.applicant.UserID)
+	userID := int32(a.Applicant.UserID)
 
 	return &userID
 }
 
 // Status .
 func (a ApplicantResolver) Status() *int32 {
-	return &a.applicant.Status
+	return &a.Applicant.Status
 }
 
 // ApplyDate .
 func (a ApplicantResolver) ApplyDate() *string {
-	applyDate := a.applicant.ApplyDate.Format(time.RFC3339)
+	applyDate := a.Applicant.ApplyDate.Format(time.RFC3339)
 	return &applyDate
 }
 
 // User .
 func (a ApplicantResolver) User() *UserResolver {
-	return &UserResolver{User: a.applicant.User}
+	return &UserResolver{User: a.Applicant.User}
+}
+
+// Essay .
+func (a ApplicantResolver) Essay() *string {
+	return &a.Applicant.Essay
+}
+
+// RecommendationLetter .
+func (a ApplicantResolver) RecommendationLetter() *ImageResolver {
+	return &ImageResolver{Image: a.Applicant.RecommendationLetter}
 }
 
 // ApplicantFeedResolver .
@@ -65,7 +75,7 @@ func (a ApplicantFeedResolver) Applicants() *[]*ApplicantResolver {
 	for _, applicant := range a.ApplicantFeed.Applicants {
 		applicant := applicant
 
-		applicants = append(applicants, &ApplicantResolver{applicant: applicant})
+		applicants = append(applicants, &ApplicantResolver{Applicant: applicant})
 	}
 
 	return &applicants

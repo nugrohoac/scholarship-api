@@ -5,6 +5,8 @@ type applicant {
     scholarshipId: Int
     status: Int
     applyDate: String
+    essay: String
+    recommendationLetter: image
 }
 
 type applicantFeed {

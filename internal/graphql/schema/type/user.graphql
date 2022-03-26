@@ -8,15 +8,17 @@ type user {
     companyName: String
     status: Int
     countryId: Int
+    country: country
     postalCode: String
     address: String
     gender: gender
-    ethnicId: Int
     birthDate: String
     birthPlace: String
+    ethnicId: Int
     ethnic: Ethnic
     cardIdentities: [cardIdentity]
     bankId: Int
+    bank: bank
     bankAccountNo: String
     bankAccountName: String
     createdAt: String
