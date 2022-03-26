@@ -470,6 +470,56 @@ func (u userRepo) SetupEducation(ctx context.Context, user entity.User) (entity.
 	return user, nil
 }
 
+// GetDocuments .
+func (u userRepo) GetDocuments(ctx context.Context, userID int64) ([]entity.UserDocument, error) {
+	query, args, err := sq.Select("id", "user_id", "document").
+		From("user_document").
+		Where(sq.Eq{"user_id": userID}).
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := u.db.QueryContext(ctx, query, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	defer func() {
+		if errClose := rows.Close(); errClose != nil {
+			logrus.Error(errClose)
+		}
+	}()
+
+	userDocs := make([]entity.UserDocument, 0)
+
+	for rows.Next() {
+		var (
+			ud      entity.UserDocument
+			byteDoc []byte
+		)
+
+		if err = rows.Scan(
+			&ud.ID,
+			&ud.UserID,
+			&byteDoc,
+		); err != nil {
+			return nil, err
+		}
+
+		if byteDoc != nil {
+			if err = json.Unmarshal(byteDoc, &ud.Document); err != nil {
+				return nil, err
+			}
+		}
+
+		userDocs = append(userDocs, ud)
+	}
+
+	return userDocs, nil
+}
+
 // NewUserRepository .
 func NewUserRepository(db *sql.DB) business.UserRepository {
 	return userRepo{db: db}

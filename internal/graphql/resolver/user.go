@@ -155,6 +155,18 @@ func (u UserResolver) UserSchools() *[]*UserSchoolResolver {
 	return &us
 }
 
+// UserDocuments .
+func (u UserResolver) UserDocuments() *[]*UserDocumentResolver {
+	uds := make([]*UserDocumentResolver, 0)
+
+	for _, ud := range u.User.UserDocuments {
+		ud := ud
+		uds = append(uds, &UserDocumentResolver{userDocument: ud})
+	}
+
+	return &uds
+}
+
 // LoginResponseResolver ...
 type LoginResponseResolver struct {
 	LoginResponse entity.LoginResponse

@@ -12,6 +12,7 @@ type applicantService struct {
 	applicantRepository   business.ApplicantRepository
 	scholarshipRepository business.ScholarshipRepository
 	schoolRepository      business.SchoolRepository
+	userRepo              business.UserRepository
 }
 
 // Fetch .
@@ -73,6 +74,13 @@ func (a applicantService) GetByID(ctx context.Context, ID int64) (entity.Applica
 
 	applicant.User.UserSchools = userSchools
 
+	userDocuments, err := a.userRepo.GetDocuments(ctx, applicant.UserID)
+	if err != nil {
+		return entity.Applicant{}, err
+	}
+
+	applicant.User.UserDocuments = userDocuments
+
 	return applicant, nil
 }
 
@@ -81,10 +89,12 @@ func NewApplicantService(
 	applicantRepository business.ApplicantRepository,
 	scholarshipRepository business.ScholarshipRepository,
 	schoolRepository business.SchoolRepository,
+	userRepo business.UserRepository,
 ) business.ApplicantService {
 	return applicantService{
 		applicantRepository:   applicantRepository,
 		scholarshipRepository: scholarshipRepository,
 		schoolRepository:      schoolRepository,
+		userRepo:              userRepo,
 	}
 }

@@ -1,0 +1,5 @@
+type userDocument {
+    id: Int
+    userId: Int
+    document: image
+}

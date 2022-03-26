@@ -24,6 +24,7 @@ type UserRepository interface {
 	SetStatus(ctx context.Context, ID int64, status int) error
 	ResetPassword(ctx context.Context, email, password string) error
 	SetupEducation(ctx context.Context, user entity.User) (entity.User, error)
+	GetDocuments(ctx context.Context, ID int64) ([]entity.UserDocument, error)
 }
 
 // UserService ....
@@ -122,7 +123,7 @@ type MajorService interface {
 type SchoolRepository interface {
 	Create(ctx context.Context, school entity.School) (entity.School, error)
 	Fetch(ctx context.Context, filter entity.SchoolFilter) ([]entity.School, string, error)
-	GetUserSchool(ctx context.Context, ID int64) ([]entity.UserSchool, error)
+	GetUserSchool(ctx context.Context, userID int64) ([]entity.UserSchool, error)
 }
 
 // SchoolService .
