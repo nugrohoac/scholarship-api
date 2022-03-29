@@ -9,6 +9,11 @@ type requirement {
 enum requirementType {
     text
     document
+    one
+    range
+    maximum
+    minimum
+    one_of
 }
 
 input inputRequirement {
