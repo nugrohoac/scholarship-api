@@ -1,6 +1,6 @@
 type bankTransfer {
     name: String
     accountName: String
-    accountNo: Int
+    accountNo: String
     image: image
 }

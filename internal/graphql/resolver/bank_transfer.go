@@ -2,6 +2,7 @@ package resolver
 
 import (
 	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
+	"strconv"
 )
 
 // BankTransferResolver ...
@@ -20,8 +21,8 @@ func (b BankTransferResolver) AccountName() *string {
 }
 
 // AccountNo ...
-func (b BankTransferResolver) AccountNo() *int32 {
-	accountNo := int32(b.BankTransfer.AccountNo)
+func (b BankTransferResolver) AccountNo() *string {
+	accountNo := strconv.Itoa(b.BankTransfer.AccountNo)
 	return &accountNo
 }
 
