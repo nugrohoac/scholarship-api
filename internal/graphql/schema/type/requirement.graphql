@@ -12,7 +12,7 @@ enum requirementType {
 }
 
 input inputRequirement {
-    type: requirementType!
+    type: String!
     name: String!
     value: String!
 }
