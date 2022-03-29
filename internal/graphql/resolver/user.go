@@ -143,6 +143,11 @@ func (u UserResolver) CreatedAt() *string {
 	return &time
 }
 
+// CareerGoal .
+func (u UserResolver) CareerGoal() *string {
+	return &u.User.CareerGoal
+}
+
 // UserSchools .
 func (u UserResolver) UserSchools() *[]*UserSchoolResolver {
 	us := make([]*UserSchoolResolver, 0)

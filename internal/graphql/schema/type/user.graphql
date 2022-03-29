@@ -22,6 +22,7 @@ type user {
     bankAccountNo: String
     bankAccountName: String
     createdAt: String
+    careerGoal: String
     userSchools: [userSchool]
     userDocuments: [userDocument]
 }
