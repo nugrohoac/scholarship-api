@@ -311,6 +311,7 @@ func SeedDegrees(db *sql.DB, t *testing.T, degrees []entity.Degree) {
 	qInsert := sq.Insert("degree").
 		Columns("id",
 			"name",
+			"rank",
 			"created_at",
 		)
 
@@ -318,6 +319,7 @@ func SeedDegrees(db *sql.DB, t *testing.T, degrees []entity.Degree) {
 		qInsert = qInsert.Values(
 			degree.ID,
 			degree.Name,
+			degree.Rank,
 			degree.CreatedAt,
 		)
 	}
