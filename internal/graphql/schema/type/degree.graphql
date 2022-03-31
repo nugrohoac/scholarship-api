@@ -1,4 +1,5 @@
 type degree {
     id: Int
     name: String
+    rank: Int
 }

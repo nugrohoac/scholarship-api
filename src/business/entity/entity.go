@@ -421,6 +421,7 @@ type InputSchool struct {
 type Degree struct {
 	ID        int32     `json:"id"`
 	Name      string    `json:"name"`
+	Rank      int       `json:"rank"`
 	CreatedAt time.Time `json:"created_at"`
 }
 

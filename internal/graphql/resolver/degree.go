@@ -18,3 +18,9 @@ func (d DegreeResolver) ID() *int32 {
 func (d DegreeResolver) Name() *string {
 	return &d.Degree.Name
 }
+
+// Rank .
+func (d DegreeResolver) Rank() *int32 {
+	rank := int32(d.Degree.Rank)
+	return &rank
+}

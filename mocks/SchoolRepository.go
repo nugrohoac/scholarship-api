@@ -4,8 +4,8 @@ package mocks
 
 import (
 	context "context"
-	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 
+	entity "github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -63,4 +63,27 @@ func (_m *SchoolRepository) Fetch(ctx context.Context, filter entity.SchoolFilte
 	}
 
 	return r0, r1, r2
+}
+
+// GetUserSchool provides a mock function with given fields: ctx, userID
+func (_m *SchoolRepository) GetUserSchool(ctx context.Context, userID int64) ([]entity.UserSchool, error) {
+	ret := _m.Called(ctx, userID)
+
+	var r0 []entity.UserSchool
+	if rf, ok := ret.Get(0).(func(context.Context, int64) []entity.UserSchool); ok {
+		r0 = rf(ctx, userID)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]entity.UserSchool)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, int64) error); ok {
+		r1 = rf(ctx, userID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }

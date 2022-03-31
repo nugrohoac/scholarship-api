@@ -16,7 +16,7 @@ type degreeRepo struct {
 
 // Fetch ...
 func (d degreeRepo) Fetch(ctx context.Context) ([]entity.Degree, error) {
-	query, args, err := sq.Select("id", "name").
+	query, args, err := sq.Select("id", "name", "rank").
 		From("degree").
 		OrderBy("created_at desc").
 		PlaceholderFormat(sq.Dollar).
@@ -41,7 +41,7 @@ func (d degreeRepo) Fetch(ctx context.Context) ([]entity.Degree, error) {
 	for rows.Next() {
 		var degree entity.Degree
 
-		if err = rows.Scan(&degree.ID, &degree.Name); err != nil {
+		if err = rows.Scan(&degree.ID, &degree.Name, &degree.Rank); err != nil {
 			return nil, err
 		}
 
