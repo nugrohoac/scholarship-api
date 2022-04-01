@@ -141,6 +141,7 @@ func (s schoolRepo) GetUserSchool(ctx context.Context, userID int64) ([]entity.U
 		"s.address",
 		"us.degree_id",
 		"d.name",
+		"d.rank",
 		"us.major_id",
 		"m.name",
 		"us.enrollment_date",
@@ -175,6 +176,7 @@ func (s schoolRepo) GetUserSchool(ctx context.Context, userID int64) ([]entity.U
 		var (
 			us         entity.UserSchool
 			degreeName sql.NullString
+			degreeRank sql.NullInt32
 			majorName  sql.NullString
 		)
 
@@ -186,6 +188,7 @@ func (s schoolRepo) GetUserSchool(ctx context.Context, userID int64) ([]entity.U
 			&us.School.Address,
 			&us.Degree.ID,
 			&degreeName,
+			&degreeRank,
 			&us.Major.ID,
 			&majorName,
 			&us.EnrollmentDate,
@@ -201,6 +204,10 @@ func (s schoolRepo) GetUserSchool(ctx context.Context, userID int64) ([]entity.U
 
 		if majorName.Valid {
 			us.Major.Name = majorName.String
+		}
+
+		if degreeRank.Valid {
+			us.Degree.Rank = int(degreeRank.Int32)
 		}
 
 		userSchools = append(userSchools, us)
