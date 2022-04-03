@@ -1,0 +1,6 @@
+type bankTransfer {
+    name: String
+    accountName: String
+    accountNo: String
+    image: image
+}

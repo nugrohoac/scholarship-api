@@ -1,0 +1,10 @@
+type userSchool {
+    id: Int,
+    userId: Int,
+    school: school,
+    degree: degree,
+    major: major,
+    enrollmentDate: String,
+    graduationDate: String,
+    gpa: Float
+}

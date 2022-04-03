@@ -1,0 +1,28 @@
+type scholarship {
+    id: Int
+    sponsorId: Int
+    sponsor: user
+    name: String
+    amount: Int
+    status: Int
+    image: image
+    awardee: Int
+    currentApplicant: Int
+    applicationStart: String
+    applicationEnd: String
+    announcementDate: String
+    eligibilityDescription: String
+    subsidyDescription: String
+    requirementDescriptions: [String]
+    fundingStart: String
+    fundingEnd: String
+    requirements: [requirement]
+    payment: payment
+    createdAt: String
+    applicationStatus: Int
+}
+
+type scholarshipFeed {
+    cursor: String
+    scholarships: [scholarship]
+}

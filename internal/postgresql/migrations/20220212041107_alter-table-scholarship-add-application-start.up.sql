@@ -1,0 +1,1 @@
+ALTER TABLE "scholarship" ADD COLUMN application_start timestamp(3) NOT NULL;

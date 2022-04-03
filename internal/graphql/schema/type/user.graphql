@@ -8,38 +8,71 @@ type user {
     companyName: String
     status: Int
     countryId: Int
+    country: country
     postalCode: String
     address: String
     gender: gender
-    ethnic: String
+    birthDate: String
+    birthPlace: String
+    ethnicId: Int
+    ethnic: Ethnic
+    cardIdentities: [cardIdentity]
     bankId: Int
+    bank: bank
     bankAccountNo: String
     bankAccountName: String
+    createdAt: String
+    careerGoal: String
+    userSchools: [userSchool]
+    userDocuments: [userDocument]
 }
 
-#type inputUser {
-#    name: String!
-#    type: userType!
-#    email: String!
-#    phoneNo: String!
-#    photo: image!
-#    companyName: String
-#    countryId: Int!
-#    postalCode: String!
-#    address: String!
-#    gender: gender
-#    ethnic: String
-#    bankId: Int!
-#    bankAccountNo: String!
-#    bankAccountName: String!
-#}
+type loginResponse {
+    token: String
+    user: user
+}
 
 enum userType {
     sponsor
     student
+    admin
 }
 
 enum gender {
     male
     female
+}
+
+input inputUserCountryGoal {
+    id: Int!
+}
+
+input inputUserSchool {
+    school: inputSchoolUserSchool!
+    degree: inputDegreeUserSchool
+    major: inputMajorUserSchool
+    enrollmentDate: String
+    graduationDate: String!
+    gpa: Float
+}
+
+input inputSchoolUserSchool {
+    id: Int!
+}
+
+input inputMajorUserSchool {
+    id: Int!
+}
+
+input inputDegreeUserSchool {
+    id: Int!
+}
+
+enum genderType {
+    male
+    female
+}
+
+input inputEthnic {
+    id: Int
 }

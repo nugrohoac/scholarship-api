@@ -10,10 +10,10 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 
-	sa "github.com/Nusantara-Muda/scholarship-api"
 	"github.com/Nusantara-Muda/scholarship-api/cmd"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/schema"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/handler"
 )
 
 func main() {
@@ -35,13 +35,23 @@ func main() {
 		cmd.BankQuery,
 		cmd.CountryQuery,
 		cmd.UserQuery,
+		cmd.ScholarshipQuery,
+		cmd.DegreeQuery,
+		cmd.MajorQuery,
+		cmd.SchoolQuery,
+		cmd.EthnicQuery,
+		cmd.ApplicantQuery,
 		cmd.UserMutation,
+		cmd.ScholarshipMutation,
+		cmd.PaymentMutation,
+		cmd.SchoolMutation,
+		cmd.SponsorQuery,
 	)
 
 	graphQlSchema := _graphql.MustParseSchema(schema.String(), rootResolver, opts...)
-
-	e.POST("/scholarship/graphql", sa.GraphQLHandler(&relay.Handler{Schema: graphQlSchema}))
-	e.GET("/scholarship/graphiql", sa.GraphQLHandler(&relay.Handler{Schema: graphQlSchema}))
+	//e.Use(cmd.Middleware.Auth)
+	e.POST("/scholarship/graphql", handler.GraphQLHandler(&relay.Handler{Schema: graphQlSchema}), cmd.Middleware.Auth)
+	e.GET("/scholarship/graphiql", handler.GraphQLHandler(&relay.Handler{Schema: graphQlSchema}), cmd.Middleware.Auth)
 
 	e.File("/scholarship/graphiql", "web/scholarship/graphiql.html")
 

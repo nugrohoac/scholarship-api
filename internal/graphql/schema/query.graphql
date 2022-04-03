@@ -14,5 +14,60 @@ type Query {
     Login(
         email: String!
         password: String!
+    ): loginResponse
+
+    ResendEmailVerification(
+        email: String!
     ): String
+
+    ForgotPassword(
+        email: String!
+    ): String
+
+    FetchScholarship(
+        sponsorId: Int
+        cursor: String
+        limit: Int
+        status: [Int]
+        name: String
+    ): scholarshipFeed
+
+    GetScholarshipByID(
+        id: Int!
+    ): scholarship
+
+    FetchDegree: [degree]
+
+    FetchMajor(
+        limit: Int
+        cursor: String
+        name: String
+    ): majorFeed
+
+    FetchSchool(
+        limit: Int
+        cursor: String
+        name: String
+        type: String
+    ): schoolFeed
+
+    FetchSponsor(
+        limit: Int
+        cursor: String
+        searchText: String
+    ): sponsorFeed
+
+    FetchEthnic: [Ethnic]
+
+    FetchApplicant(
+        sponsorId: Int!
+        scholarshipId: Int!
+        limit: Int
+        cursor: String
+        status: [Int]
+    ): applicantFeed
+
+    GetApplicantByID(
+        id: Int!
+    ): applicant
 }

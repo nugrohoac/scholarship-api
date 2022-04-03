@@ -1,0 +1,23 @@
+type requirement {
+    id: Int
+    scholarshipId: Int
+    type: String
+    name: String
+    value: String
+}
+
+enum requirementType {
+    text
+    document
+    one
+    range
+    maximum
+    minimum
+    one_of
+}
+
+input inputRequirement {
+    type: requirementType!
+    name: String!
+    value: String!
+}

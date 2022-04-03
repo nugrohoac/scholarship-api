@@ -5,4 +5,78 @@ type Mutation {
         phoneNo: String!
         password: String!
     ): user
+
+    UpdateUser(
+        id: Int!
+        name: String!
+        photo: inputImage
+        companyName: String
+        countryId: Int!
+        address: String!
+        postalCode: String!
+        cardIdentities: [inputCardIdentity!]!
+        bankId: Int!
+        bankAccountNo: String!
+        bankAccountName: String!
+        ethnic: inputEthnic
+        gender: genderType
+        birthDate: String!
+        birthPlace: String!
+    ): user
+
+    ActivateUser(
+        token: String!
+    ): user
+
+    ResetPassword(
+        password: String!
+    ): user
+
+    CreateScholarship(
+        sponsorId: Int!
+        name: String!
+        amount: Int!
+        image: inputImage
+        awardee: Int!
+        applicationStart: String!
+        applicationEnd: String!
+        announcementDate: String!
+        eligibilityDescription: String!
+        subsidyDescription: String!
+        requirementDescriptions: [String!]!
+        fundingStart: String!
+        fundingEnd: String!
+        requirements: [inputRequirement!]!
+    ): scholarship
+
+    SubmitTransferPayment(
+        scholarshipId: Int!
+        transferDate: String!
+        bankAccountName: String!
+        bankAccountNo: String!
+        image: inputImage!
+    ):payment
+
+    CreateSchool(
+        name: String!
+        type: String!
+        address: String!
+    ): school
+
+    SetupEducation(
+        userId: Int!
+        gapYearReason: String
+        careerGoal: String!
+        studyCountryGoal: inputUserCountryGoal!
+        studyDestination: String!
+        userSchools: [inputUserSchool!]!
+        userDocuments: [inputImage!]!
+    ): user
+
+    ApplyScholarship(
+        userId: Int!
+        scholarshipId: Int!
+        essay: String
+        recommendationLetter: inputImage
+    ): String
 }

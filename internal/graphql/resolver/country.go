@@ -1,10 +1,12 @@
 package resolver
 
-import sa "github.com/Nusantara-Muda/scholarship-api"
+import (
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
+)
 
 // CountryResolver ...
 type CountryResolver struct {
-	Country sa.Country
+	Country entity.Country
 }
 
 // ID ..
@@ -20,7 +22,7 @@ func (c CountryResolver) Name() *string {
 
 // CountryFeedResolver ...
 type CountryFeedResolver struct {
-	CountryFeed sa.CountryFeed
+	CountryFeed entity.CountryFeed
 }
 
 // Cursor ...

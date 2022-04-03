@@ -1,6 +1,6 @@
 [
    {
-      "id":0,
+      "id":1,
       "name":"Jhon wick",
       "type":"sponsor",
       "email":"jhon@wick.com",
@@ -12,20 +12,26 @@
          "mime":"",
          "caption":""
       },
+      "ethnic_id":0,
+      "ethnic": {
+          "id": 0,
+          "name": ""
+      },
+      "birth_place":"jakarta",
+      "birth_date": "1990-01-11T17:33:58.403414+07:00",
       "company_name":"jhon company name",
       "status":0,
       "country_id":1,
       "postal_code":"57281",
       "address":"jl s parman no 30",
-      "gender":"",
-      "ethnic":"",
+      "gender":"male",
       "bank_id":1,
       "bank_account_no":"0912234",
       "bank_account_name":"jhon wick",
       "created_at":"2022-01-11T17:33:58.403414+07:00"
    },
    {
-      "id":0,
+      "id":2,
       "name":"yayan ruhiyan",
       "type":"sponsor",
       "email":"yayan@ruhiyan.com",
@@ -37,13 +43,19 @@
          "mime":"",
          "caption":""
       },
+      "ethnic_id":0,
+      "ethnic": {
+          "id": 1,
+          "name": "asian"
+      },
+      "birth_place":"bandung",
+      "birth_date": "1991-01-11T17:33:58.403414+07:00",
       "company_name":"yayan company name",
       "status":0,
       "country_id":1,
       "postal_code":"57285",
       "address":"jl ahmad yani no 99",
-      "gender":"",
-      "ethnic":"",
+      "gender":"male",
       "bank_id":1,
       "bank_account_no":"0888111",
       "bank_account_name":"yayan ruhiyan",

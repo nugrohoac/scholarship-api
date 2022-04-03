@@ -1,0 +1,4 @@
+type Ethnic {
+    id: Int
+    name: String
+}

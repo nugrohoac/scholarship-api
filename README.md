@@ -43,11 +43,12 @@ $ go test ./... -cover -race
 ```
 
 ## Unit Test
-This is just running unit test without integraton test. Make sure mocks is up-to-date.
+This is just running unit test without integration test. Make sure mocks is up-to-date.
 * generate or update mock base on name of [interface](./contract.go)
 #### generate or update mocks
 ```bash
 $ mockery -name=name-of-interface
+$ mockery --dir=source/directory --name=nameInterface --output=destination/directory
 ```
 #### Running Integration Test
 ```bash
@@ -73,3 +74,21 @@ if your config env is custom
 ```bash
 $ go run cmd/app/main.go -config-path=your-custom-env
 ```
+
+## User status
+- 0 = not yet activated by email
+- 1 = activated by email but incomplete profile
+- 2 = complete profile (both student and sponsor)
+- 3 = complete setup education (student)
+
+## Scholarship status
+- 0 = waiting for payment
+- 1 = waiting for approve
+- 2 = approve
+- 3 = registration
+- 4 = review
+- 5 = announcement
+- 6 = funding
+- 7 = finish
+- 8 = reject
+

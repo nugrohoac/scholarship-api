@@ -1,10 +1,13 @@
 package resolver
 
-import sa "github.com/Nusantara-Muda/scholarship-api"
+import (
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
+	"time"
+)
 
 // UserResolver ...
 type UserResolver struct {
-	User sa.User
+	User entity.User
 }
 
 // ID ...
@@ -21,6 +24,10 @@ func (u UserResolver) Name() *string {
 
 // Type ...
 func (u UserResolver) Type() *string {
+	if u.User.Type == "" {
+		return nil
+	}
+
 	return &u.User.Type
 }
 
@@ -56,6 +63,11 @@ func (u UserResolver) CountryID() *int32 {
 	return &countryID
 }
 
+// Country .
+func (u UserResolver) Country() *CountryResolver {
+	return &CountryResolver{Country: u.User.Country}
+}
+
 // PostalCode ...
 func (u UserResolver) PostalCode() *string {
 	return &u.User.PostalCode
@@ -71,15 +83,36 @@ func (u UserResolver) Gender() *string {
 	return &u.User.Gender
 }
 
-// Ethnic ...
-func (u UserResolver) Ethnic() *string {
-	return &u.User.Ethnic
+// EthnicID ...
+func (u UserResolver) EthnicID() *int32 {
+	return &u.User.EthnicID
+}
+
+// BirthDate .
+func (u UserResolver) BirthDate() *string {
+	bd := u.User.BirthDate.Format(time.RFC3339)
+	return &bd
+}
+
+// BirthPlace .
+func (u UserResolver) BirthPlace() *string {
+	return &u.User.BirthPlace
+}
+
+// Ethnic .
+func (u UserResolver) Ethnic() *EthnicResolver {
+	return &EthnicResolver{Ethnic: u.User.Ethnic}
 }
 
 // BankID ...
 func (u UserResolver) BankID() *int32 {
 	bankID := u.User.BankID
 	return &bankID
+}
+
+// Bank .
+func (u UserResolver) Bank() *BankResolver {
+	return &BankResolver{Bank: u.User.Bank}
 }
 
 // BankAccountNo ...
@@ -90,4 +123,66 @@ func (u UserResolver) BankAccountNo() *string {
 // BankAccountName ...
 func (u UserResolver) BankAccountName() *string {
 	return &u.User.BankAccountName
+}
+
+// CardIdentities ...
+func (u UserResolver) CardIdentities() *[]*CardIdentityResolver {
+	cards := make([]*CardIdentityResolver, 0)
+
+	for _, c := range u.User.CardIdentities {
+		c := c
+		cards = append(cards, &CardIdentityResolver{CardIdentity: c})
+	}
+
+	return &cards
+}
+
+// CreatedAt ...
+func (u UserResolver) CreatedAt() *string {
+	time := u.User.CreatedAt.Format("2006-01-02 15:04:05")
+	return &time
+}
+
+// CareerGoal .
+func (u UserResolver) CareerGoal() *string {
+	return &u.User.CareerGoal
+}
+
+// UserSchools .
+func (u UserResolver) UserSchools() *[]*UserSchoolResolver {
+	us := make([]*UserSchoolResolver, 0)
+
+	for _, _us := range u.User.UserSchools {
+		_us := _us
+		us = append(us, &UserSchoolResolver{UserSchool: _us})
+	}
+
+	return &us
+}
+
+// UserDocuments .
+func (u UserResolver) UserDocuments() *[]*UserDocumentResolver {
+	uds := make([]*UserDocumentResolver, 0)
+
+	for _, ud := range u.User.UserDocuments {
+		ud := ud
+		uds = append(uds, &UserDocumentResolver{userDocument: ud})
+	}
+
+	return &uds
+}
+
+// LoginResponseResolver ...
+type LoginResponseResolver struct {
+	LoginResponse entity.LoginResponse
+}
+
+// Token ...
+func (l LoginResponseResolver) Token() *string {
+	return &l.LoginResponse.Token
+}
+
+// User ...
+func (l LoginResponseResolver) User() *UserResolver {
+	return &UserResolver{User: l.LoginResponse.User}
 }
