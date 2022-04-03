@@ -23,5 +23,17 @@ func (s sponsorService) FetchSponsor(ctx context.Context, filter entity.SponsorF
 		return entity.SponsorFeed{}, err
 	}
 
+	sponsorsFeed := entity.SponsorFeed{
+		Cursor:       cursor,
+		Sponsors: sponsors,
+	}
+
+	filter.Cursor = cursor
+	filter.Limit = 1
+
+	if len(sponsors) == 0 {
+		sponsorsFeed.Cursor = ""
+	}
+
 	return entity.SponsorFeed{Cursor: cursor, Sponsors: sponsors}, nil
 }

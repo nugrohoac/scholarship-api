@@ -30,8 +30,8 @@ func (c SponsorQuery) FetchSponsor(ctx context.Context, param entity.InputSponso
 		filter.Cursor = *param.Cursor
 	}
 
-	if param.Email != nil {
-		filter.Email = *param.Email
+	if param.SearchText != nil {
+		filter.SearchText = *param.SearchText
 	}
 
 	sponsorFeed, err := c.sponsorService.FetchSponsor(ctx, filter)

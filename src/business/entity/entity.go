@@ -161,14 +161,14 @@ type InputCountryFilter struct {
 type SponsorFilter struct {
 	Limit  int
 	Cursor string
-	Email  string
+	SearchText  string
 }
 
 // InputSponsorFilter ...
 type InputSponsorFilter struct {
 	Limit  *int32
 	Cursor *string
-	Email  *string
+	SearchText  *string
 }
 
 // Claim ...

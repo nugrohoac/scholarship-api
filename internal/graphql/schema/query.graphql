@@ -54,7 +54,7 @@ type Query {
     FetchSponsor(
         limit: Int
         cursor: String
-        email: String
+        searchText: String
     ): sponsorFeed
 
     FetchEthnic: [Ethnic]

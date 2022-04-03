@@ -41,9 +41,13 @@ func (u sponsorRepo) FetchSponsor(ctx context.Context, filter entity.SponsorFilt
 		qSelect = qSelect.Where(sq.Lt{"created_at": cursorTime})
 	}
 
-	if filter.Email != "" {
-		email := "%" + filter.Email + "%"
-		qSelect = qSelect.Where(sq.Like{"LOWER(email)": email})
+	if filter.SearchText != "" {
+		searchText := "%" + filter.SearchText + "%"
+		qSelect = qSelect.Where(sq.Or{
+			sq.Like{"name": searchText},
+			sq.Like{"email": searchText},
+			sq.Like{"phone_no": searchText},
+		})
 	}
 
 	query, args, err := qSelect.ToSql()
@@ -63,8 +67,9 @@ func (u sponsorRepo) FetchSponsor(ctx context.Context, filter entity.SponsorFilt
 	}()
 
 	var (
-		users = make([]entity.User, 0)
+		users     = make([]entity.User, 0)
 		cursor    = time.Time{}
+		cursorStr string
 		bytePhoto []byte
 	)
 
@@ -91,7 +96,7 @@ func (u sponsorRepo) FetchSponsor(ctx context.Context, filter entity.SponsorFilt
 		users = append(users, user)
 	}
 
-	cursorStr, err := encodeCursor(cursor)
+	cursorStr, err = encodeCursor(cursor)
 	if err != nil {
 		return nil, "", err
 	}
