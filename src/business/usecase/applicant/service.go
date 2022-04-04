@@ -62,6 +62,13 @@ func (a applicantService) Fetch(ctx context.Context, filter entity.FilterApplica
 
 // GetByID .
 func (a applicantService) GetByID(ctx context.Context, ID int64) (entity.Applicant, error) {
+	_, err := common.GetUserOnContext(ctx)
+	if err != nil {
+		return entity.Applicant{}, err
+	}
+
+	// business process will do check base on user on context
+
 	applicant, err := a.applicantRepository.GetByID(ctx, ID)
 	if err != nil {
 		return entity.Applicant{}, err
