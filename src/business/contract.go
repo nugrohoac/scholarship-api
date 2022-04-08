@@ -163,3 +163,13 @@ type ApplicantService interface {
 	Fetch(ctx context.Context, filter entity.FilterApplicant) (entity.ApplicantFeed, error)
 	GetByID(ctx context.Context, ID int64) (entity.Applicant, error)
 }
+
+// AssessmentRepository .
+type AssessmentRepository interface {
+	Submit(ctx context.Context, ApplicantID int64, eligibilities []entity.ApplicantEligibility, scores []entity.ApplicantScore) error
+}
+
+// AssessmentService .
+type AssessmentService interface {
+	Submit(ctx context.Context, ApplicantID int64, eligibilities []entity.ApplicantEligibility, scores []entity.ApplicantScore) (string, error)
+}

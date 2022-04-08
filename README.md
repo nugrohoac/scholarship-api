@@ -15,6 +15,8 @@ This is will running integration test and unit test.
 #### 1. Create file migrate
 ```bash
 $ migrate create -ext sql -dir destination/directory name_migration
+# Example
+$ migrate create -ext sql -dir internal/postgresql/migrations create_table_applicant_score
 ```
 
 Each migration has an up and down migration.
@@ -44,7 +46,7 @@ $ go test ./... -cover -race
 
 ## Unit Test
 This is just running unit test without integration test. Make sure mocks is up-to-date.
-* generate or update mock base on name of [interface](./contract.go)
+* generate or update mock base on name of [interface](src/business/contract.go)
 #### generate or update mocks
 ```bash
 $ mockery -name=name-of-interface

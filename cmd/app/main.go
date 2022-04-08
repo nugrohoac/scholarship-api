@@ -45,6 +45,7 @@ func main() {
 		cmd.ScholarshipMutation,
 		cmd.PaymentMutation,
 		cmd.SchoolMutation,
+		cmd.AssessmentMutation,
 		cmd.SponsorQuery,
 	)
 
