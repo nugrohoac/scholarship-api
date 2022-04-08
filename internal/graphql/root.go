@@ -21,6 +21,7 @@ type RootGraphql struct {
 	mutation.ScholarshipMutation
 	mutation.PaymentMutation
 	mutation.SchoolMutation
+	mutation.AssessmentMutation
 	backoffice.SponsorQuery
 }
 
@@ -39,6 +40,7 @@ func NewRootGraphql(
 	scholarshipMutation mutation.ScholarshipMutation,
 	paymentMutation mutation.PaymentMutation,
 	schoolMutation mutation.SchoolMutation,
+	assessmentMutation mutation.AssessmentMutation,
 	sponsorQuery backoffice.SponsorQuery,
 
 ) *RootGraphql {
@@ -56,6 +58,7 @@ func NewRootGraphql(
 		scholarshipMutation,
 		paymentMutation,
 		schoolMutation,
+		assessmentMutation,
 		sponsorQuery,
 	}
 }

@@ -79,4 +79,10 @@ type Mutation {
         essay: String
         recommendationLetter: inputImage
     ): String
+
+    SubmitAssessment(
+        applicantId: Int!
+        applicantEligibilities: [inputApplicantEligibility]
+        applicantScores: [inputApplicantScore!]!
+    ): String
 }

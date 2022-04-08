@@ -1,0 +1,9 @@
+input inputApplicantEligibility {
+    requirementId: Int!
+    value: Boolean!
+}
+
+input inputApplicantScore {
+    name: String!
+    value: Int!
+}

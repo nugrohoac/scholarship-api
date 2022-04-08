@@ -159,16 +159,16 @@ type InputCountryFilter struct {
 
 // SponsorFilter ...
 type SponsorFilter struct {
-	Limit  int
-	Cursor string
-	SearchText  string
+	Limit      int
+	Cursor     string
+	SearchText string
 }
 
 // InputSponsorFilter ...
 type InputSponsorFilter struct {
-	Limit  *int32
-	Cursor *string
-	SearchText  *string
+	Limit      *int32
+	Cursor     *string
+	SearchText *string
 }
 
 // Claim ...
@@ -508,18 +508,51 @@ type InputApplicantFilter struct {
 // Applicant .
 // refer to user scholarship
 type Applicant struct {
-	ID                   int64     `json:"id"`
-	ScholarshipID        int64     `json:"scholarship_id"`
-	UserID               int64     `json:"user_id"`
-	User                 User      `json:"user"`
-	Status               int32     `json:"status"`
-	ApplyDate            time.Time `json:"apply_date"`
-	Essay                string    `json:"essay"`
-	RecommendationLetter Image     `json:"recommendation_letter"`
+	ID                   int64                  `json:"id"`
+	ScholarshipID        int64                  `json:"scholarship_id"`
+	UserID               int64                  `json:"user_id"`
+	User                 User                   `json:"user"`
+	Status               int32                  `json:"status"`
+	ApplyDate            time.Time              `json:"apply_date"`
+	Essay                string                 `json:"essay"`
+	RecommendationLetter Image                  `json:"recommendation_letter"`
+	Eligibilities        []ApplicantEligibility `json:"eligibilities"`
+	Scores               []ApplicantScore       `json:"scores"`
 }
 
 // ApplicantFeed .
 type ApplicantFeed struct {
 	Cursor     string      `json:"cursor"`
 	Applicants []Applicant `json:"applicants"`
+}
+
+// ApplicantEligibility .
+type ApplicantEligibility struct {
+	ID            int64     `json:"id"`
+	ApplicantID   int64     `json:"applicant_id"`
+	RequirementID int64     `json:"requirement_id"`
+	Value         bool      `json:"value"`
+	CreatedAt     time.Time `json:"-"`
+}
+
+// ApplicantScore .
+type ApplicantScore struct {
+	ID          int64     `json:"id"`
+	ApplicantID int64     `json:"applicant_id"`
+	Name        string    `json:"name"`
+	Value       int32     `json:"value"`
+	CreatedAt   time.Time `json:"-"`
+}
+
+// InputAssessment .
+type InputAssessment struct {
+	ApplicantID            int32
+	ApplicantEligibilities *[]*struct {
+		RequirementID int32
+		Value         bool
+	}
+	ApplicantScores []struct {
+		Name  string
+		Value int32
+	}
 }
