@@ -331,7 +331,7 @@ func (s scholarshipRepo) GetByID(ctx context.Context, ID int64) (entity.Scholars
 		"r.type",
 		"r.value",
 	).From("scholarship s").
-		Join("requirement r on s.id = r.scholarship_id").
+		LeftJoin("requirement r on s.id = r.scholarship_id").
 		PlaceholderFormat(sq.Dollar).
 		Where(sq.Eq{"s.id": ID}).
 		ToSql()
@@ -353,6 +353,9 @@ func (s scholarshipRepo) GetByID(ctx context.Context, ID int64) (entity.Scholars
 	var (
 		scholarship entity.Scholarship
 		byteImage   []byte
+		name        sql.NullString
+		_type       sql.NullString
+		value       sql.NullString
 	)
 
 	for rows.Next() {
@@ -375,9 +378,9 @@ func (s scholarshipRepo) GetByID(ctx context.Context, ID int64) (entity.Scholars
 			&scholarship.FundingStart,
 			&scholarship.FundingEnd,
 			&scholarship.CreatedAt,
-			&requirement.Name,
-			&requirement.Type,
-			&requirement.Value,
+			&name,
+			&_type,
+			&value,
 		); err != nil {
 			return entity.Scholarship{}, err
 		}
@@ -387,6 +390,19 @@ func (s scholarshipRepo) GetByID(ctx context.Context, ID int64) (entity.Scholars
 				return entity.Scholarship{}, err
 			}
 		}
+
+		if name.Valid {
+			requirement.Name = name.String
+		}
+
+		if _type.Valid {
+			requirement.Type = _type.String
+		}
+
+		if value.Valid {
+			requirement.Value = value.String
+		}
+
 		scholarship.Requirements = append(scholarship.Requirements, requirement)
 	}
 
