@@ -4,6 +4,13 @@ input inputApplicantEligibility {
 }
 
 input inputApplicantScore {
-    name: String!
+    name: scoreName!
     value: Int!
+}
+
+enum scoreName {
+    acceptance
+    essay
+    supporting_document
+    total
 }
