@@ -58,6 +58,19 @@ func (a ApplicantResolver) RecommendationLetter() *ImageResolver {
 	return &ImageResolver{Image: a.Applicant.RecommendationLetter}
 }
 
+// Scores .
+func (a ApplicantResolver) Scores() *[]*ScoreResolver {
+	scores := make([]*ScoreResolver, 0)
+
+	for _, score := range a.Applicant.Scores {
+		score := score
+
+		scores = append(scores, &ScoreResolver{Score: score})
+	}
+
+	return &scores
+}
+
 // ApplicantFeedResolver .
 type ApplicantFeedResolver struct {
 	ApplicantFeed entity.ApplicantFeed
@@ -79,4 +92,19 @@ func (a ApplicantFeedResolver) Applicants() *[]*ApplicantResolver {
 	}
 
 	return &applicants
+}
+
+// ScoreResolver .
+type ScoreResolver struct {
+	Score entity.ApplicantScore
+}
+
+// Name .
+func (s ScoreResolver) Name() *string {
+	return &s.Score.Name
+}
+
+// Value .
+func (s ScoreResolver) Value() *int32 {
+	return &s.Score.Value
 }

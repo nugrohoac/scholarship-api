@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"strconv"
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
@@ -19,50 +20,40 @@ type applicantRepository struct {
 
 // Fetch .
 func (a applicantRepository) Fetch(ctx context.Context, filter entity.FilterApplicant) ([]entity.Applicant, string, error) {
-	qSelect := sq.Select("us.id",
-		"us.scholarship_id",
-		"us.user_id",
-		"us.status",
-		"us.created_at",
-		"u.id",
-		"u.name",
-		"u.type",
-		"u.email",
-		"u.phone_no",
-		"u.photo",
-		"u.company_name",
-		"u.status",
-		"u.country_id",
-		"u.postal_code",
-		"u.address",
-		"u.gender",
-		"u.ethnic_id",
-		"u.birth_date",
-		"u.birth_place",
-		"u.bank_id",
-		"u.bank_account_no",
-		"u.bank_account_name",
-		"u.ethnic_id",
-		"e.name",
+	qSelect := sq.Select("us.id applicant_id",
+		"us.scholarship_id scholarship_id",
+		"us.user_id user_id",
+		"us.status applicant_status",
+		"us.created_at applicant_created_at",
+		"u.id _user_id",
+		"u.name user_name",
+		"u.type user_type",
+		"u.email user_email",
+		"u.phone_no user_phone_no",
+		"u.photo user_photo",
+		"u.company_name user_company_name",
+		"u.status user_status",
+		"u.country_id user_country_id",
+		"u.postal_code user_postal_code",
+		"u.address user_address",
+		"u.gender user_gender",
+		"u.ethnic_id user_ethnic_id",
+		"u.birth_date user_birth_date",
+		"u.birth_place user_birth_place",
+		"u.bank_id user_bank_id",
+		"u.bank_account_no user_bank_account_no",
+		"u.bank_account_name user_bank_account_name",
+		"u.ethnic_id _user_ethnic_id",
+		"e.name ethnic_name",
+		"aps.name score_name",
+		"aps.value score_value",
+		"row_number () over(order by aps.value desc nulls last) row_id",
 	).From("user_scholarship us").
 		Join("\"user\" u on us.user_id  = u.id").
 		LeftJoin("ethnic e on e.id = u.ethnic_id").
+		LeftJoin("(select applicant_id, name, value from applicant_score where name='total') aps on aps.applicant_id = us.id ").
 		Where(sq.Eq{"us.scholarship_id": filter.ScholarshipID}).
-		PlaceholderFormat(sq.Dollar).
-		OrderBy("us.created_at desc")
-
-	if filter.Limit > 0 {
-		qSelect = qSelect.Limit(filter.Limit)
-	}
-
-	if filter.Cursor != "" {
-		cursorTime, err := decodeCursor(filter.Cursor)
-		if err != nil {
-			return nil, "", err
-		}
-
-		qSelect = qSelect.Where(sq.Lt{"us.created_at": cursorTime})
-	}
+		PlaceholderFormat(sq.Dollar)
 
 	if len(filter.Status) > 0 {
 		qSelect = qSelect.Where(sq.Eq{"us.status": filter.Status})
@@ -73,7 +64,50 @@ func (a applicantRepository) Fetch(ctx context.Context, filter entity.FilterAppl
 		return nil, "", err
 	}
 
-	rows, err := a.db.QueryContext(ctx, query, args...)
+	finalQuery := `select 
+		res.applicant_id,
+		res.scholarship_id,
+		res.user_id _user_id,
+		res.applicant_status,
+		res.applicant_created_at,
+		res.user_id,
+		res.user_name,
+		res.user_type,
+		res.user_email,
+		res.user_phone_no,
+		res.user_photo,
+		res.user_company_name,
+		res.user_status,
+		res.user_country_id,
+		res.user_postal_code,
+		res.user_address,
+		res.user_gender,
+		res.user_ethnic_id,
+		res.user_birth_date,
+		res.user_birth_place,
+		res.user_bank_id,
+		res.user_bank_account_no,
+		res.user_bank_account_name,
+		res.user_ethnic_id eth_id,
+		res.ethnic_name,
+		res.score_name,
+		res.score_value,
+		res.row_id from (` + query + `) as res`
+
+	if filter.Cursor != "" {
+		cursorRow, err := decodeCursorRow(filter.Cursor)
+		if err != nil {
+			return nil, "", err
+		}
+
+		finalQuery = finalQuery + " WHERE res.row_id > " + cursorRow
+	}
+
+	if filter.Limit > 0 {
+		finalQuery = finalQuery + " LIMIT " + strconv.Itoa(int(filter.Limit))
+	}
+
+	rows, err := a.db.QueryContext(ctx, finalQuery, args...)
 	if err != nil {
 		return nil, "", err
 	}
@@ -86,8 +120,8 @@ func (a applicantRepository) Fetch(ctx context.Context, filter entity.FilterAppl
 
 	var (
 		applicants = make([]entity.Applicant, 0)
-		cursorStr  string
-		cursor     time.Time
+		cursor     string
+		rowNumber  int64
 	)
 
 	for rows.Next() {
@@ -95,6 +129,9 @@ func (a applicantRepository) Fetch(ctx context.Context, filter entity.FilterAppl
 			applicant  entity.Applicant
 			bytePhoto  []byte
 			ethnicName sql.NullString
+			scoreName  sql.NullString
+			scoreValue sql.NullInt32
+			score      entity.ApplicantScore
 		)
 
 		if err = rows.Scan(
@@ -123,6 +160,9 @@ func (a applicantRepository) Fetch(ctx context.Context, filter entity.FilterAppl
 			&applicant.User.BankAccountName,
 			&applicant.User.EthnicID,
 			&ethnicName,
+			&scoreName,
+			&scoreValue,
+			&rowNumber,
 		); err != nil {
 			return nil, "", err
 		}
@@ -137,21 +177,27 @@ func (a applicantRepository) Fetch(ctx context.Context, filter entity.FilterAppl
 			}
 		}
 
+		score.Name = `total`
+		if scoreName.Valid {
+			score.Name = scoreName.String
+		}
+
+		score.Value = 0
+		if scoreValue.Valid {
+			score.Value = scoreValue.Int32
+		}
+
 		applicant.UserID = applicant.User.ID
 		applicant.User.Ethnic.ID = applicant.User.EthnicID
-		cursor = applicant.ApplyDate
+		applicant.Scores = []entity.ApplicantScore{score}
+		cursor = strconv.Itoa(int(rowNumber))
 
 		applicants = append(applicants, applicant)
 	}
 
-	if !cursor.IsZero() {
-		cursorStr, err = encodeCursor(cursor)
-		if err != nil {
-			return nil, "", err
-		}
-	}
+	cursor = encodeCursorRow(cursor)
 
-	return applicants, cursorStr, nil
+	return applicants, cursor, nil
 }
 
 // GetByID .

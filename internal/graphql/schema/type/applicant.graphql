@@ -7,9 +7,15 @@ type applicant {
     applyDate: String
     essay: String
     recommendationLetter: image
+    scores: [score]
 }
 
 type applicantFeed {
     cursor: String
     applicants: [applicant]
+}
+
+type score {
+    name: String
+    value: Int
 }
