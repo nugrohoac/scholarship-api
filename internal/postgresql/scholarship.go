@@ -327,6 +327,7 @@ func (s scholarshipRepo) GetByID(ctx context.Context, ID int64) (entity.Scholars
 		"s.funding_start",
 		"s.funding_end",
 		"s.created_at",
+		"r.id",
 		"r.name",
 		"r.type",
 		"r.value",
@@ -353,6 +354,7 @@ func (s scholarshipRepo) GetByID(ctx context.Context, ID int64) (entity.Scholars
 	var (
 		scholarship entity.Scholarship
 		byteImage   []byte
+		reqID       sql.NullInt64
 		name        sql.NullString
 		_type       sql.NullString
 		value       sql.NullString
@@ -378,6 +380,7 @@ func (s scholarshipRepo) GetByID(ctx context.Context, ID int64) (entity.Scholars
 			&scholarship.FundingStart,
 			&scholarship.FundingEnd,
 			&scholarship.CreatedAt,
+			&reqID,
 			&name,
 			&_type,
 			&value,
@@ -401,6 +404,10 @@ func (s scholarshipRepo) GetByID(ctx context.Context, ID int64) (entity.Scholars
 
 		if value.Valid {
 			requirement.Value = value.String
+		}
+
+		if reqID.Valid {
+			requirement.ID = reqID.Int64
 		}
 
 		scholarship.Requirements = append(scholarship.Requirements, requirement)

@@ -18,3 +18,6 @@ run:
 	@go run cmd/app/main.go
 build:
 	@go build -o scholarship-api cmd/app/main.go
+
+docker-run:
+	@docker stop bangun_container && docker rm -f bangun_container &&  docker image rm -f bangun_api &&  docker build -t bangun_api . && docker run --name=bangun_container -d -it -p 7070:7070 bangun_api
