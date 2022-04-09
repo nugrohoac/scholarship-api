@@ -53,21 +53,43 @@ func (a assessmentRepository) Submit(ctx context.Context, ApplicantID int64, eli
 		}
 	}
 
-	// insert into applicant score
 	qInsert := sq.Insert("applicant_score").
 		Columns("applicant_id",
 			"name",
 			"value",
+			"created_at",
 		).PlaceholderFormat(sq.Dollar)
 
 	for _, score := range scores {
 		qInsert = qInsert.Values(ApplicantID,
 			score.Name,
 			score.Value,
+			timeNow,
 		)
 	}
 
 	query, args, err := qInsert.ToSql()
+	if err != nil {
+		if errRollback := tx.Rollback(); errRollback != nil {
+			logrus.Error(err)
+		}
+
+		return err
+	}
+
+	if _, err = tx.ExecContext(ctx, query, args...); err != nil {
+		if errRollback := tx.Rollback(); errRollback != nil {
+			logrus.Error(err)
+		}
+
+		return err
+	}
+
+	query, args, err = sq.Update("user_scholarship").
+		SetMap(sq.Eq{"status": 1, "updated_at": timeNow}).
+		Where(sq.Eq{"id": ApplicantID}).
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
 	if err != nil {
 		if errRollback := tx.Rollback(); errRollback != nil {
 			logrus.Error(err)
