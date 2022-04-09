@@ -36,6 +36,15 @@ func (a assessmentService) Submit(ctx context.Context, ApplicantID int64, eligib
 		return "", errors.ErrNotAllowed{Message: "sponsor not scholarship owner"}
 	}
 
+	currentScores, err := a.assessmentRepository.GetScoreByApplicantIDs(ctx, []int64{ApplicantID})
+	if err != nil {
+		return "", err
+	}
+
+	if len(currentScores) > 0 {
+		return "", errors.ErrorDuplicate{Message: "you have been submit assessment for this user"}
+	}
+
 	if err = a.assessmentRepository.Submit(ctx, ApplicantID, eligibilities, scores); err != nil {
 		return "", err
 	}
