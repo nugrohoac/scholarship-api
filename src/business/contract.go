@@ -167,6 +167,7 @@ type ApplicantService interface {
 // AssessmentRepository .
 type AssessmentRepository interface {
 	Submit(ctx context.Context, ApplicantID int64, eligibilities []entity.ApplicantEligibility, scores []entity.ApplicantScore) error
+	GetScoreByApplicantIDs(ctx context.Context, applicantIDs []int64) ([]entity.ApplicantScore, error)
 }
 
 // AssessmentService .

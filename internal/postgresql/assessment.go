@@ -95,6 +95,49 @@ func (a assessmentRepository) Submit(ctx context.Context, ApplicantID int64, eli
 	return nil
 }
 
+// GetScoreByApplicantIDs .
+func (a assessmentRepository) GetScoreByApplicantIDs(ctx context.Context, applicantIDs []int64) ([]entity.ApplicantScore, error) {
+	query, args, err := sq.Select("id", "applicant_id", "name", "value").
+		From("applicant_score").
+		Where(sq.Eq{"applicant_id": applicantIDs}).
+		PlaceholderFormat(sq.Dollar).
+		OrderBy("name asc").
+		ToSql()
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := a.db.QueryContext(ctx, query, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	defer func() {
+		if errClose := rows.Close(); errClose != nil {
+			logrus.Error(errClose)
+		}
+	}()
+
+	scores := make([]entity.ApplicantScore, 0)
+
+	for rows.Next() {
+		var score entity.ApplicantScore
+
+		if err = rows.Scan(
+			&score.ID,
+			&score.ApplicantID,
+			&score.Name,
+			&score.Value,
+		); err != nil {
+			return nil, err
+		}
+
+		scores = append(scores, score)
+	}
+
+	return scores, nil
+}
+
 // NewAssessmentRepository ,
 func NewAssessmentRepository(db *sql.DB) business.AssessmentRepository {
 	return assessmentRepository{db: db}
