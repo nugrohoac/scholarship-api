@@ -90,7 +90,19 @@ $ go run cmd/app/main.go -config-path=your-custom-env
 - 3 = registration
 - 4 = review
 - 5 = announcement
-- 6 = funding
-- 7 = finish
-- 8 = reject
+- 6 = blazing email
+- 7 = funding
+- 8 = finish
+- 9 = reject
 
+## User scholarship status (Applicant status)
+- 0 = applied
+- 1 = reviewed
+- 2 = awardee
+- 3 = waiting_for_confirmation
+- 4 = confirmed
+- 5 = rejected
+
+
+## Design Database
+- [![scholarship-drawio-2.png](https://i.postimg.cc/SNY7xgSd/scholarship-drawio-2.png)](https://postimg.cc/kB9tjFtR)
