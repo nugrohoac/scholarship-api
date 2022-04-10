@@ -96,13 +96,13 @@ $ go run cmd/app/main.go -config-path=your-custom-env
 - 9 = reject
 
 ## User scholarship status (Applicant status)
-0 --> applied
-1 --> reviewed
-2 --> awardee
-3 --> waiting_for_confirmation
-4 --> confirmed
-5 --> rejected
+- 0 = applied
+- 1 = reviewed
+- 2 = awardee
+- 3 = waiting_for_confirmation
+- 4 = confirmed
+- 5 = rejected
 
 
 ## Design Database
-[![scholarship-drawio-2.png](https://i.postimg.cc/SNY7xgSd/scholarship-drawio-2.png)](https://postimg.cc/kB9tjFtR)
+- [![scholarship-drawio-2.png](https://i.postimg.cc/SNY7xgSd/scholarship-drawio-2.png)](https://postimg.cc/kB9tjFtR)
