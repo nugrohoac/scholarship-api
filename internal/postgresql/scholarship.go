@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"github.com/Nusantara-Muda/scholarship-api/src/business"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/util"
 	"strings"
 	"time"
 
@@ -51,6 +52,13 @@ func (s scholarshipRepo) FetchScholarshipBackoffice(ctx context.Context, filter 
 		}
 
 		qSelect = qSelect.Where(sq.Lt{"created_at": cursor})
+	}
+
+	if filter.SearchText != "" {
+		searchText := "%" + filter.SearchText + "%"
+		qSelect = qSelect.Where(sq.Or{
+			sq.Like{"name": searchText},
+		})
 	}
 
 	query, args, err := qSelect.ToSql()
@@ -107,6 +115,7 @@ func (s scholarshipRepo) FetchScholarshipBackoffice(ctx context.Context, filter 
 		}
 
 		cursor = scholarship.CreatedAt
+		scholarship.TextStatus = util.GetNameStatus(scholarship.Status)
 		scholarships = append(scholarships, scholarship)
 	}
 

@@ -27,6 +27,9 @@ func (s scholarshipService) FetchScholarshipBackoffice(ctx context.Context, filt
 		Scholarships: scholarships,
 	}
 
+	filter.Cursor = cursor
+	filter.Limit = 1
+
 	if len(scholarships) == 0 {
 		scholarshipFeed.Cursor = ""
 	}

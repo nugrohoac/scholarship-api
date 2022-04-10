@@ -25,6 +25,10 @@ func (s ScholarshipQuery) FetchScholarshipBackoffice(ctx context.Context, param 
 		filter.Cursor = *param.Cursor
 	}
 
+	if param.SearchText != nil {
+		filter.SearchText = *param.SearchText
+	}
+
 	scholarshipFeed, err := s.scholarshipService.FetchScholarshipBackoffice(ctx, filter)
 	if err != nil {
 		return nil, err

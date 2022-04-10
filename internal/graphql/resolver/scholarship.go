@@ -44,6 +44,11 @@ func (s ScholarshipResolver) Status() *int32 {
 	return &status
 }
 
+// Text Status ...
+func (s ScholarshipResolver) TextStatus() *string {
+	return &s.Scholarship.TextStatus
+}
+
 // Image ...
 func (s ScholarshipResolver) Image() *ImageResolver {
 	return &ImageResolver{Image: s.Scholarship.Image}

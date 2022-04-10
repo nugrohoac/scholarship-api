@@ -5,6 +5,7 @@ type scholarship {
     name: String
     amount: Int
     status: Int
+    textStatus: String
     image: image
     awardee: Int
     currentApplicant: Int
