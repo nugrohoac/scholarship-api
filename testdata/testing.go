@@ -21,7 +21,6 @@ type FuncCaller struct {
 
 func init() {
 	_, currentFile, _, _ := runtime.Caller(0)
-	fmt.Printf(currentFile)
 	basepath = filepath.Dir(currentFile)
 }
 

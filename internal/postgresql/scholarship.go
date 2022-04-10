@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"github.com/Nusantara-Muda/scholarship-api/src/business"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	"strings"
@@ -17,6 +18,105 @@ import (
 type scholarshipRepo struct {
 	db              *sql.DB
 	deadlinePayment int
+}
+
+func (s scholarshipRepo) FetchScholarshipBackoffice(ctx context.Context, filter entity.ScholarshipFilterBackoffice) ([]entity.Scholarship, string, error) {
+	qSelect := sq.Select("id",
+		"sponsor_id",
+		"name",
+		"amount",
+		"status",
+		"image",
+		"awardee",
+		"current_applicant",
+		"application_start",
+		"application_end",
+		"announcement_date",
+		"eligibility_description",
+		"subsidy_description",
+		"funding_start",
+		"funding_end",
+		"created_at",
+	).From("scholarship").
+		PlaceholderFormat(sq.Dollar).
+		OrderBy("created_at desc")
+
+	if filter.Limit > 0 {
+		qSelect = qSelect.Limit(uint64(filter.Limit))
+	}
+
+	if filter.Cursor != "" {
+		cursor, err := decodeCursor(filter.Cursor)
+		if err != nil {
+			return nil, "", err
+		}
+
+		qSelect = qSelect.Where(sq.Lt{"created_at": cursor})
+	}
+
+	query, args, err := qSelect.ToSql()
+	if err != nil {
+		return nil, "", err
+	}
+
+	rows, err := s.db.QueryContext(ctx, query, args...)
+	if err != nil {
+		return nil, "", err
+	}
+
+	defer func() {
+		if errClose := rows.Close(); errClose != nil {
+			logrus.Error(errClose)
+		}
+	}()
+
+	var (
+		scholarships = make([]entity.Scholarship, 0)
+		cursor       time.Time
+		cursorStr    string
+		byteImg      []byte
+	)
+
+	for rows.Next() {
+		var scholarship entity.Scholarship
+
+		if err = rows.Scan(
+			&scholarship.ID,
+			&scholarship.SponsorID,
+			&scholarship.Name,
+			&scholarship.Amount,
+			&scholarship.Status,
+			&byteImg,
+			&scholarship.Awardee,
+			&scholarship.CurrentApplicant,
+			&scholarship.ApplicationStart,
+			&scholarship.ApplicationEnd,
+			&scholarship.AnnouncementDate,
+			&scholarship.EligibilityDescription,
+			&scholarship.SubsidyDescription,
+			&scholarship.FundingStart,
+			&scholarship.FundingEnd,
+			&scholarship.CreatedAt,
+		); err != nil {
+			return nil, "", err
+		}
+
+		if byteImg != nil {
+			if err = json.Unmarshal(byteImg, &scholarship.Image); err != nil {
+				return nil, "", err
+			}
+		}
+
+		cursor = scholarship.CreatedAt
+		scholarships = append(scholarships, scholarship)
+	}
+
+	cursorStr, err = encodeCursor(cursor)
+	if err != nil {
+		return nil, "", err
+	}
+
+	return scholarships, cursorStr, nil
 }
 
 // Create ...
@@ -331,8 +431,15 @@ func (s scholarshipRepo) GetByID(ctx context.Context, ID int64) (entity.Scholars
 		"r.name",
 		"r.type",
 		"r.value",
+		"u.id as sponsor_id",
+		"u.name as sponsor_name",
+		"u.email as sponsor_email",
+		"u.phone_no as sponsor_phone_number",
+		"u.company_name as sponsor_company_name",
+		"u.photo as sponsor_image",
 	).From("scholarship s").
 		LeftJoin("requirement r on s.id = r.scholarship_id").
+		LeftJoin("\"user\" u on u.id = s.sponsor_id").
 		PlaceholderFormat(sq.Dollar).
 		Where(sq.Eq{"s.id": ID}).
 		ToSql()
@@ -352,16 +459,18 @@ func (s scholarshipRepo) GetByID(ctx context.Context, ID int64) (entity.Scholars
 	}()
 
 	var (
-		scholarship entity.Scholarship
-		byteImage   []byte
-		reqID       sql.NullInt64
-		name        sql.NullString
-		_type       sql.NullString
-		value       sql.NullString
+		scholarship  entity.Scholarship
+		byteImage    []byte
+		sponsorImage []byte
+		reqID        sql.NullInt64
+		name         sql.NullString
+		_type        sql.NullString
+		value        sql.NullString
 	)
 
 	for rows.Next() {
 		var requirement entity.Requirement
+		var sponsor entity.User
 
 		if err = rows.Scan(
 			&scholarship.ID,
@@ -384,12 +493,24 @@ func (s scholarshipRepo) GetByID(ctx context.Context, ID int64) (entity.Scholars
 			&name,
 			&_type,
 			&value,
+			&sponsor.ID,
+			&sponsor.Name,
+			&sponsor.Email,
+			&sponsor.PhoneNo,
+			&sponsor.CompanyName,
+			&sponsorImage,
 		); err != nil {
 			return entity.Scholarship{}, err
 		}
 
 		if byteImage != nil {
 			if err = json.Unmarshal(byteImage, &scholarship.Image); err != nil {
+				return entity.Scholarship{}, err
+			}
+		}
+
+		if sponsorImage != nil {
+			if err = json.Unmarshal(sponsorImage, &sponsor.Photo); err != nil {
 				return entity.Scholarship{}, err
 			}
 		}
@@ -411,6 +532,7 @@ func (s scholarshipRepo) GetByID(ctx context.Context, ID int64) (entity.Scholars
 		}
 
 		scholarship.Requirements = append(scholarship.Requirements, requirement)
+		scholarship.Sponsor = sponsor
 	}
 
 	return scholarship, nil

@@ -1,0 +1,16 @@
+type studentFeed {
+    cursor: String
+    students: [student]
+}
+
+type student {
+    id: Int
+    name: String
+    email: String
+    postalCode: String
+    address: String
+    birthDate: String
+    birthPlace: String
+    createdAt: String
+    careerGoal: String
+}

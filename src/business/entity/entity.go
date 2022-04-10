@@ -164,8 +164,36 @@ type SponsorFilter struct {
 	SearchText string
 }
 
+// SponsorFilter ...
+type StudentFilter struct {
+	Limit      int
+	Cursor     string
+	SearchText string
+}
+
+// SponsorFilter ...
+type ScholarshipFilterBackoffice struct {
+	Limit      int
+	Cursor     string
+	SearchText string
+}
+
 // InputSponsorFilter ...
 type InputSponsorFilter struct {
+	Limit      *int32
+	Cursor     *string
+	SearchText *string
+}
+
+// InputStudentFilter ...
+type InputStudentFilter struct {
+	Limit      *int32
+	Cursor     *string
+	SearchText *string
+}
+
+// InputScholarshipFilterBackoffice ...
+type InputScholarshipFilterBackoffice struct {
 	Limit      *int32
 	Cursor     *string
 	SearchText *string
@@ -392,6 +420,12 @@ type SchoolFeed struct {
 type SponsorFeed struct {
 	Cursor   string
 	Sponsors []User
+}
+
+// StudentFeed ...
+type StudentFeed struct {
+	Cursor   string
+	Students []User
 }
 
 // SchoolFilter .

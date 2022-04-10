@@ -18,6 +18,7 @@
 // type/scholarship.graphql
 // type/school.graphql
 // type/sponsor.graphql
+// type/student.graphql
 // type/user.graphql
 // type/user_document.graphql
 // type/user_school.graphql
@@ -112,12 +113,12 @@ func mutationGraphql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "mutation.graphql", size: 2063, mode: os.FileMode(420), modTime: time.Unix(1649470908, 0)}
+	info := bindataFileInfo{name: "mutation.graphql", size: 2063, mode: os.FileMode(420), modTime: time.Unix(1649558190, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
 
-var _queryGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xac\x53\x4d\x4f\xeb\x30\x10\xbc\xf7\x57\x6c\x6f\x2f\x7f\xc1\xb7\xd7\xd7\xf6\x29\x12\x48\xd0\x22\x2e\x55\x0f\xc6\x59\x12\x53\xc7\x8e\xd6\x1b\x41\x84\xf8\xef\xc8\x35\x8d\xd3\x0f\x2a\x8a\xea\x93\xbd\xab\x9d\x19\x8f\xc7\xdc\x35\x08\xf7\x2d\x52\x07\xef\x23\x00\x80\x39\xb2\xaa\x26\xd2\x6e\xfe\x6c\x8f\x61\x19\x5d\x6b\x16\x90\x5b\xee\x4b\xaa\x25\xef\x48\xc0\x92\x49\xdb\xb2\x2f\x5b\x59\xe3\x5e\x31\x13\xf0\x24\xed\x66\x8e\x58\x8c\x12\xfc\x3f\xd7\x5a\xa6\xee\x5a\x0c\x2a\xc2\x25\x92\x1b\x57\x6a\x9b\xd0\xb1\x96\xda\xec\x86\xc6\x7d\xb9\x91\xde\xbf\x3a\x2a\xf6\x3b\x99\x00\x13\xc6\x17\xe8\x1b\x67\x3d\x46\xc4\x05\x7a\xb4\xc5\x2c\x00\x3d\x22\xe9\x67\xad\x24\x6b\x77\x9e\x23\xeb\x75\xc6\x9b\x3b\x2a\x1d\xdf\x7d\x91\x5e\x34\x19\x3c\x5b\xaa\xca\x19\x49\xbe\xd2\x4d\x9a\xdd\x4a\x74\x94\x17\x3f\xf2\xee\x84\xcb\x9e\x25\xb7\x5e\xc0\x2a\xb7\xbc\x3e\x6b\xb2\x4f\xfc\xc9\xe8\xff\xc8\x03\x5d\x93\x2e\x9f\x26\x6d\x3a\x8a\x1a\x9f\x00\x18\x5c\x6b\x8a\x25\x21\x0a\x58\x15\xdb\xcd\x7a\xd0\xba\x95\x2f\x8e\xae\x95\x91\x3a\x80\x1d\xc4\x30\x48\x77\xe6\x2a\x0c\x61\x85\xaf\x74\xca\x35\x67\x0e\x79\xe3\xab\xfd\x86\xd8\xa3\x24\x55\x3d\xe0\x1b\x1f\x31\x45\xd0\x03\xaa\x19\x57\x56\x2b\x01\xab\xb8\x19\xda\xfb\xb7\x69\x8c\x56\xd2\xf2\x77\x71\x4a\x3f\x65\xf0\x74\x47\xbd\x0b\xb4\x1f\x65\x2d\x13\x20\x77\x2a\xf6\x42\xd5\x6b\x3b\x1f\xa9\x7e\x78\xf4\xf1\x19\x00\x00\xff\xff\x62\x7c\x4d\x68\xc8\x04\x00\x00")
+var _queryGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xac\x53\x41\x6e\xc2\x30\x10\xbc\xf3\x0a\x73\x23\x5f\xf0\xad\x14\xa8\x22\xb5\x52\x0b\x55\x2f\x88\x83\xeb\x2c\x89\x4b\xe2\x8d\xec\x8d\xda\xa8\xea\xdf\x2b\xe3\x12\x87\x10\x50\x41\xc9\xc9\x59\x6b\x67\x66\xc7\xb3\x54\x97\xc0\x5e\x2a\x30\x35\xfb\x1e\x31\xc6\xd8\x02\x48\x66\x53\xa1\x77\x93\xfd\xaf\xfb\x72\x55\x28\xe2\x2c\xd6\xd4\x94\x64\x65\x2c\x1a\xce\x56\x64\x94\x4e\x9b\xb2\x16\x05\x1c\x15\x23\xce\xde\x85\xde\x2d\x00\x92\x51\x80\xbf\xc7\x4a\x93\xa9\x87\x62\x90\x1e\x2e\x90\x3c\x62\xaa\x74\x40\x87\x42\xa8\xfc\xd0\x34\x6e\xca\xa5\xb0\xf6\x13\x4d\x72\x7c\x13\x71\x96\xbb\xf6\x25\xd8\x12\xb5\x05\x8f\xb8\x04\x0b\x3a\x99\x3b\xa0\x37\x30\x6a\xab\xa4\x20\x85\x97\x39\xa2\x46\xa7\x9f\x1c\x4d\x8a\xf4\xfc\x47\x7a\x55\xa7\xf3\x6c\x25\x33\xcc\x85\xb1\x99\x2a\x43\xef\x5e\x22\x9a\x38\xf9\x97\x77\x3d\x2e\x5b\x12\x54\x59\xce\xd6\xb1\xa6\xcd\x45\x93\x6d\xe0\x0f\x46\x3f\x00\xb5\x74\x4d\xeb\x78\x16\xb4\x29\x2f\x6a\xdc\x03\xd0\x1a\x6b\x06\xa9\x01\xe0\x6c\x9d\xec\x0f\x9b\xd6\xd5\x93\xf8\x40\x33\x54\x46\x0a\x07\xd6\x89\xa1\x93\x8e\xf9\x20\x0c\xee\x73\xab\xd4\xe7\x1a\xe6\x5d\x5e\xff\x6a\xb7\x10\x5b\x10\x46\x66\xaf\xf0\x45\x27\x4c\x1e\xb4\x43\x35\xa7\x4c\x2b\xc9\xd9\xda\x1f\xda\xf6\xde\x95\x65\xae\xa4\xd0\x74\x2e\x4e\x61\x53\x5a\x4f\x77\x72\x77\x85\xf6\x93\xac\x45\x9c\x89\x83\x8a\xa3\x50\x35\xda\x2e\x47\xaa\x69\x6e\x9b\x4b\x55\x02\xed\xa1\x06\x31\xd7\x83\xf6\xe4\xe7\x10\x7d\x21\x77\xb8\xdd\x2a\x09\x93\x5b\xb6\xf0\x3c\x71\x67\xeb\x7e\x7e\x03\x00\x00\xff\xff\x6e\x4d\xe1\x5a\xb0\x05\x00\x00")
 
 func queryGraphqlBytes() ([]byte, error) {
 	return bindataRead(
@@ -132,7 +133,7 @@ func queryGraphql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "query.graphql", size: 1224, mode: os.FileMode(420), modTime: time.Unix(1649050396, 0)}
+	info := bindataFileInfo{name: "query.graphql", size: 1456, mode: os.FileMode(420), modTime: time.Unix(1649565722, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -152,7 +153,7 @@ func schemaGraphql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "schema.graphql", size: 50, mode: os.FileMode(420), modTime: time.Unix(1641981243, 0)}
+	info := bindataFileInfo{name: "schema.graphql", size: 50, mode: os.FileMode(420), modTime: time.Unix(1649397699, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -172,7 +173,7 @@ func typeApplicantGraphql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "type/applicant.graphql", size: 311, mode: os.FileMode(420), modTime: time.Unix(1649483379, 0)}
+	info := bindataFileInfo{name: "type/applicant.graphql", size: 311, mode: os.FileMode(420), modTime: time.Unix(1649558190, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -192,7 +193,7 @@ func typeAssessmentGraphql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "type/assessment.graphql", size: 226, mode: os.FileMode(420), modTime: time.Unix(1649497714, 0)}
+	info := bindataFileInfo{name: "type/assessment.graphql", size: 226, mode: os.FileMode(420), modTime: time.Unix(1649558190, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -212,7 +213,7 @@ func typeBankGraphql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "type/bank.graphql", size: 115, mode: os.FileMode(420), modTime: time.Unix(1641850924, 0)}
+	info := bindataFileInfo{name: "type/bank.graphql", size: 115, mode: os.FileMode(420), modTime: time.Unix(1649397699, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -232,7 +233,7 @@ func typeBank_transferGraphql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "type/bank_transfer.graphql", size: 101, mode: os.FileMode(420), modTime: time.Unix(1648709991, 0)}
+	info := bindataFileInfo{name: "type/bank_transfer.graphql", size: 101, mode: os.FileMode(420), modTime: time.Unix(1649397699, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -252,7 +253,7 @@ func typeCard_identityGraphql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "type/card_identity.graphql", size: 238, mode: os.FileMode(420), modTime: time.Unix(1642350756, 0)}
+	info := bindataFileInfo{name: "type/card_identity.graphql", size: 238, mode: os.FileMode(420), modTime: time.Unix(1649397699, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -272,7 +273,7 @@ func typeCountryGraphql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "type/country.graphql", size: 111, mode: os.FileMode(420), modTime: time.Unix(1641984426, 0)}
+	info := bindataFileInfo{name: "type/country.graphql", size: 111, mode: os.FileMode(420), modTime: time.Unix(1649397699, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -292,7 +293,7 @@ func typeDegreeGraphql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "type/degree.graphql", size: 58, mode: os.FileMode(420), modTime: time.Unix(1649050396, 0)}
+	info := bindataFileInfo{name: "type/degree.graphql", size: 58, mode: os.FileMode(420), modTime: time.Unix(1649397699, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -312,7 +313,7 @@ func typeEthnicGraphql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "type/ethnic.graphql", size: 44, mode: os.FileMode(420), modTime: time.Unix(1647277130, 0)}
+	info := bindataFileInfo{name: "type/ethnic.graphql", size: 44, mode: os.FileMode(420), modTime: time.Unix(1649397699, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -332,7 +333,7 @@ func typeImageGraphql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "type/image.graphql", size: 207, mode: os.FileMode(420), modTime: time.Unix(1641981243, 0)}
+	info := bindataFileInfo{name: "type/image.graphql", size: 207, mode: os.FileMode(420), modTime: time.Unix(1649397699, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -352,7 +353,7 @@ func typeMajorGraphql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "type/major.graphql", size: 102, mode: os.FileMode(420), modTime: time.Unix(1645266495, 0)}
+	info := bindataFileInfo{name: "type/major.graphql", size: 102, mode: os.FileMode(420), modTime: time.Unix(1649397699, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -372,7 +373,7 @@ func typePaymentGraphql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "type/payment.graphql", size: 199, mode: os.FileMode(420), modTime: time.Unix(1645350005, 0)}
+	info := bindataFileInfo{name: "type/payment.graphql", size: 199, mode: os.FileMode(420), modTime: time.Unix(1649397699, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -392,7 +393,7 @@ func typeRequirementGraphql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "type/requirement.graphql", size: 300, mode: os.FileMode(420), modTime: time.Unix(1648709991, 0)}
+	info := bindataFileInfo{name: "type/requirement.graphql", size: 300, mode: os.FileMode(420), modTime: time.Unix(1649397699, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -412,7 +413,7 @@ func typeScholarshipGraphql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "type/scholarship.graphql", size: 594, mode: os.FileMode(420), modTime: time.Unix(1647350569, 0)}
+	info := bindataFileInfo{name: "type/scholarship.graphql", size: 594, mode: os.FileMode(420), modTime: time.Unix(1649397699, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -432,7 +433,7 @@ func typeSchoolGraphql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "type/school.graphql", size: 159, mode: os.FileMode(420), modTime: time.Unix(1645609664, 0)}
+	info := bindataFileInfo{name: "type/school.graphql", size: 159, mode: os.FileMode(420), modTime: time.Unix(1649397699, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -452,7 +453,27 @@ func typeSponsorGraphql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "type/sponsor.graphql", size: 61, mode: os.FileMode(420), modTime: time.Unix(1647255114, 0)}
+	info := bindataFileInfo{name: "type/sponsor.graphql", size: 61, mode: os.FileMode(420), modTime: time.Unix(1649397699, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var _typeStudentGraphql = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x64\xce\xb1\xca\x02\x41\x0c\x04\xe0\x7e\x9f\x22\xcf\x71\xdd\xcf\x2f\x8a\x9d\x60\x29\x16\xf1\x32\xe8\xc2\xde\xee\x91\xe4\x0a\x91\x7b\x77\xe1\x58\xd0\x60\x37\x7c\x4c\x86\xf8\x73\x06\x99\x2f\x82\xea\x7b\x40\xe8\x95\x88\x88\xc6\x45\xad\xe9\x40\x67\xd7\x5c\xef\x1b\xf5\x92\x0d\x74\xe9\xf1\x9a\xd6\x94\xbe\x07\xfa\x71\x96\x81\x8e\xd5\xb7\x5c\x79\x42\x98\xc1\xc4\xb9\x04\x99\x9b\x39\x97\xff\x26\xb1\xc8\x22\x0a\xb3\x60\xb7\xac\xfe\xd8\xb1\xe3\x57\x4f\x85\xc7\xc8\xa3\x82\x1d\xf2\xe7\x51\x59\x01\x3d\x34\xfe\x3c\xb1\xa6\x77\x00\x00\x00\xff\xff\x90\xb8\xcb\xba\x06\x01\x00\x00")
+
+func typeStudentGraphqlBytes() ([]byte, error) {
+	return bindataRead(
+		_typeStudentGraphql,
+		"type/student.graphql",
+	)
+}
+
+func typeStudentGraphql() (*asset, error) {
+	bytes, err := typeStudentGraphqlBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "type/student.graphql", size: 262, mode: os.FileMode(420), modTime: time.Unix(1649563595, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -472,7 +493,7 @@ func typeUserGraphql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "type/user.graphql", size: 1172, mode: os.FileMode(420), modTime: time.Unix(1648709991, 0)}
+	info := bindataFileInfo{name: "type/user.graphql", size: 1172, mode: os.FileMode(420), modTime: time.Unix(1649559835, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -492,7 +513,7 @@ func typeUser_documentGraphql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "type/user_document.graphql", size: 69, mode: os.FileMode(420), modTime: time.Unix(1648709991, 0)}
+	info := bindataFileInfo{name: "type/user_document.graphql", size: 69, mode: os.FileMode(420), modTime: time.Unix(1649397699, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -512,7 +533,7 @@ func typeUser_schoolGraphql() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "type/user_school.graphql", size: 178, mode: os.FileMode(420), modTime: time.Unix(1648709991, 0)}
+	info := bindataFileInfo{name: "type/user_school.graphql", size: 178, mode: os.FileMode(420), modTime: time.Unix(1649397699, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -587,6 +608,7 @@ var _bindata = map[string]func() (*asset, error){
 	"type/scholarship.graphql":   typeScholarshipGraphql,
 	"type/school.graphql":        typeSchoolGraphql,
 	"type/sponsor.graphql":       typeSponsorGraphql,
+	"type/student.graphql":       typeStudentGraphql,
 	"type/user.graphql":          typeUserGraphql,
 	"type/user_document.graphql": typeUser_documentGraphql,
 	"type/user_school.graphql":   typeUser_schoolGraphql,
@@ -652,6 +674,7 @@ var _bintree = &bintree{nil, map[string]*bintree{
 		"scholarship.graphql":   &bintree{typeScholarshipGraphql, map[string]*bintree{}},
 		"school.graphql":        &bintree{typeSchoolGraphql, map[string]*bintree{}},
 		"sponsor.graphql":       &bintree{typeSponsorGraphql, map[string]*bintree{}},
+		"student.graphql":       &bintree{typeStudentGraphql, map[string]*bintree{}},
 		"user.graphql":          &bintree{typeUserGraphql, map[string]*bintree{}},
 		"user_document.graphql": &bintree{typeUser_documentGraphql, map[string]*bintree{}},
 		"user_school.graphql":   &bintree{typeUser_schoolGraphql, map[string]*bintree{}},

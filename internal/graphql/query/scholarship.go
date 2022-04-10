@@ -13,6 +13,26 @@ type ScholarshipQuery struct {
 	scholarshipService business.ScholarshipService
 }
 
+// FetchScholarship backoffice...
+func (s ScholarshipQuery) FetchScholarshipBackoffice(ctx context.Context, param entity.InputScholarshipFilterBackoffice) (*resolver.ScholarshipFeedResolver, error) {
+	filter := entity.ScholarshipFilterBackoffice{}
+
+	if param.Limit != nil {
+		filter.Limit = int(uint64(*param.Limit))
+	}
+
+	if param.Cursor != nil {
+		filter.Cursor = *param.Cursor
+	}
+
+	scholarshipFeed, err := s.scholarshipService.FetchScholarshipBackoffice(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+
+	return &resolver.ScholarshipFeedResolver{ScholarshipFeed: scholarshipFeed}, nil
+}
+
 // FetchScholarship ...
 func (s ScholarshipQuery) FetchScholarship(ctx context.Context, param entity.InputScholarshipFilter) (*resolver.ScholarshipFeedResolver, error) {
 	filter := entity.ScholarshipFilter{}

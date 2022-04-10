@@ -68,6 +68,8 @@ type ScholarshipRepository interface {
 	GetByID(ctx context.Context, ID int64) (entity.Scholarship, error)
 	Apply(ctx context.Context, userID, scholarshipID int64, applicant int, essay string, recommendationLetter entity.Image) error
 	CheckApply(ctx context.Context, userID, scholarshipID int64) (bool, int, error)
+
+	FetchScholarshipBackoffice(ctx context.Context, filter entity.ScholarshipFilterBackoffice) ([]entity.Scholarship, string, error)
 }
 
 // RequirementDescriptionRepository .
@@ -81,6 +83,8 @@ type ScholarshipService interface {
 	Fetch(ctx context.Context, filter entity.ScholarshipFilter) (entity.ScholarshipFeed, error)
 	GetByID(ctx context.Context, ID int64) (entity.Scholarship, error)
 	Apply(ctx context.Context, userID, scholarshipID int64, essay string, recommendationLetter entity.Image) (string, error)
+
+	FetchScholarshipBackoffice(ctx context.Context, filter entity.ScholarshipFilterBackoffice) (entity.ScholarshipFeed, error)
 }
 
 // BankTransferRepository ...
@@ -132,16 +136,6 @@ type SchoolService interface {
 	Fetch(ctx context.Context, filter entity.SchoolFilter) (entity.SchoolFeed, error)
 }
 
-// SponsorRepository .
-type SponsorRepository interface {
-	FetchSponsor(ctx context.Context, filter entity.SponsorFilter) ([]entity.User, string, error)
-}
-
-// SponsorService .
-type SponsorService interface {
-	FetchSponsor(ctx context.Context, filter entity.SponsorFilter) (entity.SponsorFeed, error)
-}
-
 // EthnicRepository .
 type EthnicRepository interface {
 	Fetch(ctx context.Context) ([]entity.Ethnic, error)
@@ -173,4 +167,19 @@ type AssessmentRepository interface {
 // AssessmentService .
 type AssessmentService interface {
 	Submit(ctx context.Context, ApplicantID int64, eligibilities []entity.ApplicantEligibility, scores []entity.ApplicantScore) (string, error)
+}
+
+// ========= Backoffice ===========
+type SponsorService interface {
+	FetchSponsor(ctx context.Context, filter entity.SponsorFilter) (entity.SponsorFeed, error)
+}
+type SponsorRepository interface {
+	FetchSponsor(ctx context.Context, filter entity.SponsorFilter) ([]entity.User, string, error)
+}
+
+type StudentService interface {
+	FetchStudent(ctx context.Context, filter entity.StudentFilter) (entity.StudentFeed, error)
+}
+type StudentRepository interface {
+	FetchStudent(ctx context.Context, filter entity.StudentFilter) ([]entity.User, string, error)
 }

@@ -16,6 +16,24 @@ type scholarshipService struct {
 	requirementDescRepo business.RequirementDescriptionRepository
 }
 
+func (s scholarshipService) FetchScholarshipBackoffice(ctx context.Context, filter entity.ScholarshipFilterBackoffice) (entity.ScholarshipFeed, error) {
+	scholarships, cursor, err := s.scholarshipRepo.FetchScholarshipBackoffice(ctx, filter)
+	if err != nil {
+		return entity.ScholarshipFeed{}, err
+	}
+
+	scholarshipFeed := entity.ScholarshipFeed{
+		Cursor:       cursor,
+		Scholarships: scholarships,
+	}
+
+	if len(scholarships) == 0 {
+		scholarshipFeed.Cursor = ""
+	}
+
+	return scholarshipFeed, nil
+}
+
 // Create ...
 // Status of sponsor should 2
 func (s scholarshipService) Create(ctx context.Context, scholarship entity.Scholarship) (entity.Scholarship, error) {

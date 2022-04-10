@@ -10,6 +10,7 @@ import (
 	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/applicant"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/assessment"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/backoffice/sponsor"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/backoffice/student"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/ethnic"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/major"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/school"
@@ -53,6 +54,7 @@ var (
 	ethnicRepo          business.EthnicRepository
 	applicantRepo       business.ApplicantRepository
 	assessmentRepo      business.AssessmentRepository
+	studentRepo         business.StudentRepository
 
 	bankService        business.BankService
 	countryService     business.CountryService
@@ -66,6 +68,7 @@ var (
 	ethnicService      business.EthnicService
 	applicantService   business.ApplicantService
 	assessmentService  business.AssessmentService
+	studentService     business.StudentService
 
 	// email
 	emailDomain        string
@@ -94,6 +97,8 @@ var (
 	SponsorQuery backoffice2.SponsorQuery
 	// ApplicantQuery .
 	ApplicantQuery query.ApplicantQuery
+	// SponsorQuery ...
+	StudentQuery backoffice2.StudentQuery
 
 	// UserMutation ...
 	UserMutation mutation.UserMutation
@@ -209,6 +214,7 @@ func initApp() {
 	ethnicRepo = postgresql.NewEthnicRepository(db)
 	applicantRepo = postgresql.NewApplicantRepository(db)
 	assessmentRepo = postgresql.NewAssessmentRepository(db)
+	studentRepo = backoffice.NewStudentRepository(db)
 
 	bankService = bank.NewBankService(bankRepo)
 	userService = user.NewUserService(userRepo, jwtHash, emailRepo)
@@ -222,6 +228,7 @@ func initApp() {
 	ethnicService = ethnic.NewEthnicService(ethnicRepo)
 	applicantService = applicant.NewApplicantService(applicantRepo, scholarshipRepo, schoolRepo, userRepo, assessmentRepo)
 	assessmentService = assessment.NewAssessmentService(assessmentRepo, applicantRepo, scholarshipRepo)
+	studentService = student.NewStudentService(studentRepo)
 
 	UserMutation = mutation.NewUserMutation(userService)
 	ScholarshipMutation = mutation.NewScholarshipMutation(scholarshipService)
@@ -239,4 +246,5 @@ func initApp() {
 	SponsorQuery = backoffice2.NewSponsorQuery(sponsorService)
 	EthnicQuery = query.NewEthnicQuery(ethnicService)
 	ApplicantQuery = query.NewApplicantQuery(applicantService)
+	StudentQuery = backoffice2.NewStudentQuery(studentService)
 }

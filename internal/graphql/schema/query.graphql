@@ -70,4 +70,16 @@ type Query {
     GetApplicantByID(
         id: Int!
     ): applicant
+
+    FetchStudent(
+        limit: Int
+        cursor: String
+        searchText: String
+    ): studentFeed
+
+    FetchScholarshipBackoffice(
+        cursor: String
+        limit: Int
+        searchText: String
+    ): scholarshipFeed
 }
