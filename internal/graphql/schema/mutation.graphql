@@ -85,4 +85,9 @@ type Mutation {
         applicantEligibilities: [inputApplicantEligibility]
         applicantScores: [inputApplicantScore!]!
     ): String
+
+    UpdateApplicantStatus(
+        id: Int!
+        status: Int!
+    ): String
 }

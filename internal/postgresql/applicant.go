@@ -370,6 +370,27 @@ func (a applicantRepository) SubmitAssessment(ctx context.Context, ApplicantID i
 	return nil
 }
 
+// UpdateStatus .
+func (a applicantRepository) UpdateStatus(ctx context.Context, ID int64, status int32) error {
+	query, args, err := sq.Update("user_scholarship").
+		SetMap(sq.Eq{
+			"status":     status,
+			"updated_at": time.Now(),
+		}).
+		Where(sq.Eq{"id": ID}).
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+	if err != nil {
+		return err
+	}
+
+	if _, err = a.db.ExecContext(ctx, query, args...); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // NewApplicantRepository .
 func NewApplicantRepository(db *sql.DB) business.ApplicantRepository {
 	return applicantRepository{db: db}

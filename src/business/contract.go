@@ -150,12 +150,14 @@ type EthnicService interface {
 type ApplicantRepository interface {
 	Fetch(ctx context.Context, filter entity.FilterApplicant) ([]entity.Applicant, string, error)
 	GetByID(ctx context.Context, ID int64) (entity.Applicant, error)
+	UpdateStatus(ctx context.Context, ID int64, status int32) error
 }
 
 // ApplicantService .
 type ApplicantService interface {
 	Fetch(ctx context.Context, filter entity.FilterApplicant) (entity.ApplicantFeed, error)
 	GetByID(ctx context.Context, ID int64) (entity.Applicant, error)
+	UpdateStatus(ctx context.Context, ID int64, status int32) (string, error)
 }
 
 // AssessmentRepository .

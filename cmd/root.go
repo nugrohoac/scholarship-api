@@ -110,6 +110,8 @@ var (
 	SchoolMutation mutation.SchoolMutation
 	// AssessmentMutation .
 	AssessmentMutation mutation.AssessmentMutation
+	// ApplicantMutation .
+	ApplicantMutation mutation.ApplicantMutation
 
 	// PortApp apps
 	PortApp = 7070
@@ -235,6 +237,7 @@ func initApp() {
 	PaymentMutation = mutation.NewPaymentMutation(paymentService)
 	SchoolMutation = mutation.NewSchoolMutation(schoolService)
 	AssessmentMutation = mutation.NewAssessmentMutation(assessmentService)
+	ApplicantMutation = mutation.NewApplicantMutation(applicantService)
 
 	BankQuery = query.NewBankQuery(bankService)
 	CountryQuery = query.NewCountryQuery(countryService)
