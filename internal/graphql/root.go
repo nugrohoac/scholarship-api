@@ -17,13 +17,14 @@ type RootGraphql struct {
 	query.SchoolQuery
 	query.EthnicQuery
 	query.ApplicantQuery
+	backoffice.SponsorQuery
+	backoffice.StudentQuery
 	mutation.UserMutation
 	mutation.ScholarshipMutation
 	mutation.PaymentMutation
 	mutation.SchoolMutation
 	mutation.AssessmentMutation
-	backoffice.SponsorQuery
-	backoffice.StudentQuery
+	mutation.ApplicantMutation
 }
 
 // NewRootGraphql ...
@@ -37,13 +38,14 @@ func NewRootGraphql(
 	schoolQuery query.SchoolQuery,
 	ethnicQuery query.EthnicQuery,
 	applicantQuery query.ApplicantQuery,
+	sponsorQuery backoffice.SponsorQuery,
+	studentQuery backoffice.StudentQuery,
 	userMutation mutation.UserMutation,
 	scholarshipMutation mutation.ScholarshipMutation,
 	paymentMutation mutation.PaymentMutation,
 	schoolMutation mutation.SchoolMutation,
 	assessmentMutation mutation.AssessmentMutation,
-	sponsorQuery backoffice.SponsorQuery,
-	studentQuery backoffice.StudentQuery,
+	applicantMutation mutation.ApplicantMutation,
 
 ) *RootGraphql {
 	return &RootGraphql{
@@ -56,12 +58,13 @@ func NewRootGraphql(
 		schoolQuery,
 		ethnicQuery,
 		applicantQuery,
+		sponsorQuery,
+		studentQuery,
 		userMutation,
 		scholarshipMutation,
 		paymentMutation,
 		schoolMutation,
 		assessmentMutation,
-		sponsorQuery,
-		studentQuery,
+		applicantMutation,
 	}
 }
