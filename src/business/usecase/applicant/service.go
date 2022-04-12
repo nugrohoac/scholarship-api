@@ -111,6 +111,10 @@ func (a applicantService) UpdateStatus(ctx context.Context, ID int64, status int
 		return "", err
 	}
 
+	if applicant.Status == status {
+		return "", errors.ErrNotAllowed{Message: "status is same with current status"}
+	}
+
 	scholarship, err := a.scholarshipRepository.GetByID(ctx, applicant.ScholarshipID)
 	if err != nil {
 		return "", err
