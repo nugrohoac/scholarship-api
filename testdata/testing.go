@@ -2,7 +2,6 @@ package testdata
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"path/filepath"
 	"runtime"

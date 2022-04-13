@@ -4,11 +4,12 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"strings"
+	"time"
+
 	"github.com/Nusantara-Muda/scholarship-api/src/business"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/util"
-	"strings"
-	"time"
 
 	"github.com/sirupsen/logrus"
 
@@ -647,6 +648,41 @@ func (s scholarshipRepo) CheckApply(ctx context.Context, userID, scholarshipID i
 	}
 
 	return true, status, nil
+}
+
+func (s scholarshipRepo) ApprovedScholarship(ctx context.Context, scholarshipID int64) error {
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+
+	var (
+		timeNow     = time.Now()
+		errRollback error
+	)
+
+	query, args, err := sq.Update("scholarship").
+		SetMap(sq.Eq{"status": util.APPROVE, "updated_at": timeNow}).
+		PlaceholderFormat(sq.Dollar).
+		Where(sq.Eq{"id": scholarshipID}).
+		ToSql()
+	if err != nil {
+		return err
+	}
+
+	if _, err = tx.ExecContext(ctx, query, args...); err != nil {
+		return err
+	}
+
+	if errCommit := tx.Commit(); errCommit != nil {
+		if errRollback = tx.Rollback(); errRollback != nil {
+			logrus.Error(errRollback)
+		}
+
+		return errCommit
+	}
+
+	return nil
 }
 
 // NewScholarshipRepository ...

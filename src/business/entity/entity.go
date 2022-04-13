@@ -270,7 +270,7 @@ type Scholarship struct {
 	Name                    string        `json:"name"`
 	Amount                  int           `json:"amount"`
 	Status                  int           `json:"status"`
-	TextStatus string `json:"text_status"`
+	TextStatus              string        `json:"text_status"`
 	Image                   Image         `json:"image"`
 	Awardee                 int           `json:"awardee"`
 	CurrentApplicant        int           `json:"current_applicant"`
@@ -590,4 +590,8 @@ type InputAssessment struct {
 		Name  string
 		Value int32
 	}
+}
+
+type UpdateScholarshipStatus struct {
+	ID     int32
 }

@@ -21,3 +21,7 @@ build:
 
 docker-run:
 	@docker stop bangun_container && docker rm -f bangun_container &&  docker image rm -f bangun_api &&  docker build -t bangun_api . && docker run --name=bangun_container -d -it -p 7070:7070 bangun_api
+
+mock:
+	@mockery --dir=./src/business --name=ScholarshipService --output=./mocks
+	@mockery --dir=./src/business --name=ScholarshipRepository --output=./mocks
