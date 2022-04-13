@@ -529,6 +529,7 @@ type FilterApplicant struct {
 	Limit         uint64
 	Cursor        string
 	Status        []int32
+	Sort          string
 }
 
 // InputApplicantFilter .
@@ -538,6 +539,7 @@ type InputApplicantFilter struct {
 	Limit         *int32
 	Cursor        *string
 	Status        *[]*int32
+	Sort          *string
 }
 
 // Applicant .

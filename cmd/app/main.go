@@ -41,13 +41,14 @@ func main() {
 		cmd.SchoolQuery,
 		cmd.EthnicQuery,
 		cmd.ApplicantQuery,
+		cmd.SponsorQuery,
+		cmd.StudentQuery,
 		cmd.UserMutation,
 		cmd.ScholarshipMutation,
 		cmd.PaymentMutation,
 		cmd.SchoolMutation,
 		cmd.AssessmentMutation,
-		cmd.SponsorQuery,
-		cmd.StudentQuery,
+		cmd.ApplicantMutation,
 	)
 
 	graphQlSchema := _graphql.MustParseSchema(schema.String(), rootResolver, opts...)

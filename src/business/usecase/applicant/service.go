@@ -99,6 +99,38 @@ func (a applicantService) GetByID(ctx context.Context, ID int64) (entity.Applica
 	return applicant, nil
 }
 
+// UpdateStatus .
+func (a applicantService) UpdateStatus(ctx context.Context, ID int64, status int32) (string, error) {
+	user, err := common.GetUserOnContext(ctx)
+	if err != nil {
+		return "", err
+	}
+
+	applicant, err := a.applicantRepository.GetByID(ctx, ID)
+	if err != nil {
+		return "", err
+	}
+
+	if applicant.Status == status {
+		return "", errors.ErrNotAllowed{Message: "status is same with current status"}
+	}
+
+	scholarship, err := a.scholarshipRepository.GetByID(ctx, applicant.ScholarshipID)
+	if err != nil {
+		return "", err
+	}
+
+	if scholarship.SponsorID != user.ID {
+		return "", errors.ErrNotAllowed{Message: "sponsor not scholarship owner"}
+	}
+
+	if err = a.applicantRepository.UpdateStatus(ctx, ID, status); err != nil {
+		return "", err
+	}
+
+	return "success", nil
+}
+
 // NewApplicantService .
 func NewApplicantService(
 	applicantRepository business.ApplicantRepository,

@@ -65,6 +65,7 @@ type Query {
         limit: Int
         cursor: String
         status: [Int]
+        sort: sortApplicant
     ): applicantFeed
 
     GetApplicantByID(
