@@ -28,6 +28,10 @@ func (a ApplicantQuery) FetchApplicant(ctx context.Context, param entity.InputAp
 		filter.Cursor = *param.Cursor
 	}
 
+	if param.Sort != nil {
+		filter.Sort = *param.Sort
+	}
+
 	if param.Status != nil {
 		if len(*param.Status) > 0 {
 			for _, status := range *param.Status {

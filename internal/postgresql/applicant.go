@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"strconv"
 	"time"
 
@@ -20,6 +21,12 @@ type applicantRepository struct {
 
 // Fetch .
 func (a applicantRepository) Fetch(ctx context.Context, filter entity.FilterApplicant) ([]entity.Applicant, string, error) {
+	//order by aps.value desc nulls last
+	sort := "order by us.created_at desc"
+	if filter.Sort == "score" {
+		sort = "order by aps.value desc nulls last"
+	}
+
 	qSelect := sq.Select("us.id applicant_id",
 		"us.scholarship_id scholarship_id",
 		"us.user_id user_id",
@@ -47,7 +54,7 @@ func (a applicantRepository) Fetch(ctx context.Context, filter entity.FilterAppl
 		"e.name ethnic_name",
 		"aps.name score_name",
 		"aps.value score_value",
-		"row_number () over(order by aps.value desc nulls last) row_id",
+		"row_number () over(%s) row_id",
 	).From("user_scholarship us").
 		Join("\"user\" u on us.user_id  = u.id").
 		LeftJoin("ethnic e on e.id = u.ethnic_id").
@@ -63,6 +70,8 @@ func (a applicantRepository) Fetch(ctx context.Context, filter entity.FilterAppl
 	if err != nil {
 		return nil, "", err
 	}
+
+	query = fmt.Sprintf(query, sort)
 
 	finalQuery := `select 
 		res.applicant_id,

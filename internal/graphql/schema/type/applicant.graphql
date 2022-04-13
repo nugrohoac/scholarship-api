@@ -19,3 +19,7 @@ type score {
     name: String
     value: Int
 }
+
+enum sortApplicant {
+    score
+}
