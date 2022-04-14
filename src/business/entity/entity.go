@@ -547,6 +547,7 @@ type InputApplicantFilter struct {
 type Applicant struct {
 	ID                   int64                  `json:"id"`
 	ScholarshipID        int64                  `json:"scholarship_id"`
+	Scholarship          Scholarship            `json:"scholarship"`
 	UserID               int64                  `json:"user_id"`
 	User                 User                   `json:"user"`
 	Status               int32                  `json:"status"`

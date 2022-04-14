@@ -83,4 +83,12 @@ type Query {
         limit: Int
         searchText: String
     ): scholarshipFeed
+
+    MyScholarship(
+        sponsorId: Int
+        cursor: String
+        limit: Int
+        status: [Int]
+        name: String
+    ): applicantFeed
 }
