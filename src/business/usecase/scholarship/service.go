@@ -230,6 +230,43 @@ func (s scholarshipService) Apply(ctx context.Context, userID, scholarshipID int
 	return "success", nil
 }
 
+// MyScholarship .
+func (s scholarshipService) MyScholarship(ctx context.Context, filter entity.ScholarshipFilter) (entity.ApplicantFeed, error) {
+	user, err := common.GetUserOnContext(ctx)
+	if err != nil {
+		return entity.ApplicantFeed{}, err
+	}
+
+	applicants, cursor, err := s.scholarshipRepo.MyScholarship(ctx, user.ID, filter)
+	if err != nil {
+		return entity.ApplicantFeed{}, err
+	}
+
+	feed := entity.ApplicantFeed{
+		Cursor:     cursor,
+		Applicants: applicants,
+	}
+
+	if len(applicants) == 0 {
+		feed.Cursor = ""
+	}
+
+	if len(applicants) > 0 {
+		filter.Limit = 1
+		filter.Cursor = cursor
+		applicants, _, err = s.scholarshipRepo.MyScholarship(ctx, user.ID, filter)
+		if err != nil {
+			return entity.ApplicantFeed{}, err
+		}
+
+		if len(applicants) == 0 {
+			feed.Cursor = ""
+		}
+	}
+
+	return feed, nil
+}
+
 // NewScholarshipService ...
 func NewScholarshipService(
 	scholarshipRepo business.ScholarshipRepository,

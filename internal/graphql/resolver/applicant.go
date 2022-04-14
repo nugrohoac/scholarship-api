@@ -25,6 +25,11 @@ func (a ApplicantResolver) ScholarshipID() *int32 {
 	return &scholarshipID
 }
 
+// Scholarship .
+func (a ApplicantResolver) Scholarship() *ScholarshipResolver {
+	return &ScholarshipResolver{Scholarship: a.Applicant.Scholarship}
+}
+
 // UserID .
 func (a ApplicantResolver) UserID() *int32 {
 	userID := int32(a.Applicant.UserID)
