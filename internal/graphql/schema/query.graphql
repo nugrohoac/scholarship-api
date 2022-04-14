@@ -84,7 +84,7 @@ type Query {
         searchText: String
     ): scholarshipFeed
 
-    MyScholarship(
+    FetchMyScholarship(
         sponsorId: Int
         cursor: String
         limit: Int

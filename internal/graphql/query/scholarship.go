@@ -81,8 +81,8 @@ func (s ScholarshipQuery) GetScholarshipByID(ctx context.Context, param struct{ 
 	return &resolver.ScholarshipResolver{Scholarship: scholarship}, nil
 }
 
-// MyScholarship .
-func (s ScholarshipQuery) MyScholarship(ctx context.Context, param entity.InputScholarshipFilter) (*resolver.ApplicantFeedResolver, error) {
+// FetchMyScholarship .
+func (s ScholarshipQuery) FetchMyScholarship(ctx context.Context, param entity.InputScholarshipFilter) (*resolver.ApplicantFeedResolver, error) {
 	var filter entity.ScholarshipFilter
 
 	if param.Limit != nil {
