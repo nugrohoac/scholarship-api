@@ -59,6 +59,7 @@ func (a applicantRepository) Fetch(ctx context.Context, filter entity.FilterAppl
 		Join("\"user\" u on us.user_id  = u.id").
 		LeftJoin("ethnic e on e.id = u.ethnic_id").
 		LeftJoin("(select applicant_id, name, value from applicant_score where name='total') aps on aps.applicant_id = us.id ").
+		LeftJoin("scholarship s on s.id = us.scholarship_id").
 		Where(sq.Eq{"us.scholarship_id": filter.ScholarshipID}).
 		PlaceholderFormat(sq.Dollar)
 
@@ -67,7 +68,7 @@ func (a applicantRepository) Fetch(ctx context.Context, filter entity.FilterAppl
 	}
 
 	if filter.SponsorID > 0 {
-		qSelect = qSelect.Where(sq.Eq{"u.id": filter.SponsorID}).Where(sq.Eq{"u.type": entity.Sponsor})
+		qSelect = qSelect.Where(sq.Eq{"s.sponsor_id": filter.SponsorID})
 	}
 
 	query, args, err := qSelect.ToSql()

@@ -69,7 +69,6 @@ func (a applicantService) GetByID(ctx context.Context, ID int64) (entity.Applica
 	}
 
 	// business process will do check base on user on context
-
 	applicant, err := a.applicantRepository.GetByID(ctx, ID)
 	if err != nil {
 		return entity.Applicant{}, err
