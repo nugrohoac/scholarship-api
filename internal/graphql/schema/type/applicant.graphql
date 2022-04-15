@@ -3,6 +3,7 @@ type applicant {
     userId: Int
     user: user
     scholarshipId: Int
+    scholarship: scholarship
     status: Int
     applyDate: String
     essay: String

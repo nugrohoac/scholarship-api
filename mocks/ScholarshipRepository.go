@@ -168,3 +168,33 @@ func (_m *ScholarshipRepository) GetByID(ctx context.Context, ID int64) (entity.
 
 	return r0, r1
 }
+
+// MyScholarship provides a mock function with given fields: ctx, userID, filter
+func (_m *ScholarshipRepository) MyScholarship(ctx context.Context, userID int64, filter entity.ScholarshipFilter) ([]entity.Applicant, string, error) {
+	ret := _m.Called(ctx, userID, filter)
+
+	var r0 []entity.Applicant
+	if rf, ok := ret.Get(0).(func(context.Context, int64, entity.ScholarshipFilter) []entity.Applicant); ok {
+		r0 = rf(ctx, userID, filter)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]entity.Applicant)
+		}
+	}
+
+	var r1 string
+	if rf, ok := ret.Get(1).(func(context.Context, int64, entity.ScholarshipFilter) string); ok {
+		r1 = rf(ctx, userID, filter)
+	} else {
+		r1 = ret.Get(1).(string)
+	}
+
+	var r2 error
+	if rf, ok := ret.Get(2).(func(context.Context, int64, entity.ScholarshipFilter) error); ok {
+		r2 = rf(ctx, userID, filter)
+	} else {
+		r2 = ret.Error(2)
+	}
+
+	return r0, r1, r2
+}

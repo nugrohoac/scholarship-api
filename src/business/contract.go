@@ -68,6 +68,7 @@ type ScholarshipRepository interface {
 	GetByID(ctx context.Context, ID int64) (entity.Scholarship, error)
 	Apply(ctx context.Context, userID, scholarshipID int64, applicant int, essay string, recommendationLetter entity.Image) error
 	CheckApply(ctx context.Context, userID, scholarshipID int64) (bool, int, error)
+	MyScholarship(ctx context.Context, userID int64, filter entity.ScholarshipFilter) ([]entity.Applicant, string, error)
 
 	FetchScholarshipBackoffice(ctx context.Context, filter entity.ScholarshipFilterBackoffice) ([]entity.Scholarship, string, error)
 	ApprovedScholarship(ctx context.Context, status int64) error
@@ -84,6 +85,7 @@ type ScholarshipService interface {
 	Fetch(ctx context.Context, filter entity.ScholarshipFilter) (entity.ScholarshipFeed, error)
 	GetByID(ctx context.Context, ID int64) (entity.Scholarship, error)
 	Apply(ctx context.Context, userID, scholarshipID int64, essay string, recommendationLetter entity.Image) (string, error)
+	MyScholarship(ctx context.Context, filter entity.ScholarshipFilter) (entity.ApplicantFeed, error)
 
 	FetchScholarshipBackoffice(ctx context.Context, filter entity.ScholarshipFilterBackoffice) (entity.ScholarshipFeed, error)
 	ApprovedScholarship(ctx context.Context, scholarshipID int64) (string, error)

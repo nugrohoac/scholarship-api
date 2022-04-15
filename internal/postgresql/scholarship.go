@@ -650,6 +650,165 @@ func (s scholarshipRepo) CheckApply(ctx context.Context, userID, scholarshipID i
 	return true, status, nil
 }
 
+// MyScholarship .
+/* scholarship was applied by specific student
+ */
+func (s scholarshipRepo) MyScholarship(ctx context.Context, userID int64, filter entity.ScholarshipFilter) ([]entity.Applicant, string, error) {
+	qSelect := sq.Select("us.id",
+		"us.scholarship_id",
+		"us.user_id",
+		"us.essay",
+		"us.recommendation_letter",
+		"us.status",
+		"us.created_at",
+		"u.id",
+		"u.name",
+		"u.type",
+		"u.email",
+		"u.phone_no",
+		"u.photo",
+		"u.company_name",
+		"u.status",
+		"u.country_id",
+		"u.postal_code",
+		"u.address",
+		"u.gender",
+		"u.bank_id",
+		"u.bank_account_no",
+		"u.bank_account_name",
+		"s.id",
+		"s.sponsor_id",
+		"s.name",
+		"s.amount",
+		"s.awardee",
+		"s.current_applicant",
+		"s.eligibility_description",
+		"s.subsidy_description",
+		"s.application_start",
+		"s.application_end",
+		"s.announcement_date",
+		"s.funding_start",
+		"s.funding_end",
+		"s.status",
+	).From("user_scholarship us").
+		Join("\"user\" u on u.id = us.user_id").
+		Join("scholarship s on s.id = us.scholarship_id").
+		Where(sq.Eq{"us.user_id": userID}).
+		OrderBy("us.created_at desc").
+		PlaceholderFormat(sq.Dollar)
+
+	if filter.Limit > 0 {
+		qSelect = qSelect.Limit(filter.Limit)
+	}
+
+	if filter.Cursor != "" {
+		cursorTime, err := decodeCursor(filter.Cursor)
+		if err != nil {
+			return nil, "", err
+		}
+
+		qSelect = qSelect.Where(sq.Lt{"us.created_at": cursorTime})
+	}
+
+	if filter.Name != "" {
+		name := "%" + strings.ToLower(filter.Name) + "%"
+		qSelect = qSelect.Where(sq.Like{"LOWER(s.name)": name})
+	}
+
+	query, args, err := qSelect.ToSql()
+	if err != nil {
+		return nil, "", err
+	}
+
+	rows, err := s.db.QueryContext(ctx, query, args...)
+	if err != nil {
+		return nil, "", err
+	}
+
+	defer func() {
+		if errClose := rows.Close(); errClose != nil {
+			logrus.Error(errClose)
+		}
+	}()
+
+	var (
+		cursorTime time.Time
+		cursorStr  string
+		applicants = make([]entity.Applicant, 0)
+	)
+
+	for rows.Next() {
+		var (
+			applicant     entity.Applicant
+			byteRecLetter []byte
+			bytePhoto     []byte
+		)
+
+		if err = rows.Scan(
+			&applicant.ID,
+			&applicant.ScholarshipID,
+			&applicant.UserID,
+			&applicant.Essay,
+			&byteRecLetter,
+			&applicant.Status,
+			&applicant.ApplyDate,
+			&applicant.User.ID,
+			&applicant.User.Name,
+			&applicant.User.Type,
+			&applicant.User.Email,
+			&applicant.User.PhoneNo,
+			&bytePhoto,
+			&applicant.User.CompanyName,
+			&applicant.User.Status,
+			&applicant.User.CountryID,
+			&applicant.User.PostalCode,
+			&applicant.User.Address,
+			&applicant.User.Gender,
+			&applicant.User.Bank.ID,
+			&applicant.User.BankAccountNo,
+			&applicant.User.BankAccountName,
+			&applicant.Scholarship.ID,
+			&applicant.Scholarship.SponsorID,
+			&applicant.Scholarship.Name,
+			&applicant.Scholarship.Amount,
+			&applicant.Scholarship.Awardee,
+			&applicant.Scholarship.CurrentApplicant,
+			&applicant.Scholarship.EligibilityDescription,
+			&applicant.Scholarship.SubsidyDescription,
+			&applicant.Scholarship.ApplicationStart,
+			&applicant.Scholarship.ApplicationEnd,
+			&applicant.Scholarship.AnnouncementDate,
+			&applicant.Scholarship.FundingStart,
+			&applicant.Scholarship.FundingEnd,
+			&applicant.Scholarship.Status,
+		); err != nil {
+			return nil, "", err
+		}
+
+		if bytePhoto != nil {
+			if err = json.Unmarshal(bytePhoto, &applicant.User.Photo); err != nil {
+				return nil, "", err
+			}
+		}
+
+		if byteRecLetter != nil {
+			if err = json.Unmarshal(byteRecLetter, &applicant.RecommendationLetter); err != nil {
+				return nil, "", err
+			}
+		}
+
+		cursorTime = applicant.ApplyDate
+		applicants = append(applicants, applicant)
+	}
+
+	cursorStr, err = encodeCursor(cursorTime)
+	if err != nil {
+		return nil, "", err
+	}
+
+	return applicants, cursorStr, nil
+}
+
 func (s scholarshipRepo) ApprovedScholarship(ctx context.Context, scholarshipID int64) error {
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {

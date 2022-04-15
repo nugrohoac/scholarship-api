@@ -81,6 +81,30 @@ func (s ScholarshipQuery) GetScholarshipByID(ctx context.Context, param struct{ 
 	return &resolver.ScholarshipResolver{Scholarship: scholarship}, nil
 }
 
+// FetchMyScholarship .
+func (s ScholarshipQuery) FetchMyScholarship(ctx context.Context, param entity.InputScholarshipFilter) (*resolver.ApplicantFeedResolver, error) {
+	var filter entity.ScholarshipFilter
+
+	if param.Limit != nil {
+		filter.Limit = uint64(*param.Limit)
+	}
+
+	if param.Cursor != nil {
+		filter.Cursor = *param.Cursor
+	}
+
+	if param.Name != nil {
+		filter.Name = *param.Name
+	}
+
+	feed, err := s.scholarshipService.MyScholarship(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+
+	return &resolver.ApplicantFeedResolver{ApplicantFeed: feed}, nil
+}
+
 // NewScholarshipQuery ...
 func NewScholarshipQuery(scholarshipService business.ScholarshipService) ScholarshipQuery {
 	return ScholarshipQuery{scholarshipService: scholarshipService}
