@@ -2,10 +2,11 @@ package mutation
 
 import (
 	"context"
+	"time"
+
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/resolver"
 	"github.com/Nusantara-Muda/scholarship-api/src/business"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
-	"time"
 )
 
 // ScholarshipMutation ...
@@ -112,6 +113,15 @@ func (s ScholarshipMutation) ApplyScholarship(ctx context.Context, param entity.
 	}
 
 	message, err := s.scholarshipService.Apply(ctx, int64(param.UserID), int64(param.ScholarshipID), essay, recommendationLetter)
+	if err != nil {
+		return nil, err
+	}
+
+	return &message, nil
+}
+
+func (s ScholarshipMutation) ApprovedScholarship(ctx context.Context, param entity.UpdateScholarshipStatus) (*string, error) {
+	message, err := s.scholarshipService.ApprovedScholarship(ctx, int64(param.ID))
 	if err != nil {
 		return nil, err
 	}

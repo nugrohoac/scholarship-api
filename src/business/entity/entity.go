@@ -594,3 +594,7 @@ type InputAssessment struct {
 		Value int32
 	}
 }
+
+type UpdateScholarshipStatus struct {
+	ID     int32
+}

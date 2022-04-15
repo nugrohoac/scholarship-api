@@ -1,0 +1,16 @@
+package util
+
+type ScholarshipStatus int
+
+const (
+	WAITING_FOR_PAYMENT ScholarshipStatus = iota
+	WAITING_FOR_APPROVE
+	APPROVE
+	REGISTRATION
+	REVIEW
+	ANNOUNCEMENT
+	BLAZING_EMAIL
+	FUNDING
+	FINISH
+	REJECT
+)

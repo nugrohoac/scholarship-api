@@ -3,10 +3,11 @@ package scholarship_test
 import (
 	"context"
 	"errors"
+	"testing"
+
 	"github.com/Nusantara-Muda/scholarship-api/src/business/common"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	errors2 "github.com/Nusantara-Muda/scholarship-api/src/business/errors"
-	"testing"
 
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -512,6 +513,90 @@ func TestScholarshipServiceGetByID(t *testing.T) {
 
 			require.NoError(t, err)
 			require.Equal(t, test.expectedResp, scholarshipResp)
+		})
+	}
+}
+
+func TestApprovedScholarship(t *testing.T) {
+	var (
+		scholarship entity.Scholarship
+	)
+
+	testdata.GoldenJSONUnmarshal(t, "scholarship", &scholarship)
+
+	inputScholarship := entity.UpdateScholarshipStatus{
+		ID: 1,
+	}
+
+	msgSuccess := "success"
+	tests := map[string]struct {
+		paramScholarship    entity.UpdateScholarshipStatus
+		getScholarship      testdata.FuncCaller
+		approvedScholarship testdata.FuncCaller
+		expectedResp        string
+		expectedErr         error
+	}{
+		"success": {
+			paramScholarship: inputScholarship,
+			getScholarship: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, mock.AnythingOfType("int64")},
+				Output:   []interface{}{scholarship, nil},
+			},
+			approvedScholarship: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, mock.AnythingOfType("int64")},
+				Output:   []interface{}{nil},
+			},
+			expectedResp: msgSuccess,
+			expectedErr:  nil,
+		},
+		"error": {
+			paramScholarship: inputScholarship,
+			getScholarship: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, mock.AnythingOfType("int64")},
+				Output:   []interface{}{scholarship, errors.New("error")},
+			},
+			approvedScholarship: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, mock.AnythingOfType("int64")},
+				Output:   []interface{}{errors.New("error")},
+			},
+			expectedResp: "",
+			expectedErr:  errors.New("error"),
+		},
+	}
+
+	for testName, test := range tests {
+		t.Run(testName, func(t *testing.T) {
+			scholarshipRepositoryMock := new(mocks.ScholarshipRepository)
+			paymentRepoMock := new(mocks.PaymentRepository)
+			bankTransferRepoMock := new(mocks.BankTransferRepository)
+			requirementDescRepoMock := new(mocks.RequirementDescriptionRepository)
+
+			if test.getScholarship.IsCalled {
+				scholarshipRepositoryMock.On("GetByID", test.getScholarship.Input...).
+					Return(test.getScholarship.Output...).
+					Once()
+			}
+			if test.approvedScholarship.IsCalled {
+				scholarshipRepositoryMock.On("ApprovedScholarship", test.approvedScholarship.Input...).
+					Return(test.approvedScholarship.Output...)
+			}
+
+			scholarshipService := _service.NewScholarshipService(scholarshipRepositoryMock, bankTransferRepoMock, paymentRepoMock, requirementDescRepoMock)
+			resp, err := scholarshipService.ApprovedScholarship(context.Background(), int64(test.paramScholarship.ID))
+
+			if err != nil {
+				require.Error(t, err)
+				require.Equal(t, test.expectedErr, err)
+
+				return
+			}
+
+			require.NoError(t, err)
+			require.Equal(t, test.expectedResp, resp)
 		})
 	}
 }

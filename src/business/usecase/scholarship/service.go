@@ -2,11 +2,12 @@ package scholarship
 
 import (
 	"context"
+	"reflect"
+
 	"github.com/Nusantara-Muda/scholarship-api/src/business"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/common"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/errors"
-	"reflect"
 )
 
 type scholarshipService struct {
@@ -265,6 +266,23 @@ func (s scholarshipService) MyScholarship(ctx context.Context, filter entity.Sch
 	}
 
 	return feed, nil
+}
+
+func (s scholarshipService) ApprovedScholarship(ctx context.Context, id int64) (string, error) {
+	res, err := s.scholarshipRepo.GetByID(ctx, id)
+	if err != nil {
+		return "", err
+	}
+
+	if res.ID == 0 {
+		return "", errors.ErrNotFound{Message: "scholarship is not found"}
+	}
+
+	if err = s.scholarshipRepo.ApprovedScholarship(ctx, id); err != nil {
+		return "", err
+	}
+
+	return "success", nil
 }
 
 // NewScholarshipService ...
