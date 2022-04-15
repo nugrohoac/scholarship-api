@@ -4,8 +4,8 @@ package mocks
 
 import (
 	context "context"
-	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 
+	entity "github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -77,6 +77,27 @@ func (_m *ScholarshipService) Fetch(ctx context.Context, filter entity.Scholarsh
 	return r0, r1
 }
 
+// FetchScholarshipBackoffice provides a mock function with given fields: ctx, filter
+func (_m *ScholarshipService) FetchScholarshipBackoffice(ctx context.Context, filter entity.ScholarshipFilterBackoffice) (entity.ScholarshipFeed, error) {
+	ret := _m.Called(ctx, filter)
+
+	var r0 entity.ScholarshipFeed
+	if rf, ok := ret.Get(0).(func(context.Context, entity.ScholarshipFilterBackoffice) entity.ScholarshipFeed); ok {
+		r0 = rf(ctx, filter)
+	} else {
+		r0 = ret.Get(0).(entity.ScholarshipFeed)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, entity.ScholarshipFilterBackoffice) error); ok {
+		r1 = rf(ctx, filter)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetByID provides a mock function with given fields: ctx, ID
 func (_m *ScholarshipService) GetByID(ctx context.Context, ID int64) (entity.Scholarship, error) {
 	ret := _m.Called(ctx, ID)
@@ -91,6 +112,27 @@ func (_m *ScholarshipService) GetByID(ctx context.Context, ID int64) (entity.Sch
 	var r1 error
 	if rf, ok := ret.Get(1).(func(context.Context, int64) error); ok {
 		r1 = rf(ctx, ID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// MyScholarship provides a mock function with given fields: ctx, filter
+func (_m *ScholarshipService) MyScholarship(ctx context.Context, filter entity.ScholarshipFilter) (entity.ApplicantFeed, error) {
+	ret := _m.Called(ctx, filter)
+
+	var r0 entity.ApplicantFeed
+	if rf, ok := ret.Get(0).(func(context.Context, entity.ScholarshipFilter) entity.ApplicantFeed); ok {
+		r0 = rf(ctx, filter)
+	} else {
+		r0 = ret.Get(0).(entity.ApplicantFeed)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, entity.ScholarshipFilter) error); ok {
+		r1 = rf(ctx, filter)
 	} else {
 		r1 = ret.Error(1)
 	}

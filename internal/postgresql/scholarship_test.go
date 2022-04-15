@@ -92,16 +92,22 @@ func (s scholarshipSuite) TestScholarshipRepoGetByID() {
 	var (
 		scholarship  entity.Scholarship
 		requirements = make([]entity.Requirement, 0)
+		user         entity.User
 	)
 
 	testdata.GoldenJSONUnmarshal(s.T(), "scholarship", &scholarship)
 	testdata.GoldenJSONUnmarshal(s.T(), "requirements", &requirements)
+	testdata.GoldenJSONUnmarshal(s.T(), "user", &user)
+
+	user.Type = entity.Sponsor
+	user.ID = scholarship.SponsorID
 
 	requirements[0].ScholarshipID = 1
 	requirements[1].ScholarshipID = 1
 
 	postgresql.SeedScholarship(s.DBConn, s.T(), []entity.Scholarship{scholarship})
 	postgresql.SeedRequirements(s.DBConn, s.T(), requirements)
+	postgresql.SeedUsers(s.DBConn, s.T(), []entity.User{user})
 
 	scholarshipRepo := postgresql.NewScholarshipRepository(s.DBConn, 72)
 	response, err := scholarshipRepo.GetByID(context.Background(), scholarship.ID)
