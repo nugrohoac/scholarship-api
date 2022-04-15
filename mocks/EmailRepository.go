@@ -13,6 +13,20 @@ type EmailRepository struct {
 	mock.Mock
 }
 
+// NotifyFundingConformation provides a mock function with given fields: ctx, email, token, data
+func (_m *EmailRepository) NotifyFundingConformation(ctx context.Context, email string, token string, data string) error {
+	ret := _m.Called(ctx, email, token, data)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, string, string, string) error); ok {
+		r0 = rf(ctx, email, token, data)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // SendActivateUser provides a mock function with given fields: ctx, email, token
 func (_m *EmailRepository) SendActivateUser(ctx context.Context, email string, token string) error {
 	ret := _m.Called(ctx, email, token)
