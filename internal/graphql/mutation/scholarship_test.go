@@ -3,6 +3,9 @@ package mutation_test
 import (
 	"context"
 	"errors"
+	"testing"
+	"time"
+
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/mutation"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/resolver"
 	"github.com/Nusantara-Muda/scholarship-api/mocks"
@@ -10,8 +13,6 @@ import (
 	"github.com/Nusantara-Muda/scholarship-api/testdata"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
-	"testing"
-	"time"
 )
 
 func TestScholarshipMutationCreate(t *testing.T) {
@@ -108,6 +109,67 @@ func TestScholarshipMutationCreate(t *testing.T) {
 
 			scholarshipMutation := mutation.NewScholarshipMutation(scholarshipServiceMock)
 			resp, err := scholarshipMutation.CreateScholarship(context.Background(), test.paramScholarship)
+			scholarshipServiceMock.AssertExpectations(t)
+
+			if err != nil {
+				require.Error(t, err)
+				require.Equal(t, test.expectedErr, err)
+
+				return
+			}
+
+			require.NoError(t, err)
+			require.Equal(t, test.expectedResp, resp)
+		})
+	}
+}
+
+func TestApprovedScholarship(t *testing.T) {
+	inputScholarship := entity.UpdateScholarshipStatus{
+		ID:     1,
+	}
+
+	msgSuccess := "success"
+	tests := map[string]struct {
+		paramScholarship    entity.UpdateScholarshipStatus
+		approvedScholarship testdata.FuncCaller
+		expectedResp        *string
+		expectedErr         error
+	}{
+		"success": {
+			paramScholarship: inputScholarship,
+			approvedScholarship: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, mock.AnythingOfType("int64")},
+				Output:   []interface{}{"success", nil},
+			},
+			expectedResp: &msgSuccess,
+			expectedErr:  nil,
+		},
+		"error": {
+			paramScholarship: inputScholarship,
+			approvedScholarship: testdata.FuncCaller{
+				IsCalled: true,
+				Input:    []interface{}{mock.Anything, mock.AnythingOfType("int64")},
+				Output:   []interface{}{"", errors.New("error")},
+			},
+			expectedResp: nil,
+			expectedErr:  errors.New("error"),
+		},
+	}
+
+	for testName, test := range tests {
+		t.Run(testName, func(t *testing.T) {
+			scholarshipServiceMock := new(mocks.ScholarshipService)
+
+			if test.approvedScholarship.IsCalled {
+				scholarshipServiceMock.On("ApprovedScholarship", test.approvedScholarship.Input...).
+					Return(test.approvedScholarship.Output...).
+					Once()
+			}
+
+			scholarshipMutation := mutation.NewScholarshipMutation(scholarshipServiceMock)
+			resp, err := scholarshipMutation.ApprovedScholarship(context.Background(), test.paramScholarship)
 			scholarshipServiceMock.AssertExpectations(t)
 
 			if err != nil {

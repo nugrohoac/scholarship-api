@@ -90,4 +90,8 @@ type Mutation {
         id: Int!
         status: Int!
     ): String
+
+    ApprovedScholarship(
+        id: Int!
+    ): String
 }
