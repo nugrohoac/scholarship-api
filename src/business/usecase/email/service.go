@@ -6,6 +6,7 @@ import (
 	"github.com/Nusantara-Muda/scholarship-api/src/business"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/common"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/errors"
 	"golang.org/x/text/message"
 )
 
@@ -27,6 +28,10 @@ func (e emailService) NotifyFundingConformation(ctx context.Context, scholarship
 	scholarship, err := e.scholarshipRepo.GetByID(ctx, scholarshipID)
 	if err != nil {
 		return "", err
+	}
+
+	if scholarship.Status >= 6 {
+		return "", errors.ErrNotAllowed{Message: "scholarship has been blazing email"}
 	}
 
 	amount := scholarship.Amount / scholarship.Awardee
