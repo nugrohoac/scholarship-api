@@ -59,6 +59,12 @@ type JwtHash interface {
 type EmailRepository interface {
 	SendActivateUser(ctx context.Context, email, token string) error
 	SendForgotPassword(ctx context.Context, email, token string) error
+	NotifyFundingConformation(ctx context.Context, email string, data string) error
+}
+
+// EmailService .
+type EmailService interface {
+	NotifyFundingConformation(ctx context.Context) error
 }
 
 // ScholarshipRepository ...
