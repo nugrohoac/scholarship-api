@@ -809,6 +809,27 @@ func (s scholarshipRepo) MyScholarship(ctx context.Context, userID int64, filter
 	return applicants, cursorStr, nil
 }
 
+// ChangeStatus .
+func (s scholarshipRepo) ChangeStatus(ctx context.Context, ID int64, status int) error {
+	query, args, err := sq.Update("scholarship").
+		SetMap(sq.Eq{
+			"status":     status,
+			"updated_at": time.Now(),
+		}).
+		Where(sq.Eq{"id": ID}).
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+	if err != nil {
+		return err
+	}
+
+	if _, err = s.db.ExecContext(ctx, query, args...); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (s scholarshipRepo) ApprovedScholarship(ctx context.Context, scholarshipID int64) error {
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {

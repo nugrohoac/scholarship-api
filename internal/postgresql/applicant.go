@@ -66,6 +66,10 @@ func (a applicantRepository) Fetch(ctx context.Context, filter entity.FilterAppl
 		qSelect = qSelect.Where(sq.Eq{"us.status": filter.Status})
 	}
 
+	if filter.SponsorID > 0 {
+		qSelect = qSelect.Where(sq.Eq{"u.id": filter.SponsorID}).Where(sq.Eq{"u.type": entity.Sponsor})
+	}
+
 	query, args, err := qSelect.ToSql()
 	if err != nil {
 		return nil, "", err
