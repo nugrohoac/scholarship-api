@@ -59,12 +59,12 @@ type JwtHash interface {
 type EmailRepository interface {
 	SendActivateUser(ctx context.Context, email, token string) error
 	SendForgotPassword(ctx context.Context, email, token string) error
-	NotifyFundingConformation(ctx context.Context, email string, data string) error
+	NotifyFundingConformation(ctx context.Context, email, token, data string) error
 }
 
 // EmailService .
 type EmailService interface {
-	NotifyFundingConformation(ctx context.Context) error
+	NotifyFundingConformation(ctx context.Context, scholarshipID int64) (string, error)
 }
 
 // ScholarshipRepository ...
@@ -75,6 +75,7 @@ type ScholarshipRepository interface {
 	Apply(ctx context.Context, userID, scholarshipID int64, applicant int, essay string, recommendationLetter entity.Image) error
 	CheckApply(ctx context.Context, userID, scholarshipID int64) (bool, int, error)
 	MyScholarship(ctx context.Context, userID int64, filter entity.ScholarshipFilter) ([]entity.Applicant, string, error)
+	ChangeStatus(ctx context.Context, ID int64, status int) error
 
 	FetchScholarshipBackoffice(ctx context.Context, filter entity.ScholarshipFilterBackoffice) ([]entity.Scholarship, string, error)
 	ApprovedScholarship(ctx context.Context, status int64) error

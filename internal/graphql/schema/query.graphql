@@ -91,4 +91,8 @@ type Query {
         status: [Int]
         name: String
     ): applicantFeed
+
+    NotifyFundingConfirmation(
+        scholarshipId: Int!
+    ): String
 }

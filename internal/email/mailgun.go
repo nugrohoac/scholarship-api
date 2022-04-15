@@ -126,7 +126,7 @@ var (
 	%s
   </ol>
   <p style="margin: 0;font-size: 12px;line-height: 16px;color: #747793;font-weight: 400;">By confirming this email, we will sent notify to ask for confirmation on the awardees dashboard to transfer the money.</p>
-  <a href="#" target="_blank">
+  <a href="%s" target="_blank">
 	<button type="button" style="background: #B31E1A;color: #FEFFFF;padding: 8px 16px;font-size: 16px;line-height: 24px;margin-top: 24px;border: none;outline: none;border-radius: 4px;">Yes, I confirm</button>
   </a>
 </body>
@@ -135,10 +135,11 @@ var (
 )
 
 type emailRepo struct {
-	mailgunImpl        *mailgun.MailgunImpl
-	sender             string
-	pathActivateUser   string
-	pathForgotPassword string
+	mailgunImpl                   *mailgun.MailgunImpl
+	sender                        string
+	pathActivateUser              string
+	pathForgotPassword            string
+	pathNotifyFundingConfirmation string
 }
 
 // SendActivateUser ...
@@ -184,17 +185,37 @@ func (e emailRepo) SendForgotPassword(ctx context.Context, email, token string) 
 }
 
 // NotifyFundingConformation .
-func (e emailRepo) NotifyFundingConformation(ctx context.Context, email string, data string) error {
-	//TODO implement me
-	panic("implement me")
+func (e emailRepo) NotifyFundingConformation(ctx context.Context, email, token, data string) error {
+	subject := "Confirm Your Awardee"
+
+	message := e.mailgunImpl.NewMessage(e.sender, subject, "", email)
+	path := e.pathNotifyFundingConfirmation + "?token=" + token
+	// html copy, if sending to send email more, it will more extra string
+	_html := htmlNotifyFundingConfirmation
+	_html = fmt.Sprintf(_html, data, path)
+	message.SetHtml(_html)
+
+	_, _, err := e.mailgunImpl.Send(ctx, message)
+	if err != nil {
+		logrus.Error(err)
+		return err
+	}
+
+	return nil
 }
 
 // NewEmailRepository ...
-func NewEmailRepository(mailgunImpl *mailgun.MailgunImpl, sender, pathActivateUser, pathForgotPassword string) business.EmailRepository {
+func NewEmailRepository(
+	mailgunImpl *mailgun.MailgunImpl,
+	sender,
+	pathActivateUser,
+	pathForgotPassword,
+	pathNotifyFundingConfirmation string) business.EmailRepository {
 	return emailRepo{
-		mailgunImpl:        mailgunImpl,
-		sender:             sender,
-		pathActivateUser:   pathActivateUser,
-		pathForgotPassword: pathForgotPassword,
+		mailgunImpl:                   mailgunImpl,
+		sender:                        sender,
+		pathActivateUser:              pathActivateUser,
+		pathForgotPassword:            pathForgotPassword,
+		pathNotifyFundingConfirmation: pathNotifyFundingConfirmation,
 	}
 }

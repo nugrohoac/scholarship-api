@@ -11,9 +11,12 @@ import (
 	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/assessment"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/backoffice/sponsor"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/backoffice/student"
+	email2 "github.com/Nusantara-Muda/scholarship-api/src/business/usecase/email"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/ethnic"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/major"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/school"
+	"golang.org/x/text/language"
+	"golang.org/x/text/message"
 	"log"
 	"time"
 
@@ -69,13 +72,15 @@ var (
 	applicantService   business.ApplicantService
 	assessmentService  business.AssessmentService
 	studentService     business.StudentService
+	emailService       business.EmailService
 
 	// email
-	emailDomain        string
-	emailApiKey        string
-	pathActivateUser   string
-	pathForgotPassword string
-	emailSender        string
+	emailDomain                   string
+	emailApiKey                   string
+	pathActivateUser              string
+	pathForgotPassword            string
+	pathNotifyFundingConfirmation string
+	emailSender                   string
 
 	// BankQuery ...
 	BankQuery query.BankQuery
@@ -97,8 +102,10 @@ var (
 	SponsorQuery backoffice2.SponsorQuery
 	// ApplicantQuery .
 	ApplicantQuery query.ApplicantQuery
-	// SponsorQuery ...
+	// StudentQuery ...
 	StudentQuery backoffice2.StudentQuery
+	// EmailQuery .
+	EmailQuery query.EmailQuery
 
 	// UserMutation ...
 	UserMutation mutation.UserMutation
@@ -184,6 +191,7 @@ func initEnv() {
 	emailApiKey = viper.GetString("email_api_key")
 	pathActivateUser = viper.GetString("email_path_activate_user")
 	pathForgotPassword = viper.GetString("email_path_forgot_password")
+	pathNotifyFundingConfirmation = viper.GetString("email_path_notify_funding_confirmation")
 	emailSender = viper.GetString("email_sender")
 
 	viper.WatchConfig()
@@ -197,10 +205,12 @@ func initApp() {
 
 	// email
 	mg := mailgun.NewMailgun(emailDomain, emailApiKey)
-	emailRepo = email.NewEmailRepository(mg, emailSender, pathActivateUser, pathForgotPassword)
+	emailRepo = email.NewEmailRepository(mg, emailSender, pathActivateUser, pathForgotPassword, pathNotifyFundingConfirmation)
 
 	jwtHash := jwt_hash.NewJwtHash([]byte(secretKey), tokeDuration)
 	Middleware = _middleware.New(jwtHash)
+
+	printer := message.NewPrinter(language.English)
 
 	bankRepo = postgresql.NewBankRepository(db)
 	userRepo = postgresql.NewUserRepository(db)
@@ -231,6 +241,7 @@ func initApp() {
 	applicantService = applicant.NewApplicantService(applicantRepo, scholarshipRepo, schoolRepo, userRepo, assessmentRepo)
 	assessmentService = assessment.NewAssessmentService(assessmentRepo, applicantRepo, scholarshipRepo)
 	studentService = student.NewStudentService(studentRepo)
+	emailService = email2.NewEmailService(emailRepo, applicantRepo, scholarshipRepo, jwtHash, printer)
 
 	UserMutation = mutation.NewUserMutation(userService)
 	ScholarshipMutation = mutation.NewScholarshipMutation(scholarshipService)
@@ -250,4 +261,5 @@ func initApp() {
 	EthnicQuery = query.NewEthnicQuery(ethnicService)
 	ApplicantQuery = query.NewApplicantQuery(applicantService)
 	StudentQuery = backoffice2.NewStudentQuery(studentService)
+	EmailQuery = query.NewEmailQuery(emailService)
 }
