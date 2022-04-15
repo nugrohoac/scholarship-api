@@ -107,6 +107,36 @@ func (_m *ScholarshipRepository) Fetch(ctx context.Context, filter entity.Schola
 	return r0, r1, r2
 }
 
+// FetchScholarshipBackoffice provides a mock function with given fields: ctx, filter
+func (_m *ScholarshipRepository) FetchScholarshipBackoffice(ctx context.Context, filter entity.ScholarshipFilterBackoffice) ([]entity.Scholarship, string, error) {
+	ret := _m.Called(ctx, filter)
+
+	var r0 []entity.Scholarship
+	if rf, ok := ret.Get(0).(func(context.Context, entity.ScholarshipFilterBackoffice) []entity.Scholarship); ok {
+		r0 = rf(ctx, filter)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]entity.Scholarship)
+		}
+	}
+
+	var r1 string
+	if rf, ok := ret.Get(1).(func(context.Context, entity.ScholarshipFilterBackoffice) string); ok {
+		r1 = rf(ctx, filter)
+	} else {
+		r1 = ret.Get(1).(string)
+	}
+
+	var r2 error
+	if rf, ok := ret.Get(2).(func(context.Context, entity.ScholarshipFilterBackoffice) error); ok {
+		r2 = rf(ctx, filter)
+	} else {
+		r2 = ret.Error(2)
+	}
+
+	return r0, r1, r2
+}
+
 // GetByID provides a mock function with given fields: ctx, ID
 func (_m *ScholarshipRepository) GetByID(ctx context.Context, ID int64) (entity.Scholarship, error) {
 	ret := _m.Called(ctx, ID)
@@ -126,4 +156,34 @@ func (_m *ScholarshipRepository) GetByID(ctx context.Context, ID int64) (entity.
 	}
 
 	return r0, r1
+}
+
+// MyScholarship provides a mock function with given fields: ctx, userID, filter
+func (_m *ScholarshipRepository) MyScholarship(ctx context.Context, userID int64, filter entity.ScholarshipFilter) ([]entity.Applicant, string, error) {
+	ret := _m.Called(ctx, userID, filter)
+
+	var r0 []entity.Applicant
+	if rf, ok := ret.Get(0).(func(context.Context, int64, entity.ScholarshipFilter) []entity.Applicant); ok {
+		r0 = rf(ctx, userID, filter)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]entity.Applicant)
+		}
+	}
+
+	var r1 string
+	if rf, ok := ret.Get(1).(func(context.Context, int64, entity.ScholarshipFilter) string); ok {
+		r1 = rf(ctx, userID, filter)
+	} else {
+		r1 = ret.Get(1).(string)
+	}
+
+	var r2 error
+	if rf, ok := ret.Get(2).(func(context.Context, int64, entity.ScholarshipFilter) error); ok {
+		r2 = rf(ctx, userID, filter)
+	} else {
+		r2 = ret.Error(2)
+	}
+
+	return r0, r1, r2
 }
