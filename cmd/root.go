@@ -210,7 +210,7 @@ func initApp() {
 	jwtHash := jwt_hash.NewJwtHash([]byte(secretKey), tokeDuration)
 	Middleware = _middleware.New(jwtHash)
 
-	printer := message.NewPrinter(language.English)
+	printer := message.NewPrinter(language.Indonesian)
 
 	bankRepo = postgresql.NewBankRepository(db)
 	userRepo = postgresql.NewUserRepository(db)

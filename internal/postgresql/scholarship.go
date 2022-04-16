@@ -690,6 +690,7 @@ func (s scholarshipRepo) MyScholarship(ctx context.Context, userID int64, filter
 		"s.funding_start",
 		"s.funding_end",
 		"s.status",
+		"s.image",
 	).From("user_scholarship us").
 		Join("\"user\" u on u.id = us.user_id").
 		Join("scholarship s on s.id = us.scholarship_id").
@@ -739,9 +740,10 @@ func (s scholarshipRepo) MyScholarship(ctx context.Context, userID int64, filter
 
 	for rows.Next() {
 		var (
-			applicant     entity.Applicant
-			byteRecLetter []byte
-			bytePhoto     []byte
+			applicant            entity.Applicant
+			byteRecLetter        []byte
+			bytePhoto            []byte
+			byteScholarshipImage []byte
 		)
 
 		if err = rows.Scan(
@@ -781,6 +783,7 @@ func (s scholarshipRepo) MyScholarship(ctx context.Context, userID int64, filter
 			&applicant.Scholarship.FundingStart,
 			&applicant.Scholarship.FundingEnd,
 			&applicant.Scholarship.Status,
+			&byteScholarshipImage,
 		); err != nil {
 			return nil, "", err
 		}
@@ -793,6 +796,12 @@ func (s scholarshipRepo) MyScholarship(ctx context.Context, userID int64, filter
 
 		if byteRecLetter != nil {
 			if err = json.Unmarshal(byteRecLetter, &applicant.RecommendationLetter); err != nil {
+				return nil, "", err
+			}
+		}
+
+		if byteScholarshipImage != nil {
+			if err = json.Unmarshal(byteScholarshipImage, &applicant.Scholarship.Image); err != nil {
 				return nil, "", err
 			}
 		}
