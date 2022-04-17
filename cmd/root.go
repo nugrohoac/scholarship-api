@@ -270,7 +270,8 @@ func initApp() {
 	elog := echo.New().Logger
 	gsch := gocron.NewScheduler(time.UTC)
 	sh := scheduler.Init(gsch, elog, scholarshipService)
-	err = sh.ScholarshipStatusChecker(5)
+	// TODO: move scheduler duration to config file
+	err = sh.ScholarshipStatusChecker(60)
 	if err != nil {
 		elog.Fatal(fmt.Sprintf("unable to run scholarship scheduler %#v \n", err))
 	}
