@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"github.com/Nusantara-Muda/scholarship-api/src/business"
+	"github.com/go-co-op/gocron"
 	"net/http"
 	"time"
 
@@ -14,6 +16,13 @@ import (
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql"
 	"github.com/Nusantara-Muda/scholarship-api/internal/graphql/schema"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/handler"
+)
+
+var (
+	sch gocron.Scheduler
+
+	// business layer
+	scholarshipSvc business.ScholarshipService
 )
 
 func main() {

@@ -7,6 +7,7 @@ import (
 	backoffice2 "github.com/Nusantara-Muda/scholarship-api/internal/graphql/query/backoffice"
 	"github.com/Nusantara-Muda/scholarship-api/src/business"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/domain/backoffice"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/handler/scheduler"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/applicant"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/assessment"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/backoffice/sponsor"
@@ -15,6 +16,8 @@ import (
 	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/ethnic"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/major"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/school"
+	"github.com/go-co-op/gocron"
+	"github.com/labstack/echo"
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
 	"log"
@@ -262,4 +265,13 @@ func initApp() {
 	ApplicantQuery = query.NewApplicantQuery(applicantService)
 	StudentQuery = backoffice2.NewStudentQuery(studentService)
 	EmailQuery = query.NewEmailQuery(emailService)
+
+	// scheduler
+	elog := echo.New().Logger
+	gsch := gocron.NewScheduler(time.UTC)
+	sh := scheduler.Init(gsch, elog, scholarshipService)
+	err = sh.ScholarshipStatusChecker(5)
+	if err != nil {
+		elog.Fatal(fmt.Sprintf("unable to run scholarship scheduler %#v \n", err))
+	}
 }
