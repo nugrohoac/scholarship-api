@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/Nusantara-Muda/scholarship-api/src/business"
-	"github.com/go-co-op/gocron"
 	"net/http"
 	"time"
 
