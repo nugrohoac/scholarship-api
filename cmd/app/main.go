@@ -18,13 +18,6 @@ import (
 	"github.com/Nusantara-Muda/scholarship-api/src/business/handler"
 )
 
-var (
-	sch gocron.Scheduler
-
-	// business layer
-	scholarshipSvc business.ScholarshipService
-)
-
 func main() {
 	e := echo.New()
 
