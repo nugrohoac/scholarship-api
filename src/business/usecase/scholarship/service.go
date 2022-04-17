@@ -25,6 +25,38 @@ func (s scholarshipService) RegistrationStatusScheduler() ([]int, error) {
 	return ids, nil
 }
 
+func (s scholarshipService) ReviewStatusScheduler() ([]int, error) {
+	ids, err := s.scholarshipRepo.ReviewStatusScheduler()
+	if err != nil {
+		return []int{}, err
+	}
+	return ids, nil
+}
+
+func (s scholarshipService) AnnouncementStatusScheduler() ([]int, error) {
+	ids, err := s.scholarshipRepo.AnnouncementStatusScheduler()
+	if err != nil {
+		return []int{}, err
+	}
+	return ids, nil
+}
+
+func (s scholarshipService) FundingStatusScheduler() ([]int, error) {
+	ids, err := s.scholarshipRepo.FundingStatusScheduler()
+	if err != nil {
+		return []int{}, err
+	}
+	return ids, nil
+}
+
+func (s scholarshipService) FinishStatusScheduler() ([]int, error) {
+	ids, err := s.scholarshipRepo.FinishStatusScheduler()
+	if err != nil {
+		return []int{}, err
+	}
+	return ids, nil
+}
+
 func (s scholarshipService) UpdateScholarshipStatus(status, id int) error {
 	if err := s.scholarshipRepo.UpdateScholarshipStatus(status, id); err != nil {
 		return err

@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"github.com/Nusantara-Muda/scholarship-api/internal/postgresql/query"
 	"github.com/Nusantara-Muda/scholarship-api/src/business"
 	"strings"
@@ -888,6 +887,91 @@ func (s scholarshipRepo) ApprovedScholarship(ctx context.Context, scholarshipID 
 func (s scholarshipRepo) RegistrationStatusScheduler() ([]int, error) {
 	// get scholarship status == approved && date now == start period of scholarship
 	rows, err := s.db.Query(query.GetApprovedScholarship)
+	if err != nil {
+		return []int{}, err
+	}
+	defer rows.Close()
+
+	var ids []int
+	for rows.Next() {
+		var id int
+		err = rows.Scan(&id)
+		if err != nil {
+			return []int{}, err
+		}
+		ids = append(ids, id)
+	}
+
+	return ids, nil
+}
+
+func (s scholarshipRepo) ReviewStatusScheduler() ([]int, error) {
+	// get scholarship status == registration && date now in between application_start_date and application_end_date
+	// && date now == before 3 days of announcement date
+	rows, err := s.db.Query(query.GetRegistrationScholarship)
+	if err != nil {
+		return []int{}, err
+	}
+	defer rows.Close()
+
+	var ids []int
+	for rows.Next() {
+		var id int
+		err = rows.Scan(&id)
+		if err != nil {
+			return []int{}, err
+		}
+		ids = append(ids, id)
+	}
+
+	return ids, nil
+}
+
+func (s scholarshipRepo) AnnouncementStatusScheduler() ([]int, error) {
+	// get scholarship status == review && date now == announcement date
+	rows, err := s.db.Query(query.GetReviewScholarship)
+	if err != nil {
+		return []int{}, err
+	}
+	defer rows.Close()
+
+	var ids []int
+	for rows.Next() {
+		var id int
+		err = rows.Scan(&id)
+		if err != nil {
+			return []int{}, err
+		}
+		ids = append(ids, id)
+	}
+
+	return ids, nil
+}
+
+func (s scholarshipRepo) FundingStatusScheduler() ([]int, error) {
+	// get scholarship status == email blazing && date now in between funding_start_date and funding_end_date
+	rows, err := s.db.Query(query.GetEmailBlazingScholarship)
+	if err != nil {
+		return []int{}, err
+	}
+	defer rows.Close()
+
+	var ids []int
+	for rows.Next() {
+		var id int
+		err = rows.Scan(&id)
+		if err != nil {
+			return []int{}, err
+		}
+		ids = append(ids, id)
+	}
+
+	return ids, nil
+}
+
+func (s scholarshipRepo) FinishStatusScheduler() ([]int, error) {
+	// get scholarship status == funding && date now > funding date
+	rows, err := s.db.Query(query.GetFundingScholarship)
 	if err != nil {
 		return []int{}, err
 	}

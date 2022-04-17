@@ -81,6 +81,10 @@ type ScholarshipRepository interface {
 	ApprovedScholarship(ctx context.Context, status int64) error
 
 	RegistrationStatusScheduler() ([]int, error)
+	ReviewStatusScheduler() ([]int, error)
+	AnnouncementStatusScheduler() ([]int, error)
+	FundingStatusScheduler() ([]int, error)
+	FinishStatusScheduler() ([]int, error)
 	UpdateScholarshipStatus(status, id int) error
 }
 
@@ -101,6 +105,10 @@ type ScholarshipService interface {
 	ApprovedScholarship(ctx context.Context, scholarshipID int64) (string, error)
 
 	RegistrationStatusScheduler() ([]int, error)
+	ReviewStatusScheduler() ([]int, error)
+	AnnouncementStatusScheduler() ([]int, error)
+	FundingStatusScheduler() ([]int, error)
+	FinishStatusScheduler() ([]int, error)
 	UpdateScholarshipStatus(status, id int) error
 }
 
