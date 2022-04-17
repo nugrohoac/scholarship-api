@@ -17,6 +17,21 @@ type scholarshipService struct {
 	requirementDescRepo business.RequirementDescriptionRepository
 }
 
+func (s scholarshipService) RegistrationStatusScheduler() ([]int, error) {
+	ids, err := s.scholarshipRepo.RegistrationStatusScheduler()
+	if err != nil {
+		return []int{}, err
+	}
+	return ids, nil
+}
+
+func (s scholarshipService) UpdateScholarshipStatus(status, id int) error {
+	if err := s.scholarshipRepo.UpdateScholarshipStatus(status, id); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (s scholarshipService) FetchScholarshipBackoffice(ctx context.Context, filter entity.ScholarshipFilterBackoffice) (entity.ScholarshipFeed, error) {
 	scholarships, cursor, err := s.scholarshipRepo.FetchScholarshipBackoffice(ctx, filter)
 	if err != nil {

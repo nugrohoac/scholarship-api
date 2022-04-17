@@ -79,6 +79,9 @@ type ScholarshipRepository interface {
 
 	FetchScholarshipBackoffice(ctx context.Context, filter entity.ScholarshipFilterBackoffice) ([]entity.Scholarship, string, error)
 	ApprovedScholarship(ctx context.Context, status int64) error
+
+	RegistrationStatusScheduler() ([]int, error)
+	UpdateScholarshipStatus(status, id int) error
 }
 
 // RequirementDescriptionRepository .
@@ -96,6 +99,9 @@ type ScholarshipService interface {
 
 	FetchScholarshipBackoffice(ctx context.Context, filter entity.ScholarshipFilterBackoffice) (entity.ScholarshipFeed, error)
 	ApprovedScholarship(ctx context.Context, scholarshipID int64) (string, error)
+
+	RegistrationStatusScheduler() ([]int, error)
+	UpdateScholarshipStatus(status, id int) error
 }
 
 // BankTransferRepository ...

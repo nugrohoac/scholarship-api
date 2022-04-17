@@ -4,10 +4,12 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"fmt"
+	"github.com/Nusantara-Muda/scholarship-api/internal/postgresql/query"
+	"github.com/Nusantara-Muda/scholarship-api/src/business"
 	"strings"
 	"time"
 
-	"github.com/Nusantara-Muda/scholarship-api/src/business"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/util"
 
@@ -20,6 +22,15 @@ type scholarshipRepo struct {
 	db              *sql.DB
 	deadlinePayment int
 }
+
+// NewScholarshipRepository ...
+func NewScholarshipRepository(db *sql.DB, deadlinePayment int) business.ScholarshipRepository {
+	return scholarshipRepo{
+		db:              db,
+		deadlinePayment: deadlinePayment,
+	}
+}
+
 
 func (s scholarshipRepo) FetchScholarshipBackoffice(ctx context.Context, filter entity.ScholarshipFilterBackoffice) ([]entity.Scholarship, string, error) {
 	qSelect := sq.Select("id",
@@ -874,10 +885,39 @@ func (s scholarshipRepo) ApprovedScholarship(ctx context.Context, scholarshipID 
 	return nil
 }
 
-// NewScholarshipRepository ...
-func NewScholarshipRepository(db *sql.DB, deadlinePayment int) business.ScholarshipRepository {
-	return scholarshipRepo{
-		db:              db,
-		deadlinePayment: deadlinePayment,
+func (s scholarshipRepo) RegistrationStatusScheduler() ([]int, error) {
+	// get scholarship status == approved && date now == start period of scholarship
+	rows, err := s.db.Query(query.GetApprovedScholarship)
+	if err != nil {
+		return []int{}, err
 	}
+	defer rows.Close()
+
+	var ids []int
+	for rows.Next() {
+		var id int
+		err = rows.Scan(&id)
+		if err != nil {
+			return []int{}, err
+		}
+		ids = append(ids, id)
+	}
+
+	return ids, nil
+}
+
+func (s scholarshipRepo) UpdateScholarshipStatus(status, id int) error {
+	stmt, err := s.db.Prepare(query.UpdateScholarshipStatus)
+	if err != nil {
+		return err
+	}
+	res, err := stmt.Exec(status, id)
+	if err != nil {
+		return err
+	}
+	_, err = res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	return nil
 }
