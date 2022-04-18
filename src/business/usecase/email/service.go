@@ -154,10 +154,6 @@ func (e emailService) ConfirmAwardee(ctx context.Context, scholarshipID int64) (
 		return "", errors.ErrNotFound{Message: "you have been confirm or applicant not found"}
 	}
 
-	if err = e.applicantRepo.SetStatusConfirmation(ctx, user.ID, scholarshipID); err != nil {
-		return "", err
-	}
-
 	scholarship, err := e.scholarshipRepo.GetByID(ctx, scholarshipID)
 	if err != nil {
 		return "", err
@@ -165,6 +161,14 @@ func (e emailService) ConfirmAwardee(ctx context.Context, scholarshipID int64) (
 
 	sponsors, _, err := e.userRepo.Fetch(ctx, entity.UserFilter{IDs: []int64{scholarship.SponsorID}})
 	if err != nil {
+		return "", err
+	}
+
+	if len(sponsors) == 0 {
+		return "", errors.ErrNotFound{Message: "sponsor is not found"}
+	}
+
+	if err = e.applicantRepo.SetStatusConfirmation(ctx, user.ID, scholarshipID); err != nil {
 		return "", err
 	}
 
