@@ -58,7 +58,7 @@ func (e emailService) NotifyFundingConformation(ctx context.Context, scholarship
 			return "", err
 		}
 
-		if err = e.emailRepo.NotifyFundingConformation(ctx, user.Email, token, data); err != nil {
+		if err = e.emailRepo.NotifyFundingConformation(ctx, user.Email, token, scholarshipID, data); err != nil {
 			return "", err
 		}
 	}

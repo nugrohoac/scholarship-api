@@ -4,10 +4,12 @@ go 1.17
 
 require (
 	github.com/Masterminds/squirrel v1.5.2
+	github.com/go-co-op/gocron v1.13.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang-migrate/migrate v3.5.4+incompatible
 	github.com/golang-migrate/migrate/v4 v4.15.1
 	github.com/graph-gophers/graphql-go v1.2.0
+	github.com/labstack/echo v3.3.10+incompatible
 	github.com/labstack/echo/v4 v4.6.2
 	github.com/lib/pq v1.10.4
 	github.com/mailgun/mailgun-go/v4 v4.6.0
@@ -23,13 +25,11 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/go-bindata/go-bindata v3.1.2+incompatible // indirect
-	github.com/go-co-op/gocron v1.13.0 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/hashicorp/errwrap v1.0.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/labstack/echo v3.3.10+incompatible // indirect
 	github.com/labstack/gommon v0.3.1 // indirect
 	github.com/lann/builder v0.0.0-20180802200727-47ae307949d0 // indirect
 	github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0 // indirect

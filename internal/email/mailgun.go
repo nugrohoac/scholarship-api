@@ -6,6 +6,7 @@ import (
 	"github.com/Nusantara-Muda/scholarship-api/src/business"
 	"github.com/mailgun/mailgun-go/v4"
 	"github.com/sirupsen/logrus"
+	"strconv"
 )
 
 // Html ...
@@ -185,11 +186,12 @@ func (e emailRepo) SendForgotPassword(ctx context.Context, email, token string) 
 }
 
 // NotifyFundingConformation .
-func (e emailRepo) NotifyFundingConformation(ctx context.Context, email, token, data string) error {
+func (e emailRepo) NotifyFundingConformation(ctx context.Context, email, token string, scholarshipID int64, data string) error {
 	subject := "Confirm Your Awardee"
 
 	message := e.mailgunImpl.NewMessage(e.sender, subject, "", email)
-	path := e.pathNotifyFundingConfirmation + "?token=" + token
+	// it can be replaced with fmt.sprintf
+	path := e.pathNotifyFundingConfirmation + "?token=" + token + "&scholarship_id=" + strconv.Itoa(int(scholarshipID))
 	// html copy, if sending to send email more, it will more extra string
 	_html := htmlNotifyFundingConfirmation
 	_html = fmt.Sprintf(_html, data, path)
