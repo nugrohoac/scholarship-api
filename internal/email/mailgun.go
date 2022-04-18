@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/Nusantara-Muda/scholarship-api/src/business"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	"github.com/mailgun/mailgun-go/v4"
 	"github.com/sirupsen/logrus"
 	"strconv"
@@ -133,6 +134,58 @@ var (
 </body>
 </html>
 	`
+
+	htmlAwardeeConfirmation = `
+	<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+
+  <title>Awardee confirmation</title>
+  <style>
+    /* latin */
+    @font-face {
+      font-family: 'Quicksand';
+      font-style: normal;
+      font-weight: 500;
+      font-display: swap;
+      src: url(https://fonts.gstatic.com/s/quicksand/v24/6xKtdSZaM9iE8KbpRA_hK1QN.woff2) format('woff2');
+    }
+    /* latin */
+    @font-face {
+      font-family: 'Quicksand';
+      font-style: normal;
+      font-weight: 700;
+      font-display: swap;
+      src: url(https://fonts.gstatic.com/s/quicksand/v24/6xKtdSZaM9iE8KbpRA_hK1QN.woff2) format('woff2');
+    }  
+  </style>
+</head>
+<body style="font-family: 'Quicksand', 'open sans', 'helvetica neue', sans-serif; color: #464952;background: #EAECF1;font-weight: 500;padding: 16px;">
+  <img src="https://s3.ap-southeast-3.amazonaws.com/cdn.stading.bangun.app/documents//1649429019215" width="138" height="40">
+  <h2>Congratulation, you made it!</h2>
+  <p style="margin: 0;font-size: 12px;line-height: 16px;font-weight: 500;">
+    We are pleased to inform that you have been choosen as awardee for
+    <span style="line-height: 20px;font-weight: bold;font-size: 16px;">%s</span>
+    scholarship.
+  </p>
+  <br>
+  <p class="alert" style="margin: 0;font-size: 12px;line-height: 16px;font-weight: 500;color: #878C96;">
+    Please confrm your membership (by clicking the button below) as awardee within
+    <span style="line-height: 20px;font-weight: bold;font-size: 12px;color: black;">
+      72 hours
+    </span>
+    or your membership will be canceled automatically by the system.
+  </p>
+  <a href="%s" target="_blank">
+    <button type="button" style="background: #B31E1A;color: #FEFFFF;padding: 8px 16px;font-size: 16px;line-height: 24px;margin-top: 24px;border: none;outline: none;border-radius: 4px;">Yes, I confirm</button>
+  </a>
+</body>
+</html>
+	`
 )
 
 type emailRepo struct {
@@ -141,6 +194,7 @@ type emailRepo struct {
 	pathActivateUser              string
 	pathForgotPassword            string
 	pathNotifyFundingConfirmation string
+	pathConfirmationByAwardee     string
 }
 
 // SendActivateUser ...
@@ -187,7 +241,7 @@ func (e emailRepo) SendForgotPassword(ctx context.Context, email, token string) 
 
 // NotifyFundingConformation .
 func (e emailRepo) NotifyFundingConformation(ctx context.Context, email, token string, scholarshipID int64, data string) error {
-	subject := "Confirm Your Awardee"
+	subject := "Bangun Awardee Funding Confirmation"
 
 	message := e.mailgunImpl.NewMessage(e.sender, subject, "", email)
 	// it can be replaced with fmt.sprintf
@@ -206,18 +260,46 @@ func (e emailRepo) NotifyFundingConformation(ctx context.Context, email, token s
 	return nil
 }
 
+// BlazingToAwardee .
+// rezabaguspermana.rbp@gmail.com .
+// reza.bagus@tanihub.com
+func (e emailRepo) BlazingToAwardee(ctx context.Context, mapEmailToken map[string]string, scholarship entity.Scholarship) error {
+	subject := "Bangun Awardee Funding"
+
+	if len(mapEmailToken) > 0 {
+		for email, token := range mapEmailToken {
+			message := e.mailgunImpl.NewMessage(e.sender, subject, "", email)
+			// it can be replaced with fmt.sprintf
+			path := e.pathConfirmationByAwardee + "?token=" + token + "&scholarship_id=" + strconv.Itoa(int(scholarship.ID))
+			// html copy, if sending to send email more, it will more extra string
+			_html := htmlAwardeeConfirmation
+			_html = fmt.Sprintf(_html, scholarship.Name, path)
+			message.SetHtml(_html)
+
+			_, _, err := e.mailgunImpl.Send(ctx, message)
+			if err != nil {
+				logrus.Error("failed sending email to : ", email, err)
+			}
+		}
+	}
+
+	return nil
+}
+
 // NewEmailRepository ...
 func NewEmailRepository(
 	mailgunImpl *mailgun.MailgunImpl,
 	sender,
 	pathActivateUser,
 	pathForgotPassword,
-	pathNotifyFundingConfirmation string) business.EmailRepository {
+	pathNotifyFundingConfirmation,
+	pathConfirmationByAwardee string) business.EmailRepository {
 	return emailRepo{
 		mailgunImpl:                   mailgunImpl,
 		sender:                        sender,
 		pathActivateUser:              pathActivateUser,
 		pathForgotPassword:            pathForgotPassword,
 		pathNotifyFundingConfirmation: pathNotifyFundingConfirmation,
+		pathConfirmationByAwardee:     pathConfirmationByAwardee,
 	}
 }

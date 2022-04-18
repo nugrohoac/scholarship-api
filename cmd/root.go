@@ -83,7 +83,10 @@ var (
 	pathActivateUser              string
 	pathForgotPassword            string
 	pathNotifyFundingConfirmation string
+	pathConfirmationByAwardee     string
 	emailSender                   string
+
+	durationEmailConfirmationByAwardee time.Duration
 
 	// BankQuery ...
 	BankQuery query.BankQuery
@@ -195,7 +198,14 @@ func initEnv() {
 	pathActivateUser = viper.GetString("email_path_activate_user")
 	pathForgotPassword = viper.GetString("email_path_forgot_password")
 	pathNotifyFundingConfirmation = viper.GetString("email_path_notify_funding_confirmation")
+	pathConfirmationByAwardee = viper.GetString("email_path_confirmation_by_awardee")
 	emailSender = viper.GetString("email_sender")
+
+	_durationEmailConfirmationByAwardee := viper.GetInt("email_duration_confirmation_by_awardee")
+	if _durationEmailConfirmationByAwardee == 0 {
+		log.Fatalln("please provide email_duration_confirmation_by_awardee at env")
+	}
+	durationEmailConfirmationByAwardee = time.Duration(_durationEmailConfirmationByAwardee) * time.Hour
 
 	viper.WatchConfig()
 }
@@ -208,7 +218,14 @@ func initApp() {
 
 	// email
 	mg := mailgun.NewMailgun(emailDomain, emailApiKey)
-	emailRepo = email.NewEmailRepository(mg, emailSender, pathActivateUser, pathForgotPassword, pathNotifyFundingConfirmation)
+	emailRepo = email.NewEmailRepository(
+		mg,
+		emailSender,
+		pathActivateUser,
+		pathForgotPassword,
+		pathNotifyFundingConfirmation,
+		pathConfirmationByAwardee,
+	)
 
 	jwtHash := jwt_hash.NewJwtHash([]byte(secretKey), tokeDuration)
 	Middleware = _middleware.New(jwtHash)
@@ -244,7 +261,9 @@ func initApp() {
 	applicantService = applicant.NewApplicantService(applicantRepo, scholarshipRepo, schoolRepo, userRepo, assessmentRepo)
 	assessmentService = assessment.NewAssessmentService(assessmentRepo, applicantRepo, scholarshipRepo)
 	studentService = student.NewStudentService(studentRepo)
-	emailService = email2.NewEmailService(emailRepo, applicantRepo, scholarshipRepo, jwtHash, printer)
+	// create new jwtHash with expire 72 hour
+	jwtHash72Hour := jwt_hash.NewJwtHash([]byte(secretKey), durationEmailConfirmationByAwardee)
+	emailService = email2.NewEmailService(emailRepo, applicantRepo, scholarshipRepo, jwtHash72Hour, printer)
 
 	UserMutation = mutation.NewUserMutation(userService)
 	ScholarshipMutation = mutation.NewScholarshipMutation(scholarshipService)
