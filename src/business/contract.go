@@ -61,12 +61,14 @@ type EmailRepository interface {
 	SendForgotPassword(ctx context.Context, email, token string) error
 	NotifyFundingConformation(ctx context.Context, email, token string, scholarshipID int64, data string) error
 	BlazingToAwardee(ctx context.Context, mapEmailToken map[string]string, scholarship entity.Scholarship) error
+	SuccessConfirmAwardee(ctx context.Context, user entity.User, scholarshipName string) error
 }
 
 // EmailService .
 type EmailService interface {
 	NotifyFundingConformation(ctx context.Context, scholarshipID int64) (string, error)
 	BlazingToAwardee(ctx context.Context, scholarshipID int64) (string, error)
+	ConfirmAwardee(ctx context.Context, scholarshipID int64) (string, error)
 }
 
 // ScholarshipRepository ...
@@ -178,6 +180,8 @@ type ApplicantRepository interface {
 	Fetch(ctx context.Context, filter entity.FilterApplicant) ([]entity.Applicant, string, error)
 	GetByID(ctx context.Context, ID int64) (entity.Applicant, error)
 	UpdateStatus(ctx context.Context, ID int64, status int32) error
+	SetStatusWaitForConfirmation(ctx context.Context, userIDs []int64, scholarshipID int64) error
+	SetStatusConfirmation(ctx context.Context, userID, scholarshipID int64) error
 }
 
 // ApplicantService .

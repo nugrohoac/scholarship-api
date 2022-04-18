@@ -71,6 +71,10 @@ func (a applicantRepository) Fetch(ctx context.Context, filter entity.FilterAppl
 		qSelect = qSelect.Where(sq.Eq{"s.sponsor_id": filter.SponsorID})
 	}
 
+	if filter.UserID > 0 {
+		qSelect = qSelect.Where(sq.Eq{"us.user_id": filter.UserID})
+	}
+
 	query, args, err := qSelect.ToSql()
 	if err != nil {
 		return nil, "", err
@@ -392,6 +396,84 @@ func (a applicantRepository) UpdateStatus(ctx context.Context, ID int64, status 
 			"updated_at": time.Now(),
 		}).
 		Where(sq.Eq{"id": ID}).
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+	if err != nil {
+		return err
+	}
+
+	if _, err = a.db.ExecContext(ctx, query, args...); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// SetStatusWaitForConfirmation .
+// please readme.md for detail status user_scholarship
+func (a applicantRepository) SetStatusWaitForConfirmation(ctx context.Context, userIDs []int64, scholarshipID int64) error {
+	tx, err := a.db.Begin()
+	if err != nil {
+		return err
+	}
+
+	timeNow := time.Now()
+
+	query, args, err := sq.Update("user_scholarship").
+		Set("status", 3).
+		Set("updated_at", timeNow).
+		Where(sq.Eq{"user_id": userIDs}).
+		Where(sq.Eq{"scholarship_id": scholarshipID}).
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+	if err != nil {
+		return err
+	}
+
+	if _, err = tx.ExecContext(ctx, query, args...); err != nil {
+		return err
+	}
+
+	query, args, err = sq.Update("scholarship").
+		Set("status", 6).
+		Set("updated_at", timeNow).
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+	if err != nil {
+		if errRollback := tx.Rollback(); errRollback != nil {
+			logrus.Error(errRollback)
+		}
+
+		return err
+	}
+
+	if _, err = tx.ExecContext(ctx, query, args...); err != nil {
+		if errRollback := tx.Rollback(); errRollback != nil {
+			logrus.Error(errRollback)
+		}
+
+		return err
+	}
+
+	if err = tx.Commit(); err != nil {
+		if errRollback := tx.Rollback(); errRollback != nil {
+			logrus.Error(errRollback)
+		}
+
+		return err
+	}
+
+	return nil
+}
+
+// SetStatusConfirmation .
+// please readme.md for detail status user_scholarship
+func (a applicantRepository) SetStatusConfirmation(ctx context.Context, userID, scholarshipID int64) error {
+	query, args, err := sq.Update("user_scholarship").
+		Set("status", 4).
+		Set("updated_at", time.Now()).
+		Where(sq.Eq{"user_id": userID}).
+		Where(sq.Eq{"scholarship_id": scholarshipID}).
 		PlaceholderFormat(sq.Dollar).
 		ToSql()
 	if err != nil {
