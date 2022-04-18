@@ -60,11 +60,13 @@ type EmailRepository interface {
 	SendActivateUser(ctx context.Context, email, token string) error
 	SendForgotPassword(ctx context.Context, email, token string) error
 	NotifyFundingConformation(ctx context.Context, email, token string, scholarshipID int64, data string) error
+	BlazingToAwardee(ctx context.Context, mapEmailToken map[string]string, scholarship entity.Scholarship) error
 }
 
 // EmailService .
 type EmailService interface {
 	NotifyFundingConformation(ctx context.Context, scholarshipID int64) (string, error)
+	BlazingToAwardee(ctx context.Context, scholarshipID int64) (string, error)
 }
 
 // ScholarshipRepository ...

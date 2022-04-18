@@ -20,6 +20,16 @@ func (e EmailQuery) NotifyFundingConfirmation(ctx context.Context, param struct{
 	return &message, nil
 }
 
+// SendFundingConfirmation .
+func (e EmailQuery) SendFundingConfirmation(ctx context.Context, param struct{ ScholarshipID int32 }) (*string, error) {
+	message, err := e.emailService.BlazingToAwardee(ctx, int64(param.ScholarshipID))
+	if err != nil {
+		return nil, err
+	}
+
+	return &message, nil
+}
+
 // NewEmailQuery .
 func NewEmailQuery(emailService business.EmailService) EmailQuery {
 	return EmailQuery{emailService: emailService}

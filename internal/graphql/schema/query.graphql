@@ -95,4 +95,8 @@ type Query {
     NotifyFundingConfirmation(
         scholarshipId: Int!
     ): String
+
+    SendFundingConfirmation(
+        scholarshipId: Int!
+    ): String
 }
