@@ -33,6 +33,12 @@ func (e emailService) NotifyFundingConformation(ctx context.Context, scholarship
 		return "", err
 	}
 
+	// ask business if want check announcement date
+	// only status 5 is allowed
+	//if scholarship.Status != 5 {
+	// DO SOMETHING ........
+	//}
+
 	if scholarship.Status >= 6 {
 		return "", errors.ErrNotAllowed{Message: "scholarship has been blazing email"}
 	}
@@ -81,6 +87,14 @@ func (e emailService) BlazingToAwardee(ctx context.Context, scholarshipID int64)
 		return "", err
 	}
 
+	if scholarship.Status == 6 {
+		return "", errors.ErrNotAllowed{Message: "sponsor has been blazing email to awardee"}
+	}
+
+	if scholarship.Status != 5 {
+		return "", errors.ErrNotAllowed{Message: "status should announcement before blazing to awardee"}
+	}
+
 	if user.ID != scholarship.SponsorID {
 		return "", errors.ErrNotAllowed{Message: "sponsor doesnt own of scholarship"}
 	}
@@ -107,7 +121,7 @@ func (e emailService) BlazingToAwardee(ctx context.Context, scholarshipID int64)
 
 	go func() {
 		if err = e.applicantRepo.SetStatusWaitForConfirmation(context.Background(), userIDs, scholarshipID); err != nil {
-			logrus.Error("failed st status waiting for confirmation : ", err)
+			logrus.Error("failed set status waiting for confirmation : ", err)
 			return
 		}
 
@@ -136,7 +150,7 @@ func (e emailService) ConfirmAwardee(ctx context.Context, scholarshipID int64) (
 	}
 
 	if len(applicants) == 0 {
-		return "", errors.ErrNotFound{Message: "applicant not found"}
+		return "", errors.ErrNotFound{Message: "you have been confirm or applicant not found"}
 	}
 
 	if err = e.applicantRepo.SetStatusConfirmation(ctx, user.ID, scholarshipID); err != nil {
