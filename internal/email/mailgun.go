@@ -337,15 +337,15 @@ func (e emailRepo) BlazingToAwardee(ctx context.Context, mapEmailToken map[strin
 	return nil
 }
 
-// SuccessConfirmAwardee .
-func (e emailRepo) SuccessConfirmAwardee(ctx context.Context, user entity.User, scholarshipName string) error {
+// ConfirmToSponsor .
+func (e emailRepo) ConfirmToSponsor(ctx context.Context, emailSponsor, studentName string, scholarshipName string) error {
 	subject := "Success Confirmation Awardee"
-	recipient := user.Email
+	recipient := emailSponsor
 
 	message := e.mailgunImpl.NewMessage(e.sender, subject, "", recipient)
 	// html copy, if sending to send email more, it will more extra string
 	_html := htmlSuccessConfirmationAwardee
-	_html = fmt.Sprintf(_html, user.Name, scholarshipName)
+	_html = fmt.Sprintf(_html, studentName, scholarshipName)
 	message.SetHtml(_html)
 
 	_, _, err := e.mailgunImpl.Send(ctx, message)

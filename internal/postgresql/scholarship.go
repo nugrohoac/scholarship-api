@@ -30,7 +30,6 @@ func NewScholarshipRepository(db *sql.DB, deadlinePayment int) business.Scholars
 	}
 }
 
-
 func (s scholarshipRepo) FetchScholarshipBackoffice(ctx context.Context, filter entity.ScholarshipFilterBackoffice) ([]entity.Scholarship, string, error) {
 	qSelect := sq.Select("id",
 		"sponsor_id",
@@ -430,7 +429,7 @@ func (s scholarshipRepo) Fetch(ctx context.Context, filter entity.ScholarshipFil
 
 // GetByID ...
 func (s scholarshipRepo) GetByID(ctx context.Context, ID int64) (entity.Scholarship, error) {
-	query, args, err := sq.Select("s.id",
+	_query, args, err := sq.Select("s.id",
 		"s.sponsor_id",
 		"s.name",
 		"s.amount",
@@ -466,7 +465,7 @@ func (s scholarshipRepo) GetByID(ctx context.Context, ID int64) (entity.Scholars
 		return entity.Scholarship{}, err
 	}
 
-	rows, err := s.db.QueryContext(ctx, query, args...)
+	rows, err := s.db.QueryContext(ctx, _query, args...)
 	if err != nil {
 		return entity.Scholarship{}, err
 	}

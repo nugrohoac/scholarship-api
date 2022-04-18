@@ -17,6 +17,7 @@ type emailService struct {
 	emailRepo       business.EmailRepository
 	applicantRepo   business.ApplicantRepository
 	scholarshipRepo business.ScholarshipRepository
+	userRepo        business.UserRepository
 	jwtHash72Hour   business.JwtHash
 	printer         *message.Printer
 }
@@ -153,16 +154,25 @@ func (e emailService) ConfirmAwardee(ctx context.Context, scholarshipID int64) (
 		return "", errors.ErrNotFound{Message: "you have been confirm or applicant not found"}
 	}
 
-	if err = e.applicantRepo.SetStatusConfirmation(ctx, user.ID, scholarshipID); err != nil {
-		return "", err
-	}
-
 	scholarship, err := e.scholarshipRepo.GetByID(ctx, scholarshipID)
 	if err != nil {
 		return "", err
 	}
 
-	if err = e.emailRepo.SuccessConfirmAwardee(ctx, user, scholarship.Name); err != nil {
+	sponsors, _, err := e.userRepo.Fetch(ctx, entity.UserFilter{IDs: []int64{scholarship.SponsorID}})
+	if err != nil {
+		return "", err
+	}
+
+	if len(sponsors) == 0 {
+		return "", errors.ErrNotFound{Message: "sponsor is not found"}
+	}
+
+	if err = e.applicantRepo.SetStatusConfirmation(ctx, user.ID, scholarshipID); err != nil {
+		return "", err
+	}
+
+	if err = e.emailRepo.ConfirmToSponsor(ctx, sponsors[0].Name, user.Name, scholarship.Name); err != nil {
 		return "", err
 	}
 
@@ -174,6 +184,7 @@ func NewEmailService(
 	emailRepo business.EmailRepository,
 	applicantRepo business.ApplicantRepository,
 	scholarshipRepo business.ScholarshipRepository,
+	userRepo business.UserRepository,
 	jwtHash72Hour business.JwtHash,
 	printer *message.Printer,
 ) business.EmailService {
@@ -181,6 +192,7 @@ func NewEmailService(
 		emailRepo:       emailRepo,
 		applicantRepo:   applicantRepo,
 		scholarshipRepo: scholarshipRepo,
+		userRepo:        userRepo,
 		jwtHash72Hour:   jwtHash72Hour,
 		printer:         printer,
 	}
