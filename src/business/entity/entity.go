@@ -526,6 +526,7 @@ type InputApplyScholarship struct {
 type FilterApplicant struct {
 	SponsorID     int64
 	ScholarshipID int64
+	UserID        int64
 	Limit         uint64
 	Cursor        string
 	Status        []int32
@@ -596,5 +597,5 @@ type InputAssessment struct {
 }
 
 type UpdateScholarshipStatus struct {
-	ID     int32
+	ID int32
 }

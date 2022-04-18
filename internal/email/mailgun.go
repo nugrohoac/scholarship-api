@@ -186,6 +186,57 @@ var (
 </body>
 </html>
 	`
+
+	htmlSuccessConfirmationAwardee = `
+	<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+
+  <title>Awardee confirmation notification</title>
+  <style>
+    /* latin */
+    @font-face {
+      font-family: 'Quicksand';
+      font-style: normal;
+      font-weight: 500;
+      font-display: swap;
+      src: url(https://fonts.gstatic.com/s/quicksand/v24/6xKtdSZaM9iE8KbpRA_hK1QN.woff2) format('woff2');
+    }
+    /* latin */
+    @font-face {
+      font-family: 'Quicksand';
+      font-style: normal;
+      font-weight: 700;
+      font-display: swap;
+      src: url(https://fonts.gstatic.com/s/quicksand/v24/6xKtdSZaM9iE8KbpRA_hK1QN.woff2) format('woff2');
+    }  
+  </style>
+</head>
+<body style="font-family: 'Quicksand', 'open sans', 'helvetica neue', sans-serif; color: #464952;background: #EAECF1;font-weight: 500;padding: 16px;">
+  <img src="https://s3.ap-southeast-3.amazonaws.com/cdn.stading.bangun.app/documents//1649429019215" width="138" height="40">
+  <h2>Confirmation by awardee</h2>
+  <p style="margin: 0;font-size: 12px;line-height: 16px;font-weight: 500;">
+    Kindly notify that your awardee
+    <span style="line-height: 20px;font-weight: bold;font-size: 14px;">%s</span>
+    for
+    <span style="line-height: 20px;font-weight: bold;font-size: 16px;">%s</span>
+    scholarship
+    has confirmed their membership.
+  </p>
+  <br>
+  <p class="alert" style="margin: 0;font-size: 12px;line-height: 16px;font-weight: 500;">
+    Best Regards,<br>
+    <span style="line-height: 20px;font-weight: bold;font-size: 12px;color: black;">
+      Bangun Team
+    </span>
+  </p>
+</body>
+</html>
+`
 )
 
 type emailRepo struct {
@@ -281,6 +332,26 @@ func (e emailRepo) BlazingToAwardee(ctx context.Context, mapEmailToken map[strin
 				logrus.Error("failed sending email to : ", email, err)
 			}
 		}
+	}
+
+	return nil
+}
+
+// SuccessConfirmAwardee .
+func (e emailRepo) SuccessConfirmAwardee(ctx context.Context, user entity.User, scholarshipName string) error {
+	subject := "Success Confirmation Awardee"
+	recipient := user.Email
+
+	message := e.mailgunImpl.NewMessage(e.sender, subject, "", recipient)
+	// html copy, if sending to send email more, it will more extra string
+	_html := htmlSuccessConfirmationAwardee
+	_html = fmt.Sprintf(_html, user.Name, scholarshipName)
+	message.SetHtml(_html)
+
+	_, _, err := e.mailgunImpl.Send(ctx, message)
+	if err != nil {
+		logrus.Error(err)
+		return err
 	}
 
 	return nil

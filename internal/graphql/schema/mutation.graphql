@@ -94,4 +94,8 @@ type Mutation {
     ApprovedScholarship(
         id: Int!
     ): String
+
+    ConfirmAwardee(
+        scholarshipId: Int!
+    ): String
 }
