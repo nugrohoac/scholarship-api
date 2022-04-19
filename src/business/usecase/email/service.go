@@ -172,7 +172,7 @@ func (e emailService) ConfirmAwardee(ctx context.Context, scholarshipID int64) (
 		return "", err
 	}
 
-	if err = e.emailRepo.ConfirmToSponsor(ctx, sponsors[0].Name, user.Name, scholarship.Name); err != nil {
+	if err = e.emailRepo.ConfirmToSponsor(ctx, sponsors[0].Email, user.Name, scholarship.Name); err != nil {
 		return "", err
 	}
 
