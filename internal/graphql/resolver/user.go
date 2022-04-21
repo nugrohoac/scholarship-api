@@ -80,6 +80,10 @@ func (u UserResolver) Address() *string {
 
 // Gender ...
 func (u UserResolver) Gender() *string {
+	if u.User.Gender == "" {
+		return nil
+	}
+
 	return &u.User.Gender
 }
 
