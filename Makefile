@@ -20,8 +20,7 @@ build:
 	@go build -o scholarship-api cmd/app/main.go
 
 docker-run:
-	@git pull &&
-	docker stop bangun_container && \
+	@docker stop bangun_container && \
 	docker rm -f bangun_container && \
 	docker image rm -f bangun_api && \
 	docker build -t bangun_api . && \
