@@ -598,4 +598,5 @@ type InputAssessment struct {
 
 type UpdateScholarshipStatus struct {
 	ID int32
+	ActionType int32
 }

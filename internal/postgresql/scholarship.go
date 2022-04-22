@@ -848,7 +848,7 @@ func (s scholarshipRepo) ChangeStatus(ctx context.Context, ID int64, status int)
 	return nil
 }
 
-func (s scholarshipRepo) ApprovedScholarship(ctx context.Context, scholarshipID int64) error {
+func (s scholarshipRepo) ApprovedScholarship(ctx context.Context, scholarshipID int64, actionType int32) error {
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
 		return err
@@ -859,8 +859,14 @@ func (s scholarshipRepo) ApprovedScholarship(ctx context.Context, scholarshipID 
 		errRollback error
 	)
 
+	if actionType == 1 {
+		actionType = int32(util.APPROVE)
+	} else {
+		actionType = int32(util.REJECT)
+	}
+
 	query, args, err := sq.Update("scholarship").
-		SetMap(sq.Eq{"status": util.APPROVE, "updated_at": timeNow}).
+		SetMap(sq.Eq{"status": actionType, "updated_at": timeNow}).
 		PlaceholderFormat(sq.Dollar).
 		Where(sq.Eq{"id": scholarshipID}).
 		ToSql()

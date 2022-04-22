@@ -315,7 +315,7 @@ func (s scholarshipService) MyScholarship(ctx context.Context, filter entity.Sch
 	return feed, nil
 }
 
-func (s scholarshipService) ApprovedScholarship(ctx context.Context, id int64) (string, error) {
+func (s scholarshipService) ApprovedScholarship(ctx context.Context, id int64, actionType int32) (string, error) {
 	res, err := s.scholarshipRepo.GetByID(ctx, id)
 	if err != nil {
 		return "", err
@@ -325,7 +325,7 @@ func (s scholarshipService) ApprovedScholarship(ctx context.Context, id int64) (
 		return "", errors.ErrNotFound{Message: "scholarship is not found"}
 	}
 
-	if err = s.scholarshipRepo.ApprovedScholarship(ctx, id); err != nil {
+	if err = s.scholarshipRepo.ApprovedScholarship(ctx, id, actionType); err != nil {
 		return "", err
 	}
 
