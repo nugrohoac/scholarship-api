@@ -51,6 +51,7 @@ func main() {
 		cmd.AssessmentMutation,
 		cmd.ApplicantMutation,
 		cmd.EmailMutation,
+		cmd.ReportMutation,
 	)
 
 	graphQlSchema := _graphql.MustParseSchema(schema.String(), rootResolver, opts...)

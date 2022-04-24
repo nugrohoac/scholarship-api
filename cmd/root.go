@@ -15,6 +15,7 @@ import (
 	email2 "github.com/Nusantara-Muda/scholarship-api/src/business/usecase/email"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/ethnic"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/major"
+	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/report"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/usecase/school"
 	"github.com/go-co-op/gocron"
 	"github.com/labstack/echo"
@@ -61,6 +62,7 @@ var (
 	applicantRepo       business.ApplicantRepository
 	assessmentRepo      business.AssessmentRepository
 	studentRepo         business.StudentRepository
+	reportRepo          business.ReportRepository
 
 	bankService        business.BankService
 	countryService     business.CountryService
@@ -76,6 +78,7 @@ var (
 	assessmentService  business.AssessmentService
 	studentService     business.StudentService
 	emailService       business.EmailService
+	reportService      business.ReportService
 
 	// email
 	emailDomain                   string
@@ -127,6 +130,8 @@ var (
 	ApplicantMutation mutation.ApplicantMutation
 	// EmailMutation .
 	EmailMutation mutation.EmailMutation
+	// ReportMutation .
+	ReportMutation mutation.ReportMutation
 
 	// PortApp apps
 	PortApp = 7070
@@ -249,6 +254,7 @@ func initApp() {
 	applicantRepo = postgresql.NewApplicantRepository(db)
 	assessmentRepo = postgresql.NewAssessmentRepository(db)
 	studentRepo = backoffice.NewStudentRepository(db)
+	reportRepo = postgresql.NewReportRepository(db)
 
 	bankService = bank.NewBankService(bankRepo)
 	userService = user.NewUserService(userRepo, jwtHash, emailRepo)
@@ -266,6 +272,7 @@ func initApp() {
 	// create new jwtHash with expire 72 hour
 	jwtHash72Hour := jwt_hash.NewJwtHash([]byte(secretKey), durationEmailConfirmationByAwardee)
 	emailService = email2.NewEmailService(emailRepo, applicantRepo, scholarshipRepo, userRepo, jwtHash72Hour, printer)
+	reportService = report.NewReportService(reportRepo, applicantRepo)
 
 	UserMutation = mutation.NewUserMutation(userService)
 	ScholarshipMutation = mutation.NewScholarshipMutation(scholarshipService)
@@ -274,6 +281,7 @@ func initApp() {
 	AssessmentMutation = mutation.NewAssessmentMutation(assessmentService)
 	ApplicantMutation = mutation.NewApplicantMutation(applicantService)
 	EmailMutation = mutation.NewEmailMutation(emailService)
+	ReportMutation = mutation.NewReportMutation(reportService)
 
 	BankQuery = query.NewBankQuery(bankService)
 	CountryQuery = query.NewCountryQuery(countryService)

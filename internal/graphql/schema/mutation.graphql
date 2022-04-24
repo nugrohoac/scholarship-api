@@ -98,4 +98,9 @@ type Mutation {
     ConfirmAwardee(
         scholarshipId: Int!
     ): String
+
+    SubmitReport(
+        applicantId: Int!
+        file: inputImage!
+    ): String
 }

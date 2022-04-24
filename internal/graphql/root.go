@@ -27,6 +27,7 @@ type RootGraphql struct {
 	mutation.AssessmentMutation
 	mutation.ApplicantMutation
 	mutation.EmailMutation
+	mutation.ReportMutation
 }
 
 // NewRootGraphql ...
@@ -50,6 +51,7 @@ func NewRootGraphql(
 	assessmentMutation mutation.AssessmentMutation,
 	applicantMutation mutation.ApplicantMutation,
 	emailMutation mutation.EmailMutation,
+	reportMutation mutation.ReportMutation,
 
 ) *RootGraphql {
 	return &RootGraphql{
@@ -72,5 +74,6 @@ func NewRootGraphql(
 		assessmentMutation,
 		applicantMutation,
 		emailMutation,
+		reportMutation,
 	}
 }

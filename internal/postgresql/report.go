@@ -17,14 +17,14 @@ type reportRepository struct {
 
 // Store .
 func (r reportRepository) Store(ctx context.Context, report entity.ApplicantReport) error {
-	byteReport, err := json.Marshal(report.Report)
+	byteFile, err := json.Marshal(report.File)
 	if err != nil {
 		return err
 	}
 
 	query, args, err := sq.Insert("applicant_report").
-		Columns("applicant_id", "report", "created_at").
-		Values(report.ApplicantID, byteReport, time.Now()).
+		Columns("applicant_id", "file", "created_at").
+		Values(report.ApplicantID, byteFile, time.Now()).
 		PlaceholderFormat(sq.Dollar).
 		ToSql()
 	if err != nil {
