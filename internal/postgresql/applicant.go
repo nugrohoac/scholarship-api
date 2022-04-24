@@ -497,6 +497,96 @@ func (a applicantRepository) SetStatusConfirmation(ctx context.Context, userID, 
 	return nil
 }
 
+// CountAndSumRating .
+func (a applicantRepository) CountAndSumRating(ctx context.Context, userID int64) (int32, int32, error) {
+	var count, sum int32
+
+	query, args, err := sq.Select("count(id)", "sum(rating)").
+		From("user_scholarship").
+		GroupBy("user_id").
+		Where(sq.Eq{"user_id": userID}).
+		Where(sq.Gt{"rating": 0}).
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+	if err != nil {
+		return 0, 0, err
+	}
+
+	row := a.db.QueryRowContext(ctx, query, args...)
+
+	if err = row.Scan(&count, &sum); err != nil {
+		if err == sql.ErrNoRows {
+			return 0, 0, nil
+		}
+
+		return 0, 0, err
+	}
+
+	return count, sum, nil
+}
+
+// StoreRating .
+func (a applicantRepository) StoreRating(ctx context.Context, Applicant entity.Applicant, avgRating float64, rating int32) error {
+	tx, err := a.db.Begin()
+	if err != nil {
+		return err
+	}
+
+	var (
+		timeNow     = time.Now()
+		errRollback error
+		errCommit   error
+	)
+
+	query, args, err := sq.Update("user_scholarship").
+		SetMap(sq.Eq{
+			"rating":     rating,
+			"updated_at": timeNow,
+		}).Where(sq.Eq{"id": Applicant.ID}).
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+	if err != nil {
+		return err
+	}
+
+	if _, err = tx.ExecContext(ctx, query, args...); err != nil {
+		return err
+	}
+
+	query, args, err = sq.Update("\"user\"").
+		SetMap(sq.Eq{
+			"rating":     avgRating,
+			"updated_at": timeNow,
+		}).Where(sq.Eq{"id": Applicant.UserID}).
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+	if err != nil {
+		if errRollback = tx.Rollback(); errRollback != nil {
+			logrus.Error(errRollback)
+		}
+
+		return err
+	}
+
+	if _, err = tx.ExecContext(ctx, query, args...); err != nil {
+		if errRollback = tx.Rollback(); errRollback != nil {
+			logrus.Error(errRollback)
+		}
+
+		return err
+	}
+
+	if errCommit = tx.Commit(); errCommit != nil {
+		if errRollback = tx.Rollback(); errRollback != nil {
+			logrus.Error(errRollback)
+		}
+
+		return errCommit
+	}
+
+	return nil
+}
+
 // NewApplicantRepository .
 func NewApplicantRepository(db *sql.DB) business.ApplicantRepository {
 	return applicantRepository{db: db}

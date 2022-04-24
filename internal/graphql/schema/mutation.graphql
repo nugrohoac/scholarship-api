@@ -104,4 +104,9 @@ type Mutation {
         applicantId: Int!
         file: inputImage!
     ): String
+
+    SubmitRating(
+        applicantId: Int!
+        rating: Int!
+    ): String
 }

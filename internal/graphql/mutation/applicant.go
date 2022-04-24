@@ -23,6 +23,19 @@ func (a ApplicantMutation) UpdateApplicantStatus(ctx context.Context, param stru
 	return &message, err
 }
 
+// SubmitRating .
+func (a ApplicantMutation) SubmitRating(ctx context.Context, param struct {
+	ApplicantID int32
+	Rating      int32
+}) (*string, error) {
+	message, err := a.applicantService.StoreRating(ctx, int64(param.ApplicantID), param.Rating)
+	if err != nil {
+		return nil, err
+	}
+
+	return &message, nil
+}
+
 // NewApplicantMutation .
 func NewApplicantMutation(applicantService business.ApplicantService) ApplicantMutation {
 	return ApplicantMutation{applicantService: applicantService}
