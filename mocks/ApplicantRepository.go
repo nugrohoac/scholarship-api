@@ -15,21 +15,21 @@ type ApplicantRepository struct {
 }
 
 // CountAndSumRating provides a mock function with given fields: ctx, userID
-func (_m *ApplicantRepository) CountAndSumRating(ctx context.Context, userID int64) (int, int, error) {
+func (_m *ApplicantRepository) CountAndSumRating(ctx context.Context, userID int64) (int32, int32, error) {
 	ret := _m.Called(ctx, userID)
 
-	var r0 int
-	if rf, ok := ret.Get(0).(func(context.Context, int64) int); ok {
+	var r0 int32
+	if rf, ok := ret.Get(0).(func(context.Context, int64) int32); ok {
 		r0 = rf(ctx, userID)
 	} else {
-		r0 = ret.Get(0).(int)
+		r0 = ret.Get(0).(int32)
 	}
 
-	var r1 int
-	if rf, ok := ret.Get(1).(func(context.Context, int64) int); ok {
+	var r1 int32
+	if rf, ok := ret.Get(1).(func(context.Context, int64) int32); ok {
 		r1 = rf(ctx, userID)
 	} else {
-		r1 = ret.Get(1).(int)
+		r1 = ret.Get(1).(int32)
 	}
 
 	var r2 error
