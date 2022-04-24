@@ -1,0 +1,11 @@
+type report {
+    id: Int
+    applicantId: Int
+    file: image
+    createdAt: String
+}
+
+type reportFeed {
+    cursor: String
+    reports: [report]
+}

@@ -38,19 +38,19 @@ func (r ReportResolver) CreatedAt() *string {
 
 // ReportFeedResolver .
 type ReportFeedResolver struct {
-	reportFeed entity.ReportFeed
+	ReportFeed entity.ReportFeed
 }
 
 // Cursor .
 func (r ReportFeedResolver) Cursor() *string {
-	return &r.reportFeed.Cursor
+	return &r.ReportFeed.Cursor
 }
 
 // Reports .
 func (r ReportFeedResolver) Reports() *[]*ReportResolver {
 	reportResolvers := make([]*ReportResolver, 0)
 
-	for _, report := range r.reportFeed.Reports {
+	for _, report := range r.ReportFeed.Reports {
 		report := report
 
 		reportResolvers = append(reportResolvers, &ReportResolver{Report: report})

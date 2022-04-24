@@ -205,11 +205,13 @@ type AssessmentService interface {
 // ReportRepository .
 type ReportRepository interface {
 	Store(ctx context.Context, report entity.ApplicantReport) error
+	Fetch(ctx context.Context, filter entity.ReportFilter) ([]entity.ApplicantReport, string, error)
 }
 
 // ReportService .
 type ReportService interface {
 	Store(ctx context.Context, report entity.ApplicantReport) (string, error)
+	Fetch(ctx context.Context, filter entity.ReportFilter) (entity.ReportFeed, error)
 }
 
 // ========= Backoffice ===========

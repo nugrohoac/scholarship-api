@@ -42,6 +42,7 @@ func main() {
 		cmd.EthnicQuery,
 		cmd.ApplicantQuery,
 		cmd.EmailQuery,
+		cmd.ReportQuery,
 		cmd.SponsorQuery,
 		cmd.StudentQuery,
 		cmd.UserMutation,

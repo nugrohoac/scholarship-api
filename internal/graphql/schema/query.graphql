@@ -99,4 +99,10 @@ type Query {
     SendFundingConfirmation(
         scholarshipId: Int!
     ): String
+
+    FetchReport(
+        applicantId: Int!
+        limit: Int
+        cursor: String
+    ): reportFeed
 }

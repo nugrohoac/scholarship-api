@@ -115,6 +115,8 @@ var (
 	StudentQuery backoffice2.StudentQuery
 	// EmailQuery .
 	EmailQuery query.EmailQuery
+	// ReportQuery .
+	ReportQuery query.ReportQuery
 
 	// UserMutation ...
 	UserMutation mutation.UserMutation
@@ -295,6 +297,7 @@ func initApp() {
 	ApplicantQuery = query.NewApplicantQuery(applicantService)
 	StudentQuery = backoffice2.NewStudentQuery(studentService)
 	EmailQuery = query.NewEmailQuery(emailService)
+	ReportQuery = query.NewReportQuery(reportService)
 
 	// scheduler
 	elog := echo.New().Logger

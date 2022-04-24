@@ -591,6 +591,13 @@ type ApplicantReport struct {
 	CreatedAt   time.Time `json:"created_at"`
 }
 
+// ReportFilter .
+type ReportFilter struct {
+	Limit       uint64
+	Cursor      string
+	ApplicantID int64
+}
+
 // ReportFeed .
 type ReportFeed struct {
 	Cursor  string
