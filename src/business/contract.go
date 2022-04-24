@@ -82,7 +82,7 @@ type ScholarshipRepository interface {
 	ChangeStatus(ctx context.Context, ID int64, status int) error
 
 	FetchScholarshipBackoffice(ctx context.Context, filter entity.ScholarshipFilterBackoffice) ([]entity.Scholarship, string, error)
-	ApprovedScholarship(ctx context.Context, status int64) error
+	ApprovedScholarship(ctx context.Context, scholarshipId int64, actionType int32) error
 
 	RegistrationStatusScheduler() ([]int, error)
 	ReviewStatusScheduler() ([]int, error)
@@ -106,7 +106,7 @@ type ScholarshipService interface {
 	MyScholarship(ctx context.Context, filter entity.ScholarshipFilter) (entity.ApplicantFeed, error)
 
 	FetchScholarshipBackoffice(ctx context.Context, filter entity.ScholarshipFilterBackoffice) (entity.ScholarshipFeed, error)
-	ApprovedScholarship(ctx context.Context, scholarshipID int64) (string, error)
+	ApprovedScholarship(ctx context.Context, scholarshipID int64, actionType int32) (string, error)
 
 	RegistrationStatusScheduler() ([]int, error)
 	ReviewStatusScheduler() ([]int, error)

@@ -121,7 +121,7 @@ func (s ScholarshipMutation) ApplyScholarship(ctx context.Context, param entity.
 }
 
 func (s ScholarshipMutation) ApprovedScholarship(ctx context.Context, param entity.UpdateScholarshipStatus) (*string, error) {
-	message, err := s.scholarshipService.ApprovedScholarship(ctx, int64(param.ID))
+	message, err := s.scholarshipService.ApprovedScholarship(ctx, int64(param.ID), param.ActionType)
 	if err != nil {
 		return nil, err
 	}

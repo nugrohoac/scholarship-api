@@ -93,6 +93,7 @@ type Mutation {
 
     ApprovedScholarship(
         id: Int!
+        action_type: Int!
     ): String
 
     ConfirmAwardee(
