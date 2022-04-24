@@ -14,6 +14,29 @@ type ScholarshipRepository struct {
 	mock.Mock
 }
 
+// AnnouncementStatusScheduler provides a mock function with given fields:
+func (_m *ScholarshipRepository) AnnouncementStatusScheduler() ([]int, error) {
+	ret := _m.Called()
+
+	var r0 []int
+	if rf, ok := ret.Get(0).(func() []int); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]int)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Apply provides a mock function with given fields: ctx, userID, scholarshipID, applicant, essay, recommendationLetter
 func (_m *ScholarshipRepository) Apply(ctx context.Context, userID int64, scholarshipID int64, applicant int, essay string, recommendationLetter entity.Image) error {
 	ret := _m.Called(ctx, userID, scholarshipID, applicant, essay, recommendationLetter)
@@ -165,6 +188,52 @@ func (_m *ScholarshipRepository) FetchScholarshipBackoffice(ctx context.Context,
 	return r0, r1, r2
 }
 
+// FinishStatusScheduler provides a mock function with given fields:
+func (_m *ScholarshipRepository) FinishStatusScheduler() ([]int, error) {
+	ret := _m.Called()
+
+	var r0 []int
+	if rf, ok := ret.Get(0).(func() []int); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]int)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// FundingStatusScheduler provides a mock function with given fields:
+func (_m *ScholarshipRepository) FundingStatusScheduler() ([]int, error) {
+	ret := _m.Called()
+
+	var r0 []int
+	if rf, ok := ret.Get(0).(func() []int); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]int)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // GetByID provides a mock function with given fields: ctx, ID
 func (_m *ScholarshipRepository) GetByID(ctx context.Context, ID int64) (entity.Scholarship, error) {
 	ret := _m.Called(ctx, ID)
@@ -214,4 +283,64 @@ func (_m *ScholarshipRepository) MyScholarship(ctx context.Context, userID int64
 	}
 
 	return r0, r1, r2
+}
+
+// RegistrationStatusScheduler provides a mock function with given fields:
+func (_m *ScholarshipRepository) RegistrationStatusScheduler() ([]int, error) {
+	ret := _m.Called()
+
+	var r0 []int
+	if rf, ok := ret.Get(0).(func() []int); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]int)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// ReviewStatusScheduler provides a mock function with given fields:
+func (_m *ScholarshipRepository) ReviewStatusScheduler() ([]int, error) {
+	ret := _m.Called()
+
+	var r0 []int
+	if rf, ok := ret.Get(0).(func() []int); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]int)
+		}
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// UpdateScholarshipStatus provides a mock function with given fields: status, id
+func (_m *ScholarshipRepository) UpdateScholarshipStatus(status int, id int) error {
+	ret := _m.Called(status, id)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(int, int) error); ok {
+		r0 = rf(status, id)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
 }

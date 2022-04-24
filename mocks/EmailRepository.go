@@ -5,6 +5,7 @@ package mocks
 import (
 	context "context"
 
+	entity "github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	mock "github.com/stretchr/testify/mock"
 )
 
@@ -13,13 +14,41 @@ type EmailRepository struct {
 	mock.Mock
 }
 
-// NotifyFundingConformation provides a mock function with given fields: ctx, email, token, data
-func (_m *EmailRepository) NotifyFundingConformation(ctx context.Context, email string, token string, data string) error {
-	ret := _m.Called(ctx, email, token, data)
+// BlazingToAwardee provides a mock function with given fields: ctx, mapEmailToken, scholarship
+func (_m *EmailRepository) BlazingToAwardee(ctx context.Context, mapEmailToken map[string]string, scholarship entity.Scholarship) error {
+	ret := _m.Called(ctx, mapEmailToken, scholarship)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, map[string]string, entity.Scholarship) error); ok {
+		r0 = rf(ctx, mapEmailToken, scholarship)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// ConfirmToSponsor provides a mock function with given fields: ctx, emailSponsor, studentName, scholarshipName
+func (_m *EmailRepository) ConfirmToSponsor(ctx context.Context, emailSponsor string, studentName string, scholarshipName string) error {
+	ret := _m.Called(ctx, emailSponsor, studentName, scholarshipName)
 
 	var r0 error
 	if rf, ok := ret.Get(0).(func(context.Context, string, string, string) error); ok {
-		r0 = rf(ctx, email, token, data)
+		r0 = rf(ctx, emailSponsor, studentName, scholarshipName)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// NotifyFundingConformation provides a mock function with given fields: ctx, email, token, scholarshipID, data
+func (_m *EmailRepository) NotifyFundingConformation(ctx context.Context, email string, token string, scholarshipID int64, data string) error {
+	ret := _m.Called(ctx, email, token, scholarshipID, data)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, string, string, int64, string) error); ok {
+		r0 = rf(ctx, email, token, scholarshipID, data)
 	} else {
 		r0 = ret.Error(0)
 	}
