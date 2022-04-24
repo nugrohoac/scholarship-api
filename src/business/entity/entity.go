@@ -104,6 +104,7 @@ type User struct {
 	CareerGoal       string         `json:"career_goal"`
 	StudyCountryGoal Country        `json:"study_country_goal"`
 	StudyDestination string         `json:"study_destination"`
+	Rating           float64        `json:"rating"`
 	UserDocuments    []UserDocument `json:"user_documents"`
 	UserSchools      []UserSchool   `json:"user_schools"`
 	CreatedAt        time.Time      `json:"created_at"`
@@ -555,6 +556,7 @@ type Applicant struct {
 	ApplyDate            time.Time              `json:"apply_date"`
 	Essay                string                 `json:"essay"`
 	RecommendationLetter Image                  `json:"recommendation_letter"`
+	Rating               int32                  `json:"rating"`
 	Eligibilities        []ApplicantEligibility `json:"eligibilities"`
 	Scores               []ApplicantScore       `json:"scores"`
 }
@@ -618,6 +620,6 @@ type InputAssessment struct {
 }
 
 type UpdateScholarshipStatus struct {
-	ID int32
+	ID         int32
 	ActionType int32
 }

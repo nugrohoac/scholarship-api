@@ -42,6 +42,11 @@ func (a ApplicantResolver) Status() *int32 {
 	return &a.Applicant.Status
 }
 
+// Rating .
+func (a ApplicantResolver) Rating() *int32 {
+	return &a.Applicant.Rating
+}
+
 // ApplyDate .
 func (a ApplicantResolver) ApplyDate() *string {
 	applyDate := a.Applicant.ApplyDate.Format(time.RFC3339)

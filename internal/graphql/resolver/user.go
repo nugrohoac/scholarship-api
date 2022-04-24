@@ -87,6 +87,11 @@ func (u UserResolver) Gender() *string {
 	return &u.User.Gender
 }
 
+// Rating .
+func (u UserResolver) Rating() *float64 {
+	return &u.User.Rating
+}
+
 // EthnicID ...
 func (u UserResolver) EthnicID() *int32 {
 	return &u.User.EthnicID

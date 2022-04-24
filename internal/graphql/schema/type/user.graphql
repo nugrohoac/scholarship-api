@@ -14,6 +14,7 @@ type user {
     gender: gender
     birthDate: String
     birthPlace: String
+    rating: Float
     ethnicId: Int
     ethnic: Ethnic
     cardIdentities: [cardIdentity]
