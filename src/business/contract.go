@@ -202,6 +202,18 @@ type AssessmentService interface {
 	Submit(ctx context.Context, ApplicantID int64, eligibilities []entity.ApplicantEligibility, scores []entity.ApplicantScore) (string, error)
 }
 
+// ReportRepository .
+type ReportRepository interface {
+	Store(ctx context.Context, report entity.ApplicantReport) error
+	Fetch(ctx context.Context, filter entity.ReportFilter) ([]entity.ApplicantReport, string, error)
+}
+
+// ReportService .
+type ReportService interface {
+	Store(ctx context.Context, report entity.ApplicantReport) (string, error)
+	Fetch(ctx context.Context, filter entity.ReportFilter) (entity.ReportFeed, error)
+}
+
 // ========= Backoffice ===========
 type SponsorService interface {
 	FetchSponsor(ctx context.Context, filter entity.SponsorFilter) (entity.SponsorFeed, error)

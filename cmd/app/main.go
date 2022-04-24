@@ -42,6 +42,7 @@ func main() {
 		cmd.EthnicQuery,
 		cmd.ApplicantQuery,
 		cmd.EmailQuery,
+		cmd.ReportQuery,
 		cmd.SponsorQuery,
 		cmd.StudentQuery,
 		cmd.UserMutation,
@@ -51,6 +52,7 @@ func main() {
 		cmd.AssessmentMutation,
 		cmd.ApplicantMutation,
 		cmd.EmailMutation,
+		cmd.ReportMutation,
 	)
 
 	graphQlSchema := _graphql.MustParseSchema(schema.String(), rootResolver, opts...)

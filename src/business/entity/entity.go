@@ -583,6 +583,27 @@ type ApplicantScore struct {
 	CreatedAt   time.Time `json:"-"`
 }
 
+// ApplicantReport .
+type ApplicantReport struct {
+	ID          int64     `json:"id"`
+	ApplicantID int64     `json:"applicant_id"`
+	File        Image     `json:"file"`
+	CreatedAt   time.Time `json:"created_at"`
+}
+
+// ReportFilter .
+type ReportFilter struct {
+	Limit       uint64
+	Cursor      string
+	ApplicantID int64
+}
+
+// ReportFeed .
+type ReportFeed struct {
+	Cursor  string
+	Reports []ApplicantReport
+}
+
 // InputAssessment .
 type InputAssessment struct {
 	ApplicantID            int32
