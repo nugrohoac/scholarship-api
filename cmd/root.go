@@ -82,6 +82,7 @@ var (
 	emailApiKey                   string
 	pathActivateUser              string
 	pathForgotPassword            string
+	pathForgotPasswordBackoffice  string
 	pathNotifyFundingConfirmation string
 	pathConfirmationByAwardee     string
 	emailSender                   string
@@ -199,6 +200,7 @@ func initEnv() {
 	emailApiKey = viper.GetString("email_api_key")
 	pathActivateUser = viper.GetString("email_path_activate_user")
 	pathForgotPassword = viper.GetString("email_path_forgot_password")
+	pathForgotPasswordBackoffice = viper.GetString("email_path_forgot_password_backoffice")
 	pathNotifyFundingConfirmation = viper.GetString("email_path_notify_funding_confirmation")
 	pathConfirmationByAwardee = viper.GetString("email_path_confirmation_by_awardee")
 	emailSender = viper.GetString("email_sender")
@@ -225,6 +227,7 @@ func initApp() {
 		emailSender,
 		pathActivateUser,
 		pathForgotPassword,
+		pathForgotPasswordBackoffice,
 		pathNotifyFundingConfirmation,
 		pathConfirmationByAwardee,
 	)

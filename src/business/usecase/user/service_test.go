@@ -787,6 +787,7 @@ func TestUserServiceForgotPassword(t *testing.T) {
 	email := users[0].Email
 	user := users[0]
 	user.Status = 1
+	userType := users[0].Type
 
 	userInactive := user
 	userInactive.Status = 0
@@ -873,7 +874,7 @@ func TestUserServiceForgotPassword(t *testing.T) {
 			},
 			sendEmailForgotPasswd: testdata.FuncCaller{
 				IsCalled: true,
-				Input:    []interface{}{mock.Anything, email, token},
+				Input:    []interface{}{mock.Anything, email, token, userType},
 				Output:   []interface{}{errors.New("failed sending email")},
 			},
 			expectedResp: "",
