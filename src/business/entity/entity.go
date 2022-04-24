@@ -583,6 +583,14 @@ type ApplicantScore struct {
 	CreatedAt   time.Time `json:"-"`
 }
 
+// ApplicantReport .
+type ApplicantReport struct {
+	ID          int64     `json:"id"`
+	ApplicantID int64     `json:"applicant_id"`
+	Report      Image     `json:"report"`
+	CreatedAt   time.Time `json:"created_at"`
+}
+
 // InputAssessment .
 type InputAssessment struct {
 	ApplicantID            int32

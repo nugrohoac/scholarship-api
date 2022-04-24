@@ -244,11 +244,13 @@ func (a applicantRepository) GetByID(ctx context.Context, ID int64) (entity.Appl
 		"u.career_goal",
 		"us.essay",
 		"us.recommendation_letter",
+		"s.sponsor_id",
 	).From("user_scholarship us").
 		Join("\"user\" u on us.user_id = u.id").
 		Join("ethnic e on u.ethnic_id = e.id").
 		Join("country c on u.country_id = c.id").
 		Join("bank b on u.bank_id = b.id").
+		Join("scholarship s on us.scholarship_id = s.id").
 		Where(sq.Eq{"us.id": ID}).
 		PlaceholderFormat(sq.Dollar).
 		ToSql()
@@ -285,6 +287,7 @@ func (a applicantRepository) GetByID(ctx context.Context, ID int64) (entity.Appl
 		&applicant.User.CareerGoal,
 		&applicant.Essay,
 		&byteRecLetter,
+		&applicant.Scholarship.SponsorID,
 	); err != nil {
 		return entity.Applicant{}, err
 	}
