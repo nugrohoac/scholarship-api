@@ -18,6 +18,7 @@ CREATE TABLE "user" (
     "bank_id" bigint DEFAULT 0,
     "bank_account_no" varchar(50) DEFAULT '',
     "bank_account_name" varchar(100) DEFAULT '',
+    "rating" numeric(4,2) not null default 0,
     "created_at" timestamp(3) DEFAULT CURRENT_TIMESTAMP(3),
     "updated_at" timestamp(3) NULL
 );

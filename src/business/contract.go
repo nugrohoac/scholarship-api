@@ -182,6 +182,8 @@ type ApplicantRepository interface {
 	UpdateStatus(ctx context.Context, ID int64, status int32) error
 	SetStatusWaitForConfirmation(ctx context.Context, userIDs []int64, scholarshipID int64) error
 	SetStatusConfirmation(ctx context.Context, userID, scholarshipID int64) error
+	CountAndSumRating(ctx context.Context, userID int64) (count int32, sum int32, err error)
+	StoreRating(ctx context.Context, Applicant entity.Applicant, avgRating float64, rating int32) error
 }
 
 // ApplicantService .
@@ -189,6 +191,7 @@ type ApplicantService interface {
 	Fetch(ctx context.Context, filter entity.FilterApplicant) (entity.ApplicantFeed, error)
 	GetByID(ctx context.Context, ID int64) (entity.Applicant, error)
 	UpdateStatus(ctx context.Context, ID int64, status int32) (string, error)
+	StoreRating(ctx context.Context, ApplicantID int64, rating int32) (string, error)
 }
 
 // AssessmentRepository .

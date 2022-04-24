@@ -31,6 +31,7 @@ func (a applicantRepository) Fetch(ctx context.Context, filter entity.FilterAppl
 		"us.scholarship_id scholarship_id",
 		"us.user_id user_id",
 		"us.status applicant_status",
+		"us.rating applicant_rating",
 		"us.created_at applicant_created_at",
 		"u.id _user_id",
 		"u.name user_name",
@@ -87,6 +88,7 @@ func (a applicantRepository) Fetch(ctx context.Context, filter entity.FilterAppl
 		res.scholarship_id,
 		res.user_id _user_id,
 		res.applicant_status,
+		res.applicant_rating,
 		res.applicant_created_at,
 		res.user_id,
 		res.user_name,
@@ -157,6 +159,7 @@ func (a applicantRepository) Fetch(ctx context.Context, filter entity.FilterAppl
 			&applicant.ScholarshipID,
 			&applicant.UserID,
 			&applicant.Status,
+			&applicant.Rating,
 			&applicant.ApplyDate,
 			&applicant.User.ID,
 			&applicant.User.Name,
@@ -226,6 +229,7 @@ func (a applicantRepository) GetByID(ctx context.Context, ID int64) (entity.Appl
 		"us.user_id",
 		"us.scholarship_id",
 		"us.status",
+		"us.rating",
 		"u.name",
 		"u.photo",
 		"u.address",
@@ -233,6 +237,7 @@ func (a applicantRepository) GetByID(ctx context.Context, ID int64) (entity.Appl
 		"u.birth_place",
 		"u.phone_no",
 		"u.gender",
+		"u.rating",
 		"u.ethnic_id",
 		"e.name",
 		"u.country_id",
@@ -269,6 +274,7 @@ func (a applicantRepository) GetByID(ctx context.Context, ID int64) (entity.Appl
 		&applicant.UserID,
 		&applicant.ScholarshipID,
 		&applicant.Status,
+		&applicant.Rating,
 		&applicant.User.Name,
 		&bytePhoto,
 		&applicant.User.Address,
@@ -276,6 +282,7 @@ func (a applicantRepository) GetByID(ctx context.Context, ID int64) (entity.Appl
 		&applicant.User.BirthPlace,
 		&applicant.User.PhoneNo,
 		&applicant.User.Gender,
+		&applicant.User.Rating,
 		&applicant.User.EthnicID,
 		&applicant.User.Ethnic.Name,
 		&applicant.User.CountryID,
@@ -485,6 +492,96 @@ func (a applicantRepository) SetStatusConfirmation(ctx context.Context, userID, 
 
 	if _, err = a.db.ExecContext(ctx, query, args...); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// CountAndSumRating .
+func (a applicantRepository) CountAndSumRating(ctx context.Context, userID int64) (int32, int32, error) {
+	var count, sum int32
+
+	query, args, err := sq.Select("count(id)", "sum(rating)").
+		From("user_scholarship").
+		GroupBy("user_id").
+		Where(sq.Eq{"user_id": userID}).
+		Where(sq.Gt{"rating": 0}).
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+	if err != nil {
+		return 0, 0, err
+	}
+
+	row := a.db.QueryRowContext(ctx, query, args...)
+
+	if err = row.Scan(&count, &sum); err != nil {
+		if err == sql.ErrNoRows {
+			return 0, 0, nil
+		}
+
+		return 0, 0, err
+	}
+
+	return count, sum, nil
+}
+
+// StoreRating .
+func (a applicantRepository) StoreRating(ctx context.Context, Applicant entity.Applicant, avgRating float64, rating int32) error {
+	tx, err := a.db.Begin()
+	if err != nil {
+		return err
+	}
+
+	var (
+		timeNow     = time.Now()
+		errRollback error
+		errCommit   error
+	)
+
+	query, args, err := sq.Update("user_scholarship").
+		SetMap(sq.Eq{
+			"rating":     rating,
+			"updated_at": timeNow,
+		}).Where(sq.Eq{"id": Applicant.ID}).
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+	if err != nil {
+		return err
+	}
+
+	if _, err = tx.ExecContext(ctx, query, args...); err != nil {
+		return err
+	}
+
+	query, args, err = sq.Update("\"user\"").
+		SetMap(sq.Eq{
+			"rating":     avgRating,
+			"updated_at": timeNow,
+		}).Where(sq.Eq{"id": Applicant.UserID}).
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+	if err != nil {
+		if errRollback = tx.Rollback(); errRollback != nil {
+			logrus.Error(errRollback)
+		}
+
+		return err
+	}
+
+	if _, err = tx.ExecContext(ctx, query, args...); err != nil {
+		if errRollback = tx.Rollback(); errRollback != nil {
+			logrus.Error(errRollback)
+		}
+
+		return err
+	}
+
+	if errCommit = tx.Commit(); errCommit != nil {
+		if errRollback = tx.Rollback(); errRollback != nil {
+			logrus.Error(errRollback)
+		}
+
+		return errCommit
 	}
 
 	return nil

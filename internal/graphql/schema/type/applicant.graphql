@@ -8,6 +8,7 @@ type applicant {
     applyDate: String
     essay: String
     recommendationLetter: image
+    rating: Int
     scores: [score]
 }
 

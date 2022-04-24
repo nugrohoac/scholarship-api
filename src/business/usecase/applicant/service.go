@@ -130,6 +130,40 @@ func (a applicantService) UpdateStatus(ctx context.Context, ID int64, status int
 	return "success", nil
 }
 
+// StoreRating .
+func (a applicantService) StoreRating(ctx context.Context, ApplicantID int64, rating int32) (string, error) {
+	user, err := common.GetUserOnContext(ctx)
+	if err != nil {
+		return "", err
+	}
+
+	applicant, err := a.applicantRepository.GetByID(ctx, ApplicantID)
+	if err != nil {
+		return "", err
+	}
+
+	if applicant.Rating > 0 {
+		return "", errors.ErrorDuplicate{Message: "you has been rate this student"}
+	}
+
+	if user.ID != applicant.Scholarship.SponsorID {
+		return "", errors.ErrNotAllowed{Message: "sponsor is not own scholarship"}
+	}
+
+	count, sum, err := a.applicantRepository.CountAndSumRating(ctx, applicant.UserID)
+	if err != nil {
+		return "", err
+	}
+
+	avgRating := float64(sum+rating) / float64(count+1)
+
+	if err = a.applicantRepository.StoreRating(ctx, applicant, avgRating, rating); err != nil {
+		return "", err
+	}
+
+	return "success", nil
+}
+
 // NewApplicantService .
 func NewApplicantService(
 	applicantRepository business.ApplicantRepository,
