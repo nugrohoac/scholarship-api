@@ -58,20 +58,20 @@ func (_m *ScholarshipService) Apply(ctx context.Context, userID int64, scholarsh
 	return r0, r1
 }
 
-// ApprovedScholarship provides a mock function with given fields: ctx, scholarshipID
-func (_m *ScholarshipService) ApprovedScholarship(ctx context.Context, scholarshipID int64) (string, error) {
-	ret := _m.Called(ctx, scholarshipID)
+// ApprovedScholarship provides a mock function with given fields: ctx, scholarshipID, actionType
+func (_m *ScholarshipService) ApprovedScholarship(ctx context.Context, scholarshipID int64, actionType int32) (string, error) {
+	ret := _m.Called(ctx, scholarshipID, actionType)
 
 	var r0 string
-	if rf, ok := ret.Get(0).(func(context.Context, int64) string); ok {
-		r0 = rf(ctx, scholarshipID)
+	if rf, ok := ret.Get(0).(func(context.Context, int64, int32) string); ok {
+		r0 = rf(ctx, scholarshipID, actionType)
 	} else {
 		r0 = ret.Get(0).(string)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, int64) error); ok {
-		r1 = rf(ctx, scholarshipID)
+	if rf, ok := ret.Get(1).(func(context.Context, int64, int32) error); ok {
+		r1 = rf(ctx, scholarshipID, actionType)
 	} else {
 		r1 = ret.Error(1)
 	}

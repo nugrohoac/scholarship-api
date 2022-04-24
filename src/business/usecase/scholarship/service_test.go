@@ -525,7 +525,8 @@ func TestApprovedScholarship(t *testing.T) {
 	testdata.GoldenJSONUnmarshal(t, "scholarship", &scholarship)
 
 	inputScholarship := entity.UpdateScholarshipStatus{
-		ID: 1,
+		ID:         1,
+		ActionType: 1,
 	}
 
 	msgSuccess := "success"
@@ -540,12 +541,12 @@ func TestApprovedScholarship(t *testing.T) {
 			paramScholarship: inputScholarship,
 			getScholarship: testdata.FuncCaller{
 				IsCalled: true,
-				Input:    []interface{}{mock.Anything, mock.AnythingOfType("int64")},
+				Input:    []interface{}{mock.Anything, int64(1)},
 				Output:   []interface{}{scholarship, nil},
 			},
 			approvedScholarship: testdata.FuncCaller{
 				IsCalled: true,
-				Input:    []interface{}{mock.Anything, mock.AnythingOfType("int64")},
+				Input:    []interface{}{mock.Anything, int64(1), int32(1)},
 				Output:   []interface{}{nil},
 			},
 			expectedResp: msgSuccess,
@@ -555,12 +556,12 @@ func TestApprovedScholarship(t *testing.T) {
 			paramScholarship: inputScholarship,
 			getScholarship: testdata.FuncCaller{
 				IsCalled: true,
-				Input:    []interface{}{mock.Anything, mock.AnythingOfType("int64")},
+				Input:    []interface{}{mock.Anything, int64(1)},
 				Output:   []interface{}{scholarship, errors.New("error")},
 			},
 			approvedScholarship: testdata.FuncCaller{
 				IsCalled: true,
-				Input:    []interface{}{mock.Anything, mock.AnythingOfType("int64")},
+				Input:    []interface{}{mock.Anything, int64(1), int32(1)},
 				Output:   []interface{}{errors.New("error")},
 			},
 			expectedResp: "",
@@ -586,7 +587,7 @@ func TestApprovedScholarship(t *testing.T) {
 			}
 
 			scholarshipService := _service.NewScholarshipService(scholarshipRepositoryMock, bankTransferRepoMock, paymentRepoMock, requirementDescRepoMock)
-			resp, err := scholarshipService.ApprovedScholarship(context.Background(), int64(test.paramScholarship.ID))
+			resp, err := scholarshipService.ApprovedScholarship(context.Background(), int64(test.paramScholarship.ID), test.paramScholarship.ActionType)
 
 			if err != nil {
 				require.Error(t, err)

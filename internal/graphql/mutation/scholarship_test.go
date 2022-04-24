@@ -126,7 +126,8 @@ func TestScholarshipMutationCreate(t *testing.T) {
 
 func TestApprovedScholarship(t *testing.T) {
 	inputScholarship := entity.UpdateScholarshipStatus{
-		ID:     1,
+		ID:         1,
+		ActionType: 1,
 	}
 
 	msgSuccess := "success"
@@ -140,7 +141,7 @@ func TestApprovedScholarship(t *testing.T) {
 			paramScholarship: inputScholarship,
 			approvedScholarship: testdata.FuncCaller{
 				IsCalled: true,
-				Input:    []interface{}{mock.Anything, mock.AnythingOfType("int64")},
+				Input:    []interface{}{mock.Anything, int64(1), int32(1)},
 				Output:   []interface{}{"success", nil},
 			},
 			expectedResp: &msgSuccess,
@@ -150,7 +151,7 @@ func TestApprovedScholarship(t *testing.T) {
 			paramScholarship: inputScholarship,
 			approvedScholarship: testdata.FuncCaller{
 				IsCalled: true,
-				Input:    []interface{}{mock.Anything, mock.AnythingOfType("int64")},
+				Input:    []interface{}{mock.Anything, int64(1), int32(1)},
 				Output:   []interface{}{"", errors.New("error")},
 			},
 			expectedResp: nil,
