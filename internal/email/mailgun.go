@@ -3,11 +3,13 @@ package email
 import (
 	"context"
 	"fmt"
+	"strconv"
+	"strings"
+
 	"github.com/Nusantara-Muda/scholarship-api/src/business"
 	"github.com/Nusantara-Muda/scholarship-api/src/business/entity"
 	"github.com/mailgun/mailgun-go/v4"
 	"github.com/sirupsen/logrus"
-	"strconv"
 )
 
 // Html ...
@@ -244,6 +246,7 @@ type emailRepo struct {
 	sender                        string
 	pathActivateUser              string
 	pathForgotPassword            string
+	pathForgotPasswordBackoffice  string
 	pathNotifyFundingConfirmation string
 	pathConfirmationByAwardee     string
 }
@@ -270,12 +273,17 @@ func (e emailRepo) SendActivateUser(ctx context.Context, email, token string) er
 }
 
 // SendForgotPassword ...
-func (e emailRepo) SendForgotPassword(ctx context.Context, email, token string) error {
+func (e emailRepo) SendForgotPassword(ctx context.Context, email, token, userType string) error {
 	subject := "Reset Password"
 	recipient := email
+	pathForgotPassword := e.pathForgotPassword
+
+	if strings.ToLower(userType) == "admin" {
+		pathForgotPassword = e.pathForgotPasswordBackoffice
+	}
 
 	message := e.mailgunImpl.NewMessage(e.sender, subject, "", recipient)
-	path := e.pathForgotPassword + "?token=" + token
+	path := pathForgotPassword + "?token=" + token
 	// html copy, if sending to send email more, it will more extra string
 	_html := htmlForgotPassword
 	_html = fmt.Sprintf(_html, path)
@@ -363,6 +371,7 @@ func NewEmailRepository(
 	sender,
 	pathActivateUser,
 	pathForgotPassword,
+	pathForgotPasswordBackoffice,
 	pathNotifyFundingConfirmation,
 	pathConfirmationByAwardee string) business.EmailRepository {
 	return emailRepo{
@@ -370,6 +379,7 @@ func NewEmailRepository(
 		sender:                        sender,
 		pathActivateUser:              pathActivateUser,
 		pathForgotPassword:            pathForgotPassword,
+		pathForgotPasswordBackoffice:  pathForgotPasswordBackoffice,
 		pathNotifyFundingConfirmation: pathNotifyFundingConfirmation,
 		pathConfirmationByAwardee:     pathConfirmationByAwardee,
 	}

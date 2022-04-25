@@ -196,7 +196,7 @@ func (u userService) ForgotPassword(ctx context.Context, email string) (string, 
 		return "", err
 	}
 
-	if err = u.emailRepo.SendForgotPassword(ctx, email, token); err != nil {
+	if err = u.emailRepo.SendForgotPassword(ctx, email, token, users[0].Type); err != nil {
 		return "", err
 	}
 
