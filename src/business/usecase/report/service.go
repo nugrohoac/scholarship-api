@@ -26,8 +26,8 @@ func (r reportService) Store(ctx context.Context, report entity.ApplicantReport)
 		return "", err
 	}
 
-	if user.ID != applicant.Scholarship.SponsorID {
-		return "", errors.ErrNotAllowed{Message: "user is not own of scholarship"}
+	if user.ID != applicant.UserID {
+		return "", errors.ErrNotAllowed{Message: "student not apply scholarship"}
 	}
 
 	if err = r.reportRepo.Store(ctx, report); err != nil {
