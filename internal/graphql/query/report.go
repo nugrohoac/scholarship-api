@@ -15,13 +15,21 @@ type ReportQuery struct {
 
 // FetchReport .
 func (r ReportQuery) FetchReport(ctx context.Context, param struct {
-	ApplicantID int32
+	ApplicantID *int32
+	SponsorID   *int32
 	Limit       *int32
 	Cursor      *string
 }) (*resolver.ReportFeedResolver, error) {
 	filter := entity.ReportFilter{
-		Limit:       20,
-		ApplicantID: int64(param.ApplicantID),
+		Limit: 20,
+	}
+
+	if param.ApplicantID != nil {
+		filter.ApplicantID = int64(*param.ApplicantID)
+	}
+
+	if param.SponsorID != nil {
+		filter.SponsorID = int64(*param.SponsorID)
 	}
 
 	if param.Limit != nil {

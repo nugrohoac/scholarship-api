@@ -101,7 +101,8 @@ type Query {
     ): String
 
     FetchReport(
-        applicantId: Int!
+        applicantId: Int
+        sponsorId: Int
         limit: Int
         cursor: String
     ): reportFeed
