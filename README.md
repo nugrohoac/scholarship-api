@@ -105,4 +105,4 @@ $ go run cmd/app/main.go -config-path=your-custom-env
 
 
 ## Design Database
-- [![scholarship-drawio-2.png](https://i.postimg.cc/SNY7xgSd/scholarship-drawio-2.png)](https://postimg.cc/kB9tjFtR)
+[![scholarship-drawio.png](https://i.postimg.cc/TPc7fTqL/scholarship-drawio.png)](https://postimg.cc/QBHkqGzh)
