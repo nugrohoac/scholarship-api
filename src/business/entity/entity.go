@@ -598,6 +598,7 @@ type ReportFilter struct {
 	Limit       uint64
 	Cursor      string
 	ApplicantID int64
+	SponsorID   int64
 }
 
 // ReportFeed .

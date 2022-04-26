@@ -18,16 +18,22 @@ type reportRepository struct {
 
 // Fetch .
 func (r reportRepository) Fetch(ctx context.Context, filter entity.ReportFilter) ([]entity.ApplicantReport, string, error) {
-	qSelect := sq.Select("id",
-		"applicant_id",
-		"file",
-		"created_at",
-	).From("applicant_report").
-		OrderBy("created_at desc").
+	qSelect := sq.Select("ar.id",
+		"ar.applicant_id",
+		"ar.file",
+		"ar.created_at",
+	).From("applicant_report ar").
+		Join("user_scholarship us on us.id = ar.applicant_id").
+		Join("scholarship s on s.id =us.scholarship_id").
+		OrderBy("ar.created_at desc").
 		PlaceholderFormat(sq.Dollar)
 
 	if filter.ApplicantID > 0 {
-		qSelect = qSelect.Where(sq.Eq{"applicant_id": filter.ApplicantID})
+		qSelect = qSelect.Where(sq.Eq{"ar.applicant_id": filter.ApplicantID})
+	}
+
+	if filter.SponsorID > 0 {
+		qSelect = qSelect.Where(sq.Eq{"s.sponsor_id": filter.SponsorID})
 	}
 
 	if filter.Limit > 0 {
@@ -40,7 +46,7 @@ func (r reportRepository) Fetch(ctx context.Context, filter entity.ReportFilter)
 			return nil, "", err
 		}
 
-		qSelect = qSelect.Where(sq.Lt{"created_at": timeCursor})
+		qSelect = qSelect.Where(sq.Lt{"ar.created_at": timeCursor})
 	}
 
 	query, args, err := qSelect.ToSql()

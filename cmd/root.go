@@ -277,7 +277,7 @@ func initApp() {
 	// create new jwtHash with expire 72 hour
 	jwtHash72Hour := jwt_hash.NewJwtHash([]byte(secretKey), durationEmailConfirmationByAwardee)
 	emailService = email2.NewEmailService(emailRepo, applicantRepo, scholarshipRepo, userRepo, jwtHash72Hour, printer)
-	reportService = report.NewReportService(reportRepo, applicantRepo)
+	reportService = report.NewReportService(reportRepo, applicantRepo, userRepo)
 
 	UserMutation = mutation.NewUserMutation(userService)
 	ScholarshipMutation = mutation.NewScholarshipMutation(scholarshipService)
